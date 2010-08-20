@@ -1,0 +1,73 @@
+# Project: SI Simple
+# Compiler: Default GCC compiler
+# Compiler Type: MingW 3
+# Makefile created by wxDev-C++ 7.3 on 19/08/10 21:52
+
+WXLIBNAME = wxmsw28
+CPP       = g++.exe
+CC        = gcc.exe
+WINDRES   = "windres.exe"
+OBJ       = Objects/MingW/SI\ SimpleApp.o Objects/MingW/SI\ SimpleFrm.o Objects/MingW/CEvent.o Objects/MingW/Utils.o Objects/MingW/ISubject.o Objects/MingW/CCourse.o Objects/MingW/CSidetails.o Objects/MingW/CResult.o Objects/MingW/CPunch.o Objects/MingW/CUniquePunch.o Objects/MingW/CLeg.o Objects/MingW/CLegstat.o Objects/MingW/CXmlWriter.o Objects/MingW/SI_Simple_private.res
+LINKOBJ   = "Objects/MingW/SI SimpleApp.o" "Objects/MingW/SI SimpleFrm.o" "Objects/MingW/CEvent.o" "Objects/MingW/Utils.o" "Objects/MingW/ISubject.o" "Objects/MingW/CCourse.o" "Objects/MingW/CSidetails.o" "Objects/MingW/CResult.o" "Objects/MingW/CPunch.o" "Objects/MingW/CUniquePunch.o" "Objects/MingW/CLeg.o" "Objects/MingW/CLegstat.o" "Objects/MingW/CXmlWriter.o" Objects/MingW/SI_Simple_private.res
+LIBS      = -L"C:/Program Files/Dev-Cpp/Lib" -mwindows -l$(WXLIBNAME) -l$(WXLIBNAME)_gl -lwxtiff -lwxjpeg -lwxpng -lwxzlib -lwxregex -lwxexpat -lkernel32 -luser32 -lgdi32 -lcomdlg32 -lwinspool -lwinmm -lshell32 -lcomctl32 -lole32 -loleaut32 -luuid -lrpcrt4 -ladvapi32 -lwsock32 -lodbc32 -lopengl32  -lgmon -pg  -g3 
+INCS      = -I"C:/Program Files/Dev-Cpp/Include"
+CXXINCS   = -I"C:/Program Files/Dev-Cpp/lib/gcc/mingw32/3.4.5/include" -I"C:/Program Files/Dev-Cpp/include/c++/3.4.5/backward" -I"C:/Program Files/Dev-Cpp/include/c++/3.4.5/mingw32" -I"C:/Program Files/Dev-Cpp/include/c++/3.4.5" -I"C:/Program Files/Dev-Cpp/include" -I"C:/Program Files/Dev-Cpp/" -I"C:/Program Files/Dev-Cpp/include/common/wx/msw" -I"C:/Program Files/Dev-Cpp/include/common/wx/generic" -I"C:/Program Files/Dev-Cpp/include/common/wx/html" -I"C:/Program Files/Dev-Cpp/include/common/wx/protocol" -I"C:/Program Files/Dev-Cpp/include/common/wx/xml" -I"C:/Program Files/Dev-Cpp/include/common/wx/xrc" -I"C:/Program Files/Dev-Cpp/include/common/wx" -I"C:/Program Files/Dev-Cpp/include/common"
+RCINCS    = --include-dir "C:/PROGRA~1/Dev-Cpp/include/common"
+BIN       = Output/MingW/SI Simple.exe
+DEFINES   = -D__WXMSW__ -D__GNUWIN32__ -D__WIN95__
+CXXFLAGS  = $(CXXINCS) $(DEFINES) -fno-exceptions -fno-pcc-struct-return -fstrict-aliasing -Wall -D__WXMSW__ -D__GNUWIN32__ -D__WIN95__   -fexpensive-optimizations -pg -g3
+CFLAGS    = $(INCS) $(DEFINES) -fno-exceptions -fno-pcc-struct-return -fstrict-aliasing -Wall -D__WXMSW__ -D__GNUWIN32__ -D__WIN95__   -fexpensive-optimizations -pg -g3
+GPROF     = gprof.exe
+RM        = rm -f
+LINK      = g++.exe
+
+.PHONY: all all-before all-after clean clean-custom
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	$(RM) $(LINKOBJ) "$(BIN)"
+
+$(BIN): $(OBJ)
+	$(LINK) $(LINKOBJ) -o "$(BIN)" $(LIBS) 
+
+Objects/MingW/SI\ SimpleApp.o: $(GLOBALDEPS) SI\ SimpleApp.cpp SI\ SimpleApp.h SI\ SimpleFrm.h IObserver.h
+	$(CPP) -c "SI SimpleApp.cpp" -o "Objects/MingW/SI SimpleApp.o" $(CXXFLAGS)
+
+Objects/MingW/SI\ SimpleFrm.o: $(GLOBALDEPS) SI\ SimpleFrm.cpp SI\ SimpleFrm.h IObserver.h CEvent.h ISubject.h Utils.h Notifications.h CResult.h CPunch.h CXmlWriter.h Images/SI_SimpleFrm_ID_FILE_OPEN_XPM.xpm Images/SI_SimpleFrm_wxID_SAVE_XPM.xpm Images/SI_SimpleFrm_ID_MNU_RECALC_1022_XPM.xpm Images/SI_SimpleFrm_m_ToolButton_Save_XPM.xpm Images/SI_SimpleFrm_m_ToolButton_Recalc_XPM.xpm Images/SI_SimpleFrm_m_ToolButton_Open_XPM.xpm
+	$(CPP) -c "SI SimpleFrm.cpp" -o "Objects/MingW/SI SimpleFrm.o" $(CXXFLAGS)
+
+Objects/MingW/CEvent.o: $(GLOBALDEPS) CEvent.cpp CEvent.h ISubject.h utils.h Notifications.h CSiDetails.h CResult.h CPunch.h CXmlWriter.h CCourse.h CLeg.h CUniquePunch.h CResult.h CLegStat.h CPunch.h CXmlWriter.h
+	$(CPP) -c CEvent.cpp -o Objects/MingW/CEvent.o $(CXXFLAGS)
+
+Objects/MingW/Utils.o: $(GLOBALDEPS) Utils.cpp Utils.h
+	$(CPP) -c Utils.cpp -o Objects/MingW/Utils.o $(CXXFLAGS)
+
+Objects/MingW/ISubject.o: $(GLOBALDEPS) ISubject.cpp ISubject.h IObserver.h
+	$(CPP) -c ISubject.cpp -o Objects/MingW/ISubject.o $(CXXFLAGS)
+
+Objects/MingW/CCourse.o: $(GLOBALDEPS) CCourse.cpp CCourse.h CLeg.h Utils.h CLeg.h
+	$(CPP) -c CCourse.cpp -o Objects/MingW/CCourse.o $(CXXFLAGS)
+
+Objects/MingW/CSidetails.o: $(GLOBALDEPS) CSidetails.cpp csidetails.h
+	$(CPP) -c CSidetails.cpp -o Objects/MingW/CSidetails.o $(CXXFLAGS)
+
+Objects/MingW/CResult.o: $(GLOBALDEPS) CResult.cpp cresult.h CPunch.h CXmlWriter.h CSiDetails.h CEvent.h ISubject.h Utils.h CCourse.h CLeg.h CLegStat.h CPunch.h
+	$(CPP) -c CResult.cpp -o Objects/MingW/CResult.o $(CXXFLAGS)
+
+Objects/MingW/CPunch.o: $(GLOBALDEPS) CPunch.cpp cpunch.h Utils.h
+	$(CPP) -c CPunch.cpp -o Objects/MingW/CPunch.o $(CXXFLAGS)
+
+Objects/MingW/CUniquePunch.o: $(GLOBALDEPS) CUniquePunch.cpp cuniquepunch.h CResult.h CPunch.h CXmlWriter.h
+	$(CPP) -c CUniquePunch.cpp -o Objects/MingW/CUniquePunch.o $(CXXFLAGS)
+
+Objects/MingW/CLeg.o: $(GLOBALDEPS) CLeg.cpp cleg.h
+	$(CPP) -c CLeg.cpp -o Objects/MingW/CLeg.o $(CXXFLAGS)
+
+Objects/MingW/CLegstat.o: $(GLOBALDEPS) CLegstat.cpp clegstat.h CPunch.h
+	$(CPP) -c CLegstat.cpp -o Objects/MingW/CLegstat.o $(CXXFLAGS)
+
+Objects/MingW/CXmlWriter.o: $(GLOBALDEPS) CXmlWriter.cpp cxmlwriter.h utils.h
+	$(CPP) -c CXmlWriter.cpp -o Objects/MingW/CXmlWriter.o $(CXXFLAGS)
+
+Objects/MingW/SI_Simple_private.res: Objects/MingW/SI_Simple_private.rc SI\ SimpleApp.rc 
+	$(WINDRES) --input-format=rc -o Objects/MingW/SI_Simple_private.res $(RCINCS) Objects/MingW/SI_SIM~1.RC -O coff

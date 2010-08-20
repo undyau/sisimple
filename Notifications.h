@@ -1,0 +1,4 @@
+#define NFY_ALLFILES 1
+#define NFY_LOGMSG 2
+#define NFY_DISPLAYMSG 3
+#define NFY_CLEARDISPLAY 4
