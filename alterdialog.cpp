@@ -2,7 +2,7 @@
 #include "ui_alterdialog.h"
 #include "CResult.h"
 #include "CCourse.h"
-#include <QDebug>
+//#include <QDebug>
 
 AlterDialog::AlterDialog(QWidget *parent, QStringList& a_Courses, CResult* a_Result) :
     QDialog(parent), ui(new Ui::AlterDialog), m_Courses(a_Courses), m_Result(a_Result)

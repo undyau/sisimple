@@ -2,7 +2,7 @@
 #include <QMessageBox>
 #include <QDir>
 #include <QStringList>
-#include <QDebug>
+//#include <QDebug>
 
 int SIMessageBox(const QString&  a_Message,
                  QMessageBox::Icon a_Icon,
