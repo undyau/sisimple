@@ -7,7 +7,7 @@
 #include "CCourse.h"
 #include "CLegstat.h"
 #include <QStringList>
-#include <QDebug>
+//#include <QDebug>
 
 // class constructor
 CResult::CResult(QString& a_RawData) : m_RawData(a_RawData), m_ProcessedResult(false),

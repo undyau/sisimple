@@ -8,7 +8,7 @@
 #include <QFileDialog>
 #include "Utils.h"
 #include "CEvent.h"
-#include <QDebug>
+//#include <QDebug>
 #include "alterdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -22,6 +22,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Maybe need to use Tango theme ??
     ui->setupUi(this);
+
+    ui->textEdit->setReadOnly(true);
+    ui->textEdit_2->setReadOnly(true);
+
+    QWidget *viewPort = ui->textEdit->viewport();
+    viewPort->setCursor(Qt::ArrowCursor);
+    ui->textEdit->setViewport(viewPort);
+
     m_OpenAct = new QAction(QIcon::fromTheme("document-open", QIcon(":icons/icons/document-open.svg")), tr("&Open..."), this);
     m_OpenAct->setShortcuts(QKeySequence::Open);
     m_OpenAct->setStatusTip(tr("Open an existing CSV dump"));
