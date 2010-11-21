@@ -34,6 +34,11 @@ CCourse::CCourse(QString& a_Data)
         m_Climb = courseParts[3];
     }
 
+CCourse::CCourse(QString& a_Name, QString& a_Length, QString& a_Climb, QStringList& a_Controls)
+    {
+    Alter(a_Name, a_Length, a_Climb, a_Controls);
+    }
+
 // class destructor
 CCourse::~CCourse()
     {
@@ -188,3 +193,33 @@ QString CCourse::TextSplitHdrStr()
     result += "  Finish.           min/km";
     return result;
 }
+
+void CCourse::GetControls(QStringList& a_Controls) const
+{
+    QString s;
+    for (int i = 0; i < (int)m_Controls.size() -1; i++)
+        {
+        s = QString("%1").arg(m_Controls[i]->GetEndCN());
+        a_Controls.append(s);
+        }
+}
+
+void CCourse::Alter(QString& a_Name, QString& a_Length, QString& a_Climb, QStringList a_Controls)
+    {
+    m_Name = a_Name;
+    m_Length = a_Length;
+    m_Climb = a_Climb;
+    m_Controls.clear();
+
+    long lastCN(-1);
+    long nextCN;
+    int i(0);
+    while (i < a_Controls.count())
+        {
+        nextCN = ToLong(a_Controls[i]);
+        m_Controls.push_back(new CLeg(lastCN, nextCN));
+        lastCN = nextCN;
+        i++;
+        }
+    m_Controls.push_back(new CLeg(lastCN, -2));
+    }

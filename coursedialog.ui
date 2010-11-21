@@ -96,9 +96,6 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0" colspan="4">
-    <widget class="QPlainTextEdit" name="controlsText"/>
-   </item>
    <item row="6" column="0" colspan="4">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
@@ -108,6 +105,9 @@
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
+   </item>
+   <item row="5" column="0" colspan="4">
+    <widget class="QTextEdit" name="controlsText"/>
    </item>
   </layout>
  </widget>

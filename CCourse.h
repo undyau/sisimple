@@ -14,23 +14,27 @@ class CCourse
     public:
         // class constructor
         CCourse(QString& a_Data);
+        CCourse(QString& a_Name, QString& a_Length, QString& a_Climb, QStringList& a_Controls);
         // class destructor
         ~CCourse();
 
         static bool ValidData(QString& a_Data);
-        void SetUntimedLeg(int a_Index);   
+        void SetUntimedLeg(int a_Index);
         void SetOptionalLeg(int a_Index);
-        bool GetUntimedLeg(int a_Index);   
-        bool GetOptionalLeg(int a_Index);  
+        bool GetUntimedLeg(int a_Index);
+        bool GetOptionalLeg(int a_Index);
         QString GetLength() {return m_Length;};
-        
-        void CompulsoryControls(std::list<long>& a_Controls);                              
+
+        void CompulsoryControls(std::list<long>& a_Controls);
+        void GetControls(QStringList& a_Controls) const;
         QString GetName() {return m_Name;};
         CLeg GetLeg(int a_Index);
         int GetLegCount() {return m_Controls.size();};
         QString TextDescStr();
         QString TextSplitHdrStr();
-	
+
+        void Alter(QString& a_Name, QString& a_Length, QString& a_Climb, QStringList a_Controls);
+
     private:
         QString m_Name;
         QString m_Length;
