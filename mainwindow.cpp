@@ -10,6 +10,7 @@
 #include "CEvent.h"
 //#include <QDebug>
 #include "alterdialog.h"
+#include "coursesdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -100,6 +101,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->textEdit, SIGNAL(customContextMenuRequested(const QPoint&)),this, SLOT(showDownloadContextMenu(const QPoint&)));
     connect(this, SIGNAL(dnf(long)), CEvent::Event(), SLOT(dnfResult(long)));
     connect(this, SIGNAL(reinstate(long)), CEvent::Event(), SLOT(reinstateResult(long)));
+    connect(ui->actionManage, SIGNAL(triggered()), this, SLOT(runcoursesdialog()));
 
 }
 
@@ -238,5 +240,11 @@ void MainWindow::runAlterDialog(long a_Index)
     CEvent::Event()->GetCourseNames(courses);
 
     AlterDialog dlg(this, courses, CEvent::Event()->GetResult(a_Index));
+    dlg.exec();
+}
+
+void MainWindow::runcoursesdialog()
+{
+    coursesdialog dlg(this);
     dlg.exec();
 }
