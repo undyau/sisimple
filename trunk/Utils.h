@@ -2,19 +2,22 @@
 
 #ifndef __UTILS_H__
 #define __UTILS_H__
-#include <wx/string.h>
-#include <wx/window.h>
-#include <wx/datetime.h>
+#include <QString>
+#include <QDateTime>
+#include <QMessageBox>
 
-int SIMessageBox(const wxString&  message,
-		const wxString&  caption = "SI Simple",
-		long style = wxOK|wxCENTRE,
-		wxWindow*  parent = NULL);
+int SIMessageBox(const QString&  a_Message,
+                QMessageBox::Icon a_Icon = QMessageBox::NoIcon,
+                QMessageBox::StandardButtons a_Buttons = QMessageBox::Ok,
+                const QString&  a_Caption = QString("SI Simple"),
+                QWidget*  a_Parent = NULL
+                );
 		
-wxString SimplifyPath(wxString a_Path);		
+QString SimplifyPath(QString a_Path);
 
-long ToLong(const wxString& a_Value);
-wxDateTime ToDateTime(const wxString& a_Value);
-int DOWToInt(const wxString& a_DOW);
-wxString FormatTimeTaken(wxTimeSpan a_TimeSpan, bool a_NullOK = false);
+long ToLong(const QString& a_Value);
+QDateTime ToDateTime(const QString& a_Value);
+int DOWToInt(const QString& a_DOW);
+//QString FormatTimeTaken(long a_Secs, bool a_NullOK = false);
+QString FormatTimeTaken(long a_Secs);
 #endif
