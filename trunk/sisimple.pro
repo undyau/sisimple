@@ -22,7 +22,9 @@ SOURCES += main.cpp\
     CResult.cpp \
     CUniquePunch.cpp \
     CEvent.cpp \
-    alterdialog.cpp
+    alterdialog.cpp \
+    coursesdialog.cpp \
+    coursedialog.cpp
 
 HEADERS  += mainwindow.h \
     Utils.h \
@@ -35,10 +37,14 @@ HEADERS  += mainwindow.h \
     CResult.h \
     CUniquePunch.h \
     CEvent.h \
-    alterdialog.h
+    alterdialog.h \
+    coursesdialog.h \
+    coursedialog.h
 
 FORMS    += mainwindow.ui \
-    alterdialog.ui
+    alterdialog.ui \
+    coursesdialog.ui \
+    coursedialog.ui
 
 RESOURCES += \
     sisimple.qrc

@@ -84,8 +84,16 @@
      <string>Help</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuCourses">
+    <property name="title">
+     <string>Courses</string>
+    </property>
+    <addaction name="actionManage"/>
+    <addaction name="actionImport"/>
+   </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Results"/>
+   <addaction name="menuCourses"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -130,6 +138,16 @@
   <action name="action_About">
    <property name="text">
     <string>&amp;About</string>
+   </property>
+  </action>
+  <action name="actionManage">
+   <property name="text">
+    <string>Manage...</string>
+   </property>
+  </action>
+  <action name="actionImport">
+   <property name="text">
+    <string>Import...</string>
    </property>
   </action>
  </widget>
