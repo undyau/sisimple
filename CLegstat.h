@@ -2,7 +2,7 @@
 
 #ifndef CLEGSTAT_H
 #define CLEGSTAT_H
-#include <wx/datetime.h>
+#include <QDateTime>
 #include "CPunch.h"
 
 class CResult;
@@ -18,12 +18,12 @@ class CLegStat
 		
 	   CResult* m_Result;
        long m_Index; // index of leg within course
-       wxTimeSpan m_ElapsedTime;
+       long m_ElapsedTime; // elapsed time in seconds
        long m_ElapsedPos;
-       wxTimeSpan m_ElapsedBehind;
+       long m_ElapsedBehind;
 
-       wxTimeSpan m_LegTime;
-       wxTimeSpan m_LegBehind; 
+       long m_LegTime;
+       long m_LegBehind;
        CPunch m_Punch;  
        long m_LegPos;           
        

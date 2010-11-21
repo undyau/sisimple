@@ -2,7 +2,7 @@
 
 #ifndef CLEG_H
 #define CLEG_H
-#include <wx/string.h>
+#include <QString>
 
 // An object of this class represents a leg on a course
 class CLeg
@@ -21,7 +21,7 @@ class CLeg
         
         void SetOptional(bool a_Optional) {m_Optional = a_Optional;};
         void SetUntimed(bool a_Untimed) {m_Untimed = a_Untimed;};  
-        wxString Label();      
+        QString Label();
 		
     private:
         long m_StartCN;

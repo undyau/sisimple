@@ -2,27 +2,28 @@
 
 #ifndef CXMLWRITER_H
 #define CXMLWRITER_H
-#include <wx/string.h>
+#include <QString>
 #include <stack>
 
 // Objects in this class can be used to create then write out an XML tree
 class CXmlWriter
 {
-	public:
-		// class constructor
-		CXmlWriter(wxString a_DocType, wxString a_DtdName);
-		// class destructor
-		~CXmlWriter();
-		void StartElement(wxString a_ElementName, wxString a_Attributes = wxEmptyString);
-		void EndElement();
-		void AddValue(wxString a_Value);
-		bool WriteToFile(wxString a_File);
-		
+    public:
+        // class constructor
+        CXmlWriter(QString a_DocType, QString a_DtdName);
+        // class destructor
+        ~CXmlWriter();
+        void StartElement(QString a_ElementName, QString a_Attributes = "");
+        void EndElement();
+        void AddValue(QString a_Value);
+        void AddValue(long a_Value);
+        bool WriteToFile(QString a_File);
+
     private:
-        wxString m_Output;
-        std::stack<wxString> m_Elements;
+        QString m_Output;
+        std::stack<QString> m_Elements;
         bool m_GotValue;
-        wxString m_LastElement;				
+        QString m_LastElement;
 };
 
 #endif // CXMLWRITER_H

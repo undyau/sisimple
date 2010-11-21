@@ -5,104 +5,116 @@
 #ifndef CEVENT_H
 #define CEVENT_H
 
-#include <wx/string.h>
-#include <wx/arrstr.h>
-#include "ISubject.h"
+#include <QString>
+#include <QObject>
 #include <vector>
 #include <map>
 class CSiDetails;
 class CResult;
 class CCourse;
-class wxTextFile;
+class QFile;
 
 // Class encapsulating an event
-class CEvent : public ISubject
+class CEvent : public QObject
 {
-	private:
-		// class constructor
-		CEvent();
-        CEvent(CEvent const&);              // Don't Implement
-        void operator=(CEvent const&); // Don't implement
-		
+    Q_OBJECT
 
-	public:
-		// class destructor
-		~CEvent();
-		// Singleton access/creation
-		static CEvent* Event();
-		wxString Directory() {return m_Dir;};
-		bool SetDirectory(wxString a_Dir);
-		wxString SINamesGlobalFile() {return m_SINamesGlobalFile;};
-		
-		wxString FindCourseFile(wxString a_Dir) const;
-		wxString FindRawDataFile(wxString a_Dir) const;
-        wxString FindSINamesFile(wxString a_Dir) const;
-		wxString FindSINamesGlobalFile(wxString a_Dir) const;
-		wxString LastLogMsg() {return m_LastLogMsg;};
-		wxString LastDisplayMsg() {return m_LastDisplayMsg;};
-		void GetCourseNames(wxArrayString& a_Names);
-		
-		void RecalcResults();
-		
-		CSiDetails* GetSIData(long a_SINumber);
-		void LogMsg(wxString a_Msg);
-        void LogResultProblem(CResult* a_Result, wxString a_Msg);
-        void DisplayMsg(wxString a_Msg);	
+    private:
+        // class constructor
+        CEvent();
+        CEvent(CEvent const&);         // Don't Implement
+        void operator=(CEvent const&); // Don't implement
+
+signals:
+    void filesChanged(const QString& a_RawData, const QString &a_Courses, const QString& a_SiNames, const QString& a_GlobalSiNames);
+    void logMsg(const QString& a_LogMsg);
+    void displayMsg(const QString& a_LogMsg);
+    void updatedResultsOutput(std::vector<QString>& a_Lines);
+
+    public:
+        // class destructor
+        ~CEvent();
+        // Singleton access/creation
+        static CEvent* Event();
+        QString Directory() {return m_Dir;};
+        bool SetDirectory(QString a_Dir);
+        QString SINamesGlobalFile() {return m_SINamesGlobalFile;};
+
+        QString FindCourseFile(QString a_Dir) const;
+        QString FindRawDataFile(QString a_Dir) const;
+        QString FindSINamesFile(QString a_Dir) const;
+        QString FindSINamesGlobalFile(QString a_Dir) const;
+        QString LastLogMsg() {return m_LastLogMsg;};
+        QString LastDisplayMsg() {return m_LastDisplayMsg;};
+        void GetCourseNames(QStringList& a_Names);
+
+        void RecalcResults();
+
+        CSiDetails* GetSIData(long a_SINumber);
+        void LogMsg(QString a_Msg);
+        void LogResultProblem(CResult* a_Result, QString a_Msg);
+        void DisplayMsg(QString a_Msg);
         int  CompareCourseIndex(CCourse* a_Lhs, CCourse* a_Rhs);
         CResult* GetResult(long a_RawIndex);
         unsigned int GetCourseCount() {return m_Courses.size();};
-        void SetResultCourse(CResult* a_Result, wxString a_CourseName);
-        
-        void ExportXML(wxString a_File);     
-        void SaveResults(wxString a_File);             
-        
-        bool GetShowSplits();   	
-        bool GetShowHTML();        
-        void SetShowSplits(bool a_Show);   	
-        void SetShowHTML(bool a_Show);  
-        wxString GetEventName();
-        void SetEventName(wxString a_Name);      
+        void SetResultCourse(CResult* a_Result, QString a_CourseName);
 
+        void ExportXML(QString a_File);
+        void SaveResults(QString a_File);
 
-	private:
-		bool CanClose();
-		
-		wxString FindDataFile(wxArrayString& a_Candidates, wxString a_Dir) const;
-		void LoadRawData();
-		void LoadCourseData();
-		void LoadSIData();		
-		void LoadSIFile(wxString& a_File);   
-        
-        void SetCourse(CResult* a_Result); 
+        bool GetShowSplits();
+        bool GetShowHTML();
+        void SetShowSplits(bool a_Show);
+        void SetShowHTML(bool a_Show);
+        QString GetEventName();
+        void SetEventName(QString a_Name);
+        bool GetResultFinished(long a_Index);
+        bool GetResultInvalid(long a_Index);
+        bool ResultExists(long a_Index);
+
+    private slots:
+        void dnfResult(long a_Index); // DNF someone
+        void reinstateResult(long a_Index); // Reinstate someone
+
+    private:
+        bool CanClose();
+
+        QString FindDataFile(QStringList& a_Candidates, QString a_Dir) const;
+        void LoadRawData();
+        void LoadCourseData();
+        void LoadSIData();
+        void LoadSIFile(QString& a_File);
+
+        void SetCourse(CResult* a_Result);
         void DisplayRawData();
         void CalcResults();
         void SetPositions(std::vector<CResult*>& a_SortedResults);
-        void SetLegStats(std::vector<CResult*>& a_SortedResults); 
+        void SetLegStats(std::vector<CResult*>& a_SortedResults);
         void SetCourseLegStats(CCourse* a_Course, std::vector<CResult*>& a_SortedResults, std::vector<CResult*>::iterator& a_Start, std::vector<CResult*>::iterator& a_End);
         void SetPunchTimes(CResult* a_Result);
-        void DisplayTextResults();        
-        void DisplayTextSplits();
-        void DisplayHTMLSplits();
-        void WriteResultLine(wxString a_Text);       
+        void DisplayTextResults(std::vector<QString>& a_Lines);
+        void DisplayTextSplits(std::vector<QString>& a_Lines);
+        void DisplayHTMLSplits(std::vector<QString>& a_Lines);
+        void WriteResults(std::vector<QString>& a_Lines);
 
-		bool m_Changed;
-		bool m_ShowSplits;
-		bool m_ShowHTML;
-		wxString m_EventName;
-		wxString m_Dir;
-		wxString m_CourseFile;
-		wxString m_RawDataFile;
-		wxString m_SINamesFile;				
-		wxString m_SINamesGlobalFile;
-        wxString m_LastLogMsg;						
-        wxString m_LastDisplayMsg;	  
+        bool m_Changed;
+        bool m_ShowSplits;
+        bool m_ShowHTML;
+        QString m_EventName;
+        QString m_Dir;
+        QString m_CourseFile;
+        QString m_RawDataFile;
+        QString m_SINamesFile;
+        QString m_SINamesGlobalFile;
+        QString m_LastLogMsg;
+        QString m_LastDisplayMsg;
         bool m_SavingResults;
-        wxTextFile* m_SaveFile;      
-		
-		static CEvent* _instance;
-		std::vector<CCourse*> m_Courses;
-		std::map<long, CSiDetails*> m_SiDetails;
-        std::vector<CResult*> m_Results;	
+        QFile* m_SaveFile;
+
+        static CEvent* _instance;
+        std::vector<CCourse*> m_Courses;
+        std::map<long, CSiDetails*> m_SiDetails;
+        std::vector<CResult*> m_Results;
 };
 
 #endif // CEVENT_H

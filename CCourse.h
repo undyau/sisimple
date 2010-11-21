@@ -4,40 +4,39 @@
 #define CCOURSE_H
 
 #include <vector>
-#include <wx/string.h>
+#include <QString>
 #include <list>
 #include "CLeg.h"
 
 // Objects in this class represent a course for the event.
 class CCourse
 {
-	public:
-		// class constructor
-		CCourse(wxString& a_Data);
-		// class destructor
-		~CCourse();
-		
-		static bool ValidData(wxString& a_Data);
+    public:
+        // class constructor
+        CCourse(QString& a_Data);
+        // class destructor
+        ~CCourse();
+
+        static bool ValidData(QString& a_Data);
         void SetUntimedLeg(int a_Index);   
         void SetOptionalLeg(int a_Index);
         bool GetUntimedLeg(int a_Index);   
         bool GetOptionalLeg(int a_Index);  
-        wxString GetLength() {return m_Length;};                     
+        QString GetLength() {return m_Length;};
         
         void CompulsoryControls(std::list<long>& a_Controls);                              
-        wxString GetName() {return m_Name;};
+        QString GetName() {return m_Name;};
         CLeg GetLeg(int a_Index);
         int GetLegCount() {return m_Controls.size();};
-        wxString TextDescStr();
-        wxString TextSplitHdrStr();        
+        QString TextDescStr();
+        QString TextSplitHdrStr();
 	
-	private:
-          
-		wxString m_Name;
-		wxString m_Length;
-		wxString m_Climb;
-		
-		std::vector<CLeg*> m_Controls;
+    private:
+        QString m_Name;
+        QString m_Length;
+        QString m_Climb;
+
+        std::vector<CLeg*> m_Controls;
 };
 
 #endif // CCOURSE_H

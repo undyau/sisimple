@@ -1,49 +1,57 @@
 #include "Utils.h"
-#include <wx/msgdlg.h>
-#include <wx/stdpaths.h>
-#include <wx/filename.h>
-#include <wx/tokenzr.h>
+#include <QMessageBox>
+#include <QDir>
+#include <QStringList>
+#include <QDebug>
 
-
-int SIMessageBox(const wxString &  	message,
-		const wxString& caption,
-		long style,
-		wxWindow* parent)
+int SIMessageBox(const QString&  a_Message,
+                 QMessageBox::Icon a_Icon,
+                 QMessageBox::StandardButtons a_Buttons,
+                 const QString&  a_Caption,
+                 QWidget*  a_Parent
+                  )
 {
-    wxMessageDialog dlg(parent, message, caption, style);
-    return dlg.ShowModal();
+    QMessageBox dlg(a_Icon, a_Caption, a_Message, a_Buttons, a_Parent);
+    return dlg.exec();
 }
 
-wxString SimplifyPath(wxString a_Path)
+QString SimplifyPath(QString a_Path)
 {
-    wxString docdir =  wxStandardPaths::Get().GetDocumentsDir();
-    if (a_Path.Left(docdir.length() + 1) ==  docdir + wxFileName::GetPathSeparator())
-        return a_Path.Mid(docdir.length() + 1);
+    QString docdir =  QDir::homePath();
+    if (a_Path.left(docdir.length() + 1) ==  docdir + QDir::separator())
+        return a_Path.mid(docdir.length() + 1);
     else
-        return a_Path;  
+        return a_Path;
 }
 
-long ToLong(const wxString& a_Value)
+long ToLong(const QString& a_Value)
 {
     long result;
-    if (a_Value.ToLong(&result))
+    bool ok(false);
+    result = a_Value.toLong(&ok);
+    if (ok)
         return result;
     else
         return 0;
 }
 
-wxDateTime ToDateTime(const wxString& a_Value)
+QDateTime ToDateTime(const QString& a_Value)
 {
-    wxDateTime result;
-    
-    if (!a_Value.IsEmpty()) 
-        result.ParseTime(a_Value);
+    QTime time;
+    QDateTime result;
+
+    if (!a_Value.isEmpty())
+        {
+        time = QTime::fromString(a_Value, "hh:mm:ss");
+        result.setTime(time);
+        result.setDate(QDate::currentDate());
+        }
     return result;
 }
 
-int DOWToInt(const wxString& a_DOW)
+int DOWToInt(const QString& a_DOW)
 {
-    if (a_DOW.IsEmpty())
+    if (a_DOW.isEmpty())
         return -1;
     if (a_DOW == "Su") return 0;
     if (a_DOW == "Mo") return 1;
@@ -55,17 +63,14 @@ int DOWToInt(const wxString& a_DOW)
     return -2;
 }
 
-wxString FormatTimeTaken(wxTimeSpan a_TimeSpan, bool a_NullOK)
+QString FormatTimeTaken(long a_Secs)
 {
-    if ((!a_NullOK && a_TimeSpan.IsNull()) || a_TimeSpan.IsNegative())
+    if (a_Secs < 0)
         return "";
-        
-    wxLongLong minutes, seconds;
-    seconds = a_TimeSpan.GetSeconds();
-    minutes = seconds /60;
-    seconds = seconds - (minutes * 60);
 
-    wxString s;
-    s.Printf("%01ld:%02ld", minutes.ToLong(), seconds.ToLong());
+    short minutes = a_Secs /60;
+    a_Secs = a_Secs - (minutes * 60);
+
+    QString s = QString("%1:%2").arg(minutes).arg(a_Secs, 2, 10, QLatin1Char('0'));
     return s;
 }
