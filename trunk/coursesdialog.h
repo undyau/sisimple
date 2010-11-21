@@ -18,6 +18,7 @@ public:
 private slots:
     void runCourseDialog();
     void runNewCourseDialog();
+    void enableCtrls();
 
 private:
     Ui::coursesdialog *ui;

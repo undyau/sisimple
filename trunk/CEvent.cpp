@@ -811,13 +811,14 @@ void CEvent::GetCourseNames(QStringList& a_Names)
 
 void CEvent::SetResultCourse(CResult* a_Result, QString a_CourseName)
 {
-    for (unsigned int i = 0; i < m_Courses.size(); i++)
-        if (m_Courses[i]->GetName() == a_CourseName)
-            {
-            a_Result->SetCourse(m_Courses[i]);
-            SetPunchTimes(a_Result);
-            return;
-            }
+    CCourse* course = CourseFromName(a_CourseName);
+
+    if (course)
+        {
+        a_Result->SetCourse(course);
+        SetPunchTimes(a_Result);
+        return;
+        }
 }
 
 bool CEvent::GetShowSplits()
@@ -889,4 +890,14 @@ void CEvent::reinstateResult(long a_Index) // Reinstate someone
     CResult* res = GetResult(a_Index);
     if (res)
         res->SetFinishedOverride(true);
+}
+
+CCourse* CEvent::CourseFromName(QString a_Name)
+{
+    for (unsigned int i = 0; i < m_Courses.size(); i++)
+        if (m_Courses[i]->GetName() == a_Name)
+            {
+            return m_Courses[i];
+            }
+    return NULL;
 }

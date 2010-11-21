@@ -71,6 +71,7 @@ signals:
         bool GetResultFinished(long a_Index);
         bool GetResultInvalid(long a_Index);
         bool ResultExists(long a_Index);
+        CCourse* CourseFromName(QString a_Name);
 
     private slots:
         void dnfResult(long a_Index); // DNF someone

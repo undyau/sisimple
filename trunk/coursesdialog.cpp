@@ -2,6 +2,8 @@
 #include "ui_coursesdialog.h"
 #include "CEvent.h"
 #include "coursedialog.h"
+#include "CCourse.h"
+#include <QMessageBox>
 
 coursesdialog::coursesdialog(QWidget *parent) :
     QDialog(parent),
@@ -15,6 +17,8 @@ coursesdialog::coursesdialog(QWidget *parent) :
 
     connect(ui->newButton, SIGNAL(clicked()), this, SLOT(runNewCourseDialog()));
     connect(ui->EditButton, SIGNAL(clicked()), this, SLOT(runCourseDialog()));
+    connect(ui->coursesList,SIGNAL(itemSelectionChanged()), this, SLOT(enableCtrls()));
+    enableCtrls();
 }
 
 coursesdialog::~coursesdialog()
@@ -29,7 +33,41 @@ void coursesdialog::runNewCourseDialog()
 }
 
 void coursesdialog::runCourseDialog()
+    {
+    CCourse* course = CEvent::Event()->CourseFromName(ui->coursesList->selectedItems()[0]->text());
+    if (course)
+        {
+        courseDialog dlg(this, course);
+        if (dlg.exec())
+            {
+            if (dlg.m_Name != course->GetName())
+                {
+                if (ui->coursesList->findItems(dlg.m_Name, Qt::MatchFixedString).count() > 0)
+                    {
+                    QMessageBox msg;
+                    msg.setText("Course already exists " + dlg.m_Name );
+                    msg.exec();
+                    return;
+                    }
+                else
+                    {
+                    ui->coursesList->selectedItems()[0]->setText(dlg.m_Name);
+                    }
+                }
+            QString s = dlg.m_Controls;
+            s.remove(" ");
+            course->Alter(dlg.m_Name,
+                                dlg.m_Length,
+                                dlg.m_Climb,
+                                dlg.m_Controls.split(","));
+            }
+        }
+    }
+
+void coursesdialog::enableCtrls()
 {
-    courseDialog dlg(this/*, course*/);
-    dlg.exec();
+    int count = ui->coursesList->selectedItems().count();
+
+    ui->EditButton->setEnabled(count == 1);
+    ui->deleteButton->setEnabled(count > 0);
 }
