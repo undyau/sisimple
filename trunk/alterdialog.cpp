@@ -2,7 +2,7 @@
 #include "ui_alterdialog.h"
 #include "CResult.h"
 #include "CCourse.h"
-//#include <QDebug>
+#include <QDebug>
 
 AlterDialog::AlterDialog(QWidget *parent, QStringList& a_Courses, CResult* a_Result) :
     QDialog(parent), ui(new Ui::AlterDialog), m_Courses(a_Courses), m_Result(a_Result)
@@ -10,8 +10,9 @@ AlterDialog::AlterDialog(QWidget *parent, QStringList& a_Courses, CResult* a_Res
 {
     ui->setupUi(this);
     ui->classComboBox->addItems(m_Courses);
+
     int index;
-    if ((index = ui->classComboBox->findText(m_Result->GetCourse()->GetName())) >= 0)
+    if (m_Result->GetCourse() && (index = ui->classComboBox->findText(m_Result->GetCourse()->GetName())) >= 0)
         ui->classComboBox->setCurrentIndex(index);
 
     ui->nameEdit->setText(m_Result->GetName());

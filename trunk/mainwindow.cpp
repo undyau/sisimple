@@ -8,7 +8,7 @@
 #include <QFileDialog>
 #include "Utils.h"
 #include "CEvent.h"
-//#include <QDebug>
+#include <QDebug>
 #include "alterdialog.h"
 #include "coursesdialog.h"
 

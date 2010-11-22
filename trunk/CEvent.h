@@ -30,6 +30,8 @@ signals:
     void logMsg(const QString& a_LogMsg);
     void displayMsg(const QString& a_LogMsg);
     void updatedResultsOutput(std::vector<QString>& a_Lines);
+    void newCourseExists(QString);
+    void deletedCourse(QString);
 
     public:
         // class destructor
@@ -76,6 +78,8 @@ signals:
     private slots:
         void dnfResult(long a_Index); // DNF someone
         void reinstateResult(long a_Index); // Reinstate someone
+        void newCourse(CCourse* a_Course);  // Add a new course to event
+        void deleteCourse(CCourse* a_Course);  // Remove course from event
 
     private:
         bool CanClose();
