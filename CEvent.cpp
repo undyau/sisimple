@@ -399,6 +399,7 @@ void CEvent::CalcResults()
 {
     for (std::vector<CResult*>::iterator i = m_Results.begin(); i != m_Results.end(); i++)
         {
+        SetCourse(*i);
         if ((*i)->GetCourse() != NULL)
             SetPunchTimes(*i);
         }
@@ -597,13 +598,19 @@ void CEvent::SetCourse(CResult* a_Result)
                 }
             }
         }
-    a_Result->SetCourse(bestCourse);
+    if (bestCourse != NULL)
+        a_Result->SetCourse(bestCourse);
 
     if (m_Courses.size() == 1 && bestCourse == NULL)
         a_Result->SetCourse(m_Courses[0]);
     else
         if (bestCourse == NULL)
-            LogResultProblem(a_Result, "Couldn't guess course");
+            {
+            if (a_Result->GetCourse() == NULL)
+                LogResultProblem(a_Result, "Couldn't guess course");
+            else
+                LogResultProblem(a_Result, "Couldn't guess course, left as " + a_Result->GetCourse()->GetName());
+            }
 
 }
 
@@ -900,4 +907,22 @@ CCourse* CEvent::CourseFromName(QString a_Name)
             return m_Courses[i];
             }
     return NULL;
+}
+
+void CEvent::newCourse(CCourse* a_Course)
+{
+    m_Courses.push_back(a_Course);
+    emit newCourseExists(a_Course->GetName());
+}
+
+void CEvent::deleteCourse(CCourse* a_Course)
+{
+    for (unsigned int i = 0; i < m_Courses.size(); i++)
+        if (m_Courses[i] == a_Course)
+            {
+            m_Courses.erase(m_Courses.begin() + i);
+            delete a_Course;
+            emit deletedCourse(a_Course->GetName());
+            return;
+            }
 }

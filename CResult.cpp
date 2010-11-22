@@ -374,6 +374,7 @@ void CResult::ClearLegStats()
     {
     for (std::map<int, CLegStat*>::iterator i = m_LegStats.begin(); i != m_LegStats.end(); i++)
         delete i->second;
+    m_LegStats.clear();
     }
 
 CLegStat* CResult::GetLegStat(int a_Leg)
