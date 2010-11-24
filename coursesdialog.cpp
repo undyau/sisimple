@@ -1,9 +1,28 @@
+/*
+Copyright 2010 Andy Simpson
+
+This file is part of SI Simple.
+
+SI Simple is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+SI Simple is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "coursesdialog.h"
 #include "ui_coursesdialog.h"
 #include "CEvent.h"
 #include "coursedialog.h"
 #include "CCourse.h"
 #include <QMessageBox>
+#include <QDebug>
 
 coursesdialog::coursesdialog(QWidget *parent) :
     QDialog(parent),
@@ -101,9 +120,12 @@ emit (deleteCourse(course));
 
 void coursesdialog::deleteCourseName(QString a_Course)
 {
-    QList<QListWidgetItem*> items = ui->coursesList->findItems(a_Course,Qt::MatchFixedString);
-    if (items.count() == 1)
-        ui->coursesList->removeItemWidget(items[0]);
+for(int i = 0, len = ui->coursesList->count();i < len; ++i)
+    if(ui->coursesList->item(i)->text() == a_Course)
+        {
+        delete ui->coursesList->takeItem(i);
+        break;
+        }
 }
 
 void coursesdialog::addNewCourseName(QString a_Course)

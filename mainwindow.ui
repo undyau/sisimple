@@ -90,6 +90,7 @@
     </property>
     <addaction name="actionManage"/>
     <addaction name="actionImport"/>
+    <addaction name="actionGuess"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Results"/>
@@ -148,6 +149,11 @@
   <action name="actionImport">
    <property name="text">
     <string>Import...</string>
+   </property>
+  </action>
+  <action name="actionGuess">
+   <property name="text">
+    <string>Guess...</string>
    </property>
   </action>
  </widget>
