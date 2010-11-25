@@ -68,6 +68,7 @@ bool CEvent::SetDirectory(QString a_Dir)
             return false;
 
     m_Dir = a_Dir;
+    m_GoodThreshold = 4; // if n people have done the same course, aways mark it legitimate
     m_Changed = false;
     m_CourseFile = FindCourseFile(a_Dir);
     m_RawDataFile = FindRawDataFile(a_Dir);
@@ -944,9 +945,26 @@ void CEvent::deleteCourse(CCourse* a_Course)
             }
 }
 
-void CEvent::CollectPunchSequences(std::map<int, std::list<long> >& a_Sequences)
+struct ltlonglist
 {
-    std::map<std::list<long>, int> foundSequences;
+  bool operator()(std::list<long> l1, std::list<long> l2) const
+  {
+    if (l1.size() != l2.size())
+        return l1.size() < l2.size();
+
+    std::list<long>::const_iterator x1,x2;
+    for ( x1 = l1.begin(),x2 = l2.begin(); x1 != l1.end(); x1++, x2++)
+        if (*x1 != *x2)
+            return *x1 < *x2;
+
+    return false;
+  }
+};
+
+
+void CEvent::CollectPunchSequences(std::map<std::list<long>, int>& a_Sequences)
+{
+    a_Sequences.clear();
 
     for (unsigned int i = 0; i < m_Results.size(); i++)
         {
@@ -954,23 +972,17 @@ void CEvent::CollectPunchSequences(std::map<int, std::list<long> >& a_Sequences)
         m_Results[i]->PunchedControls(punches, false);
         std::list<long> plist;
         for (std::list<CPunch>::iterator y = punches.begin(); y != punches.end(); y++)
+            {
             plist.push_back((*y).GetCN());
-        if (foundSequences.find(plist) != foundSequences.end())
-            foundSequences[plist] = foundSequences[plist] + 1;
+            }
+        if (a_Sequences.find(plist) != a_Sequences.end())
+            a_Sequences[plist] = a_Sequences[plist] + 1;
         else
-            foundSequences[plist] = 1;
+            a_Sequences[plist] = 1;
         }
-
-    a_Sequences.clear();
-
-    for (std::map<std::list<long>, int>::const_iterator x = foundSequences.begin();
-         x != foundSequences.end(); x++)
-         {
-         a_Sequences[x->second] = x->first;
-         }
 }
 
-void CEvent::AddGuessedCourses(std::map<int, std::list<long> >& a_Sequences)
+void CEvent::AddGuessedCourses(std::map<std::list<long>, int >& a_Sequences)
 {
     std::list<QStringList> existingSequences;
     std::list<QString> existingNames;
@@ -983,33 +995,22 @@ void CEvent::AddGuessedCourses(std::map<int, std::list<long> >& a_Sequences)
         existingNames.push_back((*x)->GetName());
         }
     int i(1);
-    for (std::map<int, std::list<long> >::iterator x = a_Sequences.begin(); x != a_Sequences.end(); x++, i++)
+    for (std::map<std::list<long>,int >::iterator x = a_Sequences.begin(); x != a_Sequences.end(); x++, i++)
         {
         QStringList sl;
-        for (std::list<long>::const_iterator y = x->second.begin(); y != x->second.end(); y++)
+        for (std::list<long>::const_iterator y = x->first.begin(); y != x->first.end(); y++)
             {
             QString t = QString("%1").arg(*y);
             sl.append(t);
             }
 
-        bool match(false);
-        for (std::list<QStringList>::const_iterator y = existingSequences.begin();
-             y != existingSequences.end(); y++)
-             if ((*y).size() == sl.size())
-                {
-                match = true;
-                for (int k = 0; k < sl.size(); k++)
-                    if (sl.at(k) != (*y).at(k))
-                        match = false;
-                }
-
-        //if (std::find(existingSequences.begin(), existingSequences.end(), sl) == existingSequences.end())
-        if (!match)
+        if (std::find(existingSequences.begin(), existingSequences.end(), sl) == existingSequences.end())
             {
-            QString name = QString(tr("GuessCourse_%1")).arg(i);
+            QString stemName = QString(tr("Guess_Course_(%1 controls %2 to %2)")).arg(sl.size()).arg(sl.first()).arg(sl.last());
+            QString name(stemName);
             while (std::find(existingNames.begin(), existingNames.end(), name) != existingNames.end())
                 {
-                name = QString(tr("GuessCourse_%1")).arg(++i);
+                name = QString(tr("%1%2")).arg(stemName).arg(++i);
                 }
             QString len = tr("not set");
             QString climb = tr("not set");
@@ -1021,17 +1022,16 @@ void CEvent::AddGuessedCourses(std::map<int, std::list<long> >& a_Sequences)
 
 }
 
-void CEvent::guessCourses()
+bool CEvent::ContinueCourseLoad()
 {
-    // Tidy up existing courses if required
     if (m_Courses.size() > 0)
         {
         QMessageBox::StandardButtons btns = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
-        int answer = SIMessageBox("Courses already exist - do you want to delete them all and then guess the courses ?",
+        int answer = SIMessageBox("Courses already exist - do you want to delete them and then guess the courses ?",
                      QMessageBox::Question,
                      btns);
         if (answer == QDialogButtonBox::Cancel)
-            return;
+            return false;
 
         if (answer == QDialogButtonBox::Yes)
             {
@@ -1041,13 +1041,79 @@ void CEvent::guessCourses()
             m_Courses.clear();
             }
         }
+    return true;
+}
 
-    std::map<int, std::list<long> > sequences;
+int CEvent::ControlsDifferent(const std::list<long>& a_Good, const std::list<long>& a_Candidate)
+    {
+    int missing(0), extra(0);
+
+    std::list<long>::iterator goodIter, candidateIter;
+    // count missing
+    for (std::list<long>::const_iterator goodIter = a_Good.begin(); goodIter != a_Good.end(); goodIter++)
+        {
+        if (std::find(a_Candidate.begin(),a_Candidate.end(), *goodIter) == a_Candidate.end())
+            missing++;
+        }
+    for (std::list<long>::const_iterator x = a_Candidate.begin(); x != a_Candidate.end(); x++)
+        {
+        if (std::find(a_Good.begin(),a_Good.end(), *x) == a_Good.end())
+            extra++;
+        }
+
+    return missing + extra;
+    }
+
+bool CEvent::courseIsSubset(const std::list<long>& a_Good, const std::list<long>& a_Candidate)
+{
+// Ignoring sequence, check if all controls on candidate are in good course
+    for (std::list<long>::const_iterator x = a_Candidate.begin(); x != a_Candidate.end(); x++)
+        {
+        if (std::find(a_Good.begin(),a_Good.end(), *x) == a_Good.end())
+            return false;
+        }
+    return true;
+}
+
+void CEvent::EliminateMispunchSequences(std::map<std::list<long>, int> &a_Sequences)
+{
+
+    std::vector<std::list<long> > eliminate;
+
+    for (std::map<std::list<long>,int >::iterator x = a_Sequences.begin(); x != a_Sequences.end(); x++)
+        {
+        for (std::map<std::list<long>,int >::iterator y = a_Sequences.begin(); y != a_Sequences.end(); x++)
+            {
+            if ((*y).first != (*x).first && (*y).second > (*x).second && x->second < m_GoodThreshold)
+                {
+                // Eliminate courses which are a subset of a "good" course (ignoring order)
+                if (courseIsSubset(y->first, x->first))
+                    eliminate.push_back(x->first);
+                else
+                // Eliminate courses with only one or two punches different to a more popular courses
+                    {
+                    int diffs = ControlsDifferent(y->first,x->first);
+                    if (diffs < 3 && (*y).first.size() > 7)
+                        {
+                        eliminate.push_back(x->first);
+                        }
+                    }
+                }
+            }
+        }
+    for (unsigned int i = 0; i < eliminate.size(); i++)
+        a_Sequences.erase(eliminate[i]);
+ }
+
+void CEvent::guessCourses()
+{
+    // Tidy up existing courses if required
+    if (!ContinueCourseLoad())
+        return;
+
+    std::map<std::list<long>,int > sequences;
     CollectPunchSequences(sequences);
-
-    // Compare patterns
-
-    // Add candidates
+    EliminateMispunchSequences(sequences);
     AddGuessedCourses(sequences);
 
     emit coursesGuessed();
