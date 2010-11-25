@@ -120,8 +120,12 @@ signals:
         void DisplayTextSplits(std::vector<QString>& a_Lines);
         void DisplayHTMLSplits(std::vector<QString>& a_Lines);
         void WriteResults(std::vector<QString>& a_Lines);
-        void CollectPunchSequences(std::map<int, std::list<long> >& a_Sequences); // get punch data to guess courses
-        void AddGuessedCourses(std::map<int, std::list<long> >& a_Sequences); // Add the courses that have been guessed
+        void CollectPunchSequences(std::map<std::list<long>, int >& a_Sequences); // get punch data to guess courses
+        void AddGuessedCourses(std::map<std::list<long>, int >& a_Sequences); // Add the courses that have been guessed
+        bool ContinueCourseLoad();
+        void EliminateMispunchSequences(std::map<std::list<long>, int >& a_Sequences);
+        int ControlsDifferent(const std::list<long>& good, const std::list<long>& candidate);
+        bool courseIsSubset(const std::list<long>& a_Good, const std::list<long>& a_Candidate);
 
         bool m_Changed;
         bool m_ShowSplits;
@@ -136,6 +140,7 @@ signals:
         QString m_LastDisplayMsg;
         bool m_SavingResults;
         QFile* m_SaveFile;
+        int m_GoodThreshold;
 
         static CEvent* _instance;
         std::vector<CCourse*> m_Courses;
