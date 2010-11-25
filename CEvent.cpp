@@ -1113,7 +1113,7 @@ void CEvent::guessCourses()
 
     std::map<std::list<long>,int > sequences;
     CollectPunchSequences(sequences);
-    EliminateMispunchSequences(sequences);
+    //EliminateMispunchSequences(sequences);
     AddGuessedCourses(sequences);
 
     emit coursesGuessed();
