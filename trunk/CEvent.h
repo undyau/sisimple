@@ -124,8 +124,7 @@ signals:
         void AddGuessedCourses(std::map<std::list<long>, int >& a_Sequences); // Add the courses that have been guessed
         bool ContinueCourseLoad();
         void EliminateMispunchSequences(std::map<std::list<long>, int >& a_Sequences);
-        int ControlsDifferent(const std::list<long>& good, const std::list<long>& candidate);
-        bool courseIsSubset(const std::list<long>& a_Good, const std::list<long>& a_Candidate);
+        int ControlsMissing(const std::list<long>& a_Good, const std::list<long>& a_Candidate);
 
         bool m_Changed;
         bool m_ShowSplits;
