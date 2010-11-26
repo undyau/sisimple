@@ -44,7 +44,7 @@ private slots:
     void runCourseDialog();
     void runNewCourseDialog();
     void enableCtrls();
-    void deleteSelectedCourse();
+    void deleteSelectedCourses();
     void deleteCourseName(QString a_Course);
     void addNewCourseName(QString a_Course);
 

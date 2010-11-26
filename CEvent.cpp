@@ -76,9 +76,10 @@ bool CEvent::SetDirectory(QString a_Dir)
     QFileInfo dirInfo(a_Dir);
     m_SINamesGlobalFile = FindSINamesGlobalFile(dirInfo.absoluteFilePath());
     emit filesChanged(m_RawDataFile, m_CourseFile, m_SINamesFile, m_SINamesGlobalFile);
-    LoadCourseData();
+   // LoadCourseData();
     LoadSIData();
     LoadRawData();
+    guessCourses();    // Should be a decision made by user here
     DisplayRawData();
 
     RecalcResults();
@@ -945,23 +946,6 @@ void CEvent::deleteCourse(CCourse* a_Course)
             }
 }
 
-struct ltlonglist
-{
-  bool operator()(std::list<long> l1, std::list<long> l2) const
-  {
-    if (l1.size() != l2.size())
-        return l1.size() < l2.size();
-
-    std::list<long>::const_iterator x1,x2;
-    for ( x1 = l1.begin(),x2 = l2.begin(); x1 != l1.end(); x1++, x2++)
-        if (*x1 != *x2)
-            return *x1 < *x2;
-
-    return false;
-  }
-};
-
-
 void CEvent::CollectPunchSequences(std::map<std::list<long>, int>& a_Sequences)
 {
     a_Sequences.clear();
@@ -1006,7 +990,7 @@ void CEvent::AddGuessedCourses(std::map<std::list<long>, int >& a_Sequences)
 
         if (std::find(existingSequences.begin(), existingSequences.end(), sl) == existingSequences.end())
             {
-            QString stemName = QString(tr("Guess_Course_(%1 controls %2 to %2)")).arg(sl.size()).arg(sl.first()).arg(sl.last());
+            QString stemName = QString(tr("Course_(%1 ctls, %2 people, first CN: %3)")).arg(sl.size()).arg(x->second).arg(sl.first());
             QString name(stemName);
             while (std::find(existingNames.begin(), existingNames.end(), name) != existingNames.end())
                 {
@@ -1044,59 +1028,40 @@ bool CEvent::ContinueCourseLoad()
     return true;
 }
 
-int CEvent::ControlsDifferent(const std::list<long>& a_Good, const std::list<long>& a_Candidate)
+int CEvent::ControlsMissing(const std::list<long>& a_Good, const std::list<long>& a_Candidate)
     {
-    int missing(0), extra(0);
-
+    int missing(0);
     std::list<long>::iterator goodIter, candidateIter;
-    // count missing
+
     for (std::list<long>::const_iterator goodIter = a_Good.begin(); goodIter != a_Good.end(); goodIter++)
         {
         if (std::find(a_Candidate.begin(),a_Candidate.end(), *goodIter) == a_Candidate.end())
             missing++;
         }
-    for (std::list<long>::const_iterator x = a_Candidate.begin(); x != a_Candidate.end(); x++)
-        {
-        if (std::find(a_Good.begin(),a_Good.end(), *x) == a_Good.end())
-            extra++;
-        }
-
-    return missing + extra;
+    return missing;
     }
-
-bool CEvent::courseIsSubset(const std::list<long>& a_Good, const std::list<long>& a_Candidate)
-{
-// Ignoring sequence, check if all controls on candidate are in good course
-    for (std::list<long>::const_iterator x = a_Candidate.begin(); x != a_Candidate.end(); x++)
-        {
-        if (std::find(a_Good.begin(),a_Good.end(), *x) == a_Good.end())
-            return false;
-        }
-    return true;
-}
 
 void CEvent::EliminateMispunchSequences(std::map<std::list<long>, int> &a_Sequences)
 {
-
     std::vector<std::list<long> > eliminate;
-
     for (std::map<std::list<long>,int >::iterator x = a_Sequences.begin(); x != a_Sequences.end(); x++)
         {
-        for (std::map<std::list<long>,int >::iterator y = a_Sequences.begin(); y != a_Sequences.end(); x++)
+        for (std::map<std::list<long>,int >::iterator y = a_Sequences.begin(); y != a_Sequences.end(); y++)
             {
-            if ((*y).first != (*x).first && (*y).second > (*x).second && x->second < m_GoodThreshold)
+            if (y->first != x->first && y->second > x->second && x->second < m_GoodThreshold)
                 {
-                // Eliminate courses which are a subset of a "good" course (ignoring order)
-                if (courseIsSubset(y->first, x->first))
-                    eliminate.push_back(x->first);
-                else
-                // Eliminate courses with only one or two punches different to a more popular courses
+                // Eliminate courses which are only 1 punch out from being a "good" course (ignoring order)
+                int missing, extra;
+                if ((missing = ControlsMissing(y->first, x->first)) < 2 && missing > 0)
                     {
-                    int diffs = ControlsDifferent(y->first,x->first);
-                    if (diffs < 3 && (*y).first.size() > 7)
-                        {
-                        eliminate.push_back(x->first);
-                        }
+                    eliminate.push_back(x->first);
+                    break;
+                    }
+                // find extra controls
+                if ((extra = ControlsMissing(x->first, y->first)) < 2 && extra > 0)
+                    {
+                    eliminate.push_back(x->first);
+                    break;
                     }
                 }
             }
@@ -1113,7 +1078,7 @@ void CEvent::guessCourses()
 
     std::map<std::list<long>,int > sequences;
     CollectPunchSequences(sequences);
-    //EliminateMispunchSequences(sequences);
+    EliminateMispunchSequences(sequences);
     AddGuessedCourses(sequences);
 
     emit coursesGuessed();

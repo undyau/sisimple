@@ -36,7 +36,7 @@ coursesdialog::coursesdialog(QWidget *parent) :
 
     connect(ui->newButton, SIGNAL(clicked()), this, SLOT(runNewCourseDialog()));
     connect(ui->EditButton, SIGNAL(clicked()), this, SLOT(runCourseDialog()));
-    connect(ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteSelectedCourse()));
+    connect(ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteSelectedCourses()));
     connect(ui->coursesList,SIGNAL(itemSelectionChanged()), this, SLOT(enableCtrls()));
     connect(this, SIGNAL(newCourse(CCourse*)), CEvent::Event(), SLOT(newCourse(CCourse*)));
     connect(this, SIGNAL(deleteCourse(CCourse*)), CEvent::Event(), SLOT(deleteCourse(CCourse*)));
@@ -112,10 +112,18 @@ void coursesdialog::enableCtrls()
     ui->deleteButton->setEnabled(count > 0);
 }
 
-void coursesdialog::deleteSelectedCourse()
+void coursesdialog::deleteSelectedCourses()
 {
-CCourse* course = CEvent::Event()->CourseFromName(ui->coursesList->selectedItems()[0]->text());
-emit (deleteCourse(course));
+    std::vector<CCourse*> victims;
+    for (int i = 0; i < ui->coursesList->selectedItems().size(); i++)
+        {
+        QString name = ui->coursesList->selectedItems()[i]->text();
+        CCourse* course = CEvent::Event()->CourseFromName(name);
+        victims.push_back(course);
+        }
+
+    for (unsigned int i = 0; i < victims.size(); i++)
+        emit (deleteCourse(victims[i]));
 }
 
 void coursesdialog::deleteCourseName(QString a_Course)
