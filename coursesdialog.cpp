@@ -23,6 +23,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include "CCourse.h"
 #include <QMessageBox>
 #include <QDebug>
+#include <set>
 
 coursesdialog::coursesdialog(QWidget *parent) :
     QDialog(parent),
@@ -114,16 +115,16 @@ void coursesdialog::enableCtrls()
 
 void coursesdialog::deleteSelectedCourses()
 {
-    std::vector<CCourse*> victims;
+    std::set<CCourse*> victims;
     for (int i = 0; i < ui->coursesList->selectedItems().size(); i++)
         {
         QString name = ui->coursesList->selectedItems()[i]->text();
         CCourse* course = CEvent::Event()->CourseFromName(name);
-        victims.push_back(course);
+        victims.insert(course);
         }
 
-    for (unsigned int i = 0; i < victims.size(); i++)
-        emit (deleteCourse(victims[i]));
+    for (std::set<CCourse*>::iterator c = victims.begin(); c != victims.end(); c++)
+        emit (deleteCourse(*c));
 }
 
 void coursesdialog::deleteCourseName(QString a_Course)
