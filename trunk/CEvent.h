@@ -99,6 +99,7 @@ signals:
         void newCourse(CCourse* a_Course);  // Add a new course to event
         void deleteCourse(CCourse* a_Course);  // Remove course from event
         void guessCourses();  // Guess what courses exist from punching records
+        void importCourses(QString a_FileName); // import courses in IOF XML format
 
     private:
         bool CanClose();
@@ -125,6 +126,7 @@ signals:
         bool ContinueCourseLoad();
         void EliminateMispunchSequences(std::map<std::list<long>, int >& a_Sequences);
         int ControlsMissing(const std::list<long>& a_Good, const std::list<long>& a_Candidate);
+        void LoadCoursesFromXML(QString a_FileName);
 
         bool m_Changed;
         bool m_ShowSplits;

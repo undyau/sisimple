@@ -42,6 +42,7 @@ signals:
     void reinstate(long a_Index);
     void dnf(long a_Index);
     void alter(long a_Index, QString a_Name, QString a_Club);
+    void importCourses(QString a_Filename);
 
 private slots:
     void open(); // Open new dump from SI-Config
@@ -55,6 +56,7 @@ private slots:
     void showResults(std::vector<QString>& a_Lines); // Show the results
     void showDownloadContextMenu(const QPoint& a_Pos); // Show the context menu for the download pane
     void runcoursesdialog(); // Show the course management dialog
+    void importCourses(); // Identify a course file for loading
 
 private:
     Ui::MainWindow *ui;
