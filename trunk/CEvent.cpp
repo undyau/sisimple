@@ -34,6 +34,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include <QTextStream>
 #include <QDebug>
 #include <QDialogButtonBox>
+#include <set>
 
 
 
@@ -979,7 +980,7 @@ void CEvent::AddGuessedCourses(std::map<std::list<long>, int >& a_Sequences)
         existingNames.push_back((*x)->GetName());
         }
     int i(1);
-    for (std::map<std::list<long>,int >::iterator x = a_Sequences.begin(); x != a_Sequences.end(); x++, i++)
+    for (std::map<std::list<long>,int >::iterator x = a_Sequences.begin(); x != a_Sequences.end(); x++)
         {
         QStringList sl;
         for (std::list<long>::const_iterator y = x->first.begin(); y != x->first.end(); y++)
@@ -990,12 +991,12 @@ void CEvent::AddGuessedCourses(std::map<std::list<long>, int >& a_Sequences)
 
         if (std::find(existingSequences.begin(), existingSequences.end(), sl) == existingSequences.end())
             {
-            QString stemName = QString(tr("Course_(%1 ctls, %2 people, first CN: %3)")).arg(sl.size()).arg(x->second).arg(sl.first());
-            QString name(stemName);
-            while (std::find(existingNames.begin(), existingNames.end(), name) != existingNames.end())
-                {
-                name = QString(tr("%1%2")).arg(stemName).arg(++i);
-                }
+            QString name;
+            do
+                name = QString(tr("Course_%1 (%3 people, %2 ctls, first CN: %4")).arg(i++)
+                       .arg(sl.size()).arg(x->second).arg(sl.first());
+            while (std::find(existingNames.begin(), existingNames.end(), name) != existingNames.end());
+
             QString len = tr("not set");
             QString climb = tr("not set");
             CCourse* course = new CCourse(name, len, climb, sl);
@@ -1043,7 +1044,7 @@ int CEvent::ControlsMissing(const std::list<long>& a_Good, const std::list<long>
 
 void CEvent::EliminateMispunchSequences(std::map<std::list<long>, int> &a_Sequences)
 {
-    std::vector<std::list<long> > eliminate;
+    std::set<std::list<long> > eliminate;
     for (std::map<std::list<long>,int >::iterator x = a_Sequences.begin(); x != a_Sequences.end(); x++)
         {
         for (std::map<std::list<long>,int >::iterator y = a_Sequences.begin(); y != a_Sequences.end(); y++)
@@ -1054,20 +1055,21 @@ void CEvent::EliminateMispunchSequences(std::map<std::list<long>, int> &a_Sequen
                 int missing, extra;
                 if ((missing = ControlsMissing(y->first, x->first)) < 2 && missing > 0)
                     {
-                    eliminate.push_back(x->first);
+                    eliminate.insert(x->first);
                     break;
                     }
                 // find extra controls
                 if ((extra = ControlsMissing(x->first, y->first)) < 2 && extra > 0)
                     {
-                    eliminate.push_back(x->first);
+                    eliminate.insert(x->first);
                     break;
                     }
                 }
             }
         }
-    for (unsigned int i = 0; i < eliminate.size(); i++)
-        a_Sequences.erase(eliminate[i]);
+
+    for (std::set<std::list<long> >::iterator i = eliminate.begin(); i != eliminate.end(); i++)
+        a_Sequences.erase(*i);
  }
 
 void CEvent::guessCourses()
