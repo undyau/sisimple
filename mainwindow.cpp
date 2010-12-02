@@ -121,6 +121,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, SIGNAL(reinstate(long)), CEvent::Event(), SLOT(reinstateResult(long)));
     connect(ui->actionManage, SIGNAL(triggered()), this, SLOT(runcoursesdialog()));
     connect(ui->actionGuess, SIGNAL(triggered()), CEvent::Event(), SLOT(guessCourses()));
+    connect(ui->actionImport, SIGNAL(triggered()), this, SLOT(importCourses));
+    connect(this, SIGNAL(importCourses(QString)), CEvent::Event(), SLOT(importCourses(QString)));
     connect(CEvent::Event(), SIGNAL(coursesGuessed()), this, SLOT(runcoursesdialog()));
 }
 
@@ -266,4 +268,15 @@ void MainWindow::runcoursesdialog()
 {
     coursesdialog dlg(this);
     dlg.exec();
+}
+
+void MainWindow::importCourses()
+{
+    QString file = QFileDialog::getOpenFileName(this,tr("Select course file"), CEvent::Event()->Directory(), QString("*.xml"));
+
+    if (file.isEmpty())
+        return;
+    else
+        emit importCourses(file);
+
 }

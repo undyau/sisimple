@@ -35,6 +35,8 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 #include <QDialogButtonBox>
 #include <set>
+#include <QXmlSimpleReader>
+#include "ciofresultxmlhandler.h"
 
 
 
@@ -1082,6 +1084,29 @@ void CEvent::guessCourses()
     CollectPunchSequences(sequences);
     EliminateMispunchSequences(sequences);
     AddGuessedCourses(sequences);
+
+    emit coursesGuessed();
+}
+
+void CEvent::LoadCoursesFromXML(QString a_FileName)
+{
+  QFile file(a_FileName);
+  QXmlInputSource source( &file );
+  CIofResultXmlHandler handler;
+
+  QXmlSimpleReader reader;
+  reader.setContentHandler( &handler );
+  connect(&handler, SIGNAL(newCourse(CCourse*)), this, SLOT(newCourse(CCourse*)));
+  reader.parse( source );
+}
+
+void CEvent::importCourses(QString a_FileName)
+{
+    // Tidy up existing courses if required
+    if (!ContinueCourseLoad())
+        return;
+
+    LoadCoursesFromXML(a_FileName);
 
     emit coursesGuessed();
 }

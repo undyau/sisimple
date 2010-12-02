@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui xml
 
 TARGET = sisimple
 TEMPLATE = app
@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     CEvent.cpp \
     alterdialog.cpp \
     coursesdialog.cpp \
-    coursedialog.cpp
+    coursedialog.cpp \
+    ciofresultxmlhandler.cpp
 
 HEADERS  += mainwindow.h \
     Utils.h \
@@ -39,7 +40,8 @@ HEADERS  += mainwindow.h \
     CEvent.h \
     alterdialog.h \
     coursesdialog.h \
-    coursedialog.h
+    coursedialog.h \
+    ciofresultxmlhandler.h
 
 FORMS    += mainwindow.ui \
     alterdialog.ui \
