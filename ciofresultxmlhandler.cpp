@@ -1,22 +1,29 @@
 #include "ciofresultxmlhandler.h"
 #include "CCourse.h"
 #include "CEvent.h"
+#include "QDebug"
 
 CIofResultXmlHandler::CIofResultXmlHandler()
-{
+    {
     m_States["CourseName"] = inName;
     m_States["CourseLength"] = inLength;
     m_States["CourseClimb"] = inClimb;
     m_States["ControlCode"] = inControls;
-}
+    }
+
 
 bool CIofResultXmlHandler::endElement( const QString&, const QString&, const QString &name )
 {
     if (name == "Course")
         {
+        if (m_LengthType == "m")
+            m_Length = QString("%1").arg(m_Length.toFloat()/1000,0,'g',3);
+        else if (m_LengthType == "ft")
+            m_Length = QString("%1").arg(m_Length.toFloat()/3280.8399,0,'g',3);
         CCourse* course = new CCourse(m_Name, m_Length, m_Climb, m_Controls);
         CEvent::Event()->addNewCourse(course);
         }
+    m_State = inOther;
     return true;
 }
 
@@ -46,6 +53,14 @@ bool CIofResultXmlHandler::startElement( const QString&, const QString&, const Q
         m_Name.clear();
         m_Controls.clear();
         return true;
+        }
+
+    if (name == "CourseLength")
+        {
+        if (attrs.index(QString("unit")) >= 0)
+            m_LengthType = attrs.value(attrs.index(QString("unit")));
+        else
+            m_LengthType = "m";
         }
 
     return true;

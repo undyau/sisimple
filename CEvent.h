@@ -50,6 +50,7 @@ signals:
     void newCourseExists(QString);
     void deletedCourse(QString);
     void coursesGuessed();
+    void findImportFile();
 
     public:
         // class destructor
@@ -107,7 +108,7 @@ signals:
 
         QString FindDataFile(QStringList& a_Candidates, QString a_Dir) const;
         void LoadRawData();
-        void LoadCourseData();
+        void LoadCourseData(bool& a_Guess);
         void LoadSIData();
         void LoadSIFile(QString& a_File);
 

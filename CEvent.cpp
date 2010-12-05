@@ -37,6 +37,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include <set>
 #include <QXmlSimpleReader>
 #include "ciofresultxmlhandler.h"
+#include <QFileDialog>
 
 
 
@@ -79,10 +80,13 @@ bool CEvent::SetDirectory(QString a_Dir)
     QFileInfo dirInfo(a_Dir);
     m_SINamesGlobalFile = FindSINamesGlobalFile(dirInfo.absoluteFilePath());
     emit filesChanged(m_RawDataFile, m_CourseFile, m_SINamesFile, m_SINamesGlobalFile);
-   // LoadCourseData();
+
+    bool guess(false);
+    LoadCourseData(guess);
     LoadSIData();
     LoadRawData();
-    guessCourses();    // Should be a decision made by user here
+    if (guess)
+        guessCourses();    // Should be a decision made by user here
     DisplayRawData();
 
     RecalcResults();
@@ -123,32 +127,32 @@ void CEvent::RecalcResults()
     WriteResults(lines);
 }
 
-void CEvent::LoadCourseData()
+void CEvent::LoadCourseData(bool& a_Guess)
 {
-    // Clear out old data
-    for (std::vector<CCourse*>::iterator i = m_Courses.begin(); i != m_Courses.end(); i++)
-        delete (*i);
-    m_Courses.clear();
-
-    // Load new file
-    QFile tfile(m_CourseFile);
-    if (!tfile.open(QIODevice::ReadOnly))
-        {
-        QMessageBox msg;
-        msg.setText("Unable to open course file " + m_CourseFile);
-        msg.exec();
+    if (m_Courses.size() > 0)
         return;
-        }
 
-    QString line;
-    QTextStream input(&tfile);
-    while (!input.atEnd())
+    // Guess, import or set manually ?
+    QMessageBox msgBox;
+    QPushButton *importButton = msgBox.addButton(tr("Import"), QMessageBox::AcceptRole);
+    QPushButton *guessButton = msgBox.addButton(tr("Guess"), QMessageBox::AcceptRole);
+    QPushButton *deferButton = msgBox.addButton(tr("Later"), QMessageBox::AcceptRole);
+
+    msgBox.setText(tr("<p>If you have a file containing the course data in XML format from Purple Pen or OCAD, you can load that data now.</p><p>Alternatively SI Simple can guess the courses based on the controls visited or you can define the courses later.</p><p>Whichever approach you choose now, you can always alter the courses later.</p>"));
+    msgBox.exec();
+
+    a_Guess = false;
+
+     if (msgBox.clickedButton() == (QAbstractButton*)importButton)
         {
-        line = input.readLine();
-        m_Courses.push_back(new CCourse(line));
-        }
+        QString file = QFileDialog::getOpenFileName(NULL,tr("Select course file"), CEvent::Event()->Directory(), QString("*.xml"));
 
-    tfile.close();
+        if (!file.isEmpty())
+            importCourses(file);
+        }
+     else if (msgBox.clickedButton() == (QAbstractButton*)guessButton)
+         a_Guess = true;
+
 }
 
 void CEvent::LoadSIData()
@@ -995,7 +999,7 @@ void CEvent::AddGuessedCourses(std::map<std::list<long>, int >& a_Sequences)
             {
             QString name;
             do
-                name = QString(tr("Course_%1 (%3 people, %2 ctls, first CN: %4")).arg(i++)
+                name = QString(tr("Course_%1 (%3 people, %2 ctls, first CN: %4)")).arg(i++)
                        .arg(sl.size()).arg(x->second).arg(sl.first());
             while (std::find(existingNames.begin(), existingNames.end(), name) != existingNames.end());
 
