@@ -67,6 +67,7 @@ signals:
         QString LastLogMsg() {return m_LastLogMsg;};
         QString LastDisplayMsg() {return m_LastDisplayMsg;};
         void GetCourseNames(QStringList& a_Names);
+        void addNewCourse(CCourse* a_Course);  // Add a new course to event
 
         void RecalcResults();
 

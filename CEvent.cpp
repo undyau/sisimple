@@ -1096,7 +1096,6 @@ void CEvent::LoadCoursesFromXML(QString a_FileName)
 
   QXmlSimpleReader reader;
   reader.setContentHandler( &handler );
-  connect(&handler, SIGNAL(newCourse(CCourse*)), this, SLOT(newCourse(CCourse*)));
   reader.parse( source );
 }
 
@@ -1109,4 +1108,24 @@ void CEvent::importCourses(QString a_FileName)
     LoadCoursesFromXML(a_FileName);
 
     emit coursesGuessed();
+}
+
+void CEvent::addNewCourse(CCourse* a_Course)
+{
+    QString name = a_Course->GetName();
+    int i(2);
+    bool unique(false);
+
+    while (!unique)
+        {
+        unique = true;
+        for (std::vector<CCourse*>::iterator x = m_Courses.begin(); x != m_Courses.end(); x++)
+            if ((*x)->GetName() == name)
+                unique = false;
+        if (!unique)
+            name = QString("%1(%2)").arg(a_Course->GetName()).arg(i++);
+        }
+
+    a_Course->SetName(name);
+    this->newCourse(a_Course);
 }

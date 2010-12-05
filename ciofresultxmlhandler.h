@@ -4,9 +4,10 @@
 #include <QXmlDefaultHandler>
 #include <map>
 
+class CCourse;
+
 class CIofResultXmlHandler : public QXmlDefaultHandler
 {
-Q_OBJECT
 
 enum e_State{inName, inLength, inClimb, inControls, inOther};
 public:
@@ -15,9 +16,6 @@ public:
     virtual bool endElement( const QString&, const QString&, const QString &name );
     virtual bool startElement( const QString&, const QString&, const QString &name, const QXmlAttributes &attrs );
     virtual bool characters(const QString &ch);
-
-signals:
-    void newCourse(CCourse*);
 
 private:
     e_State m_State;
