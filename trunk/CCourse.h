@@ -45,6 +45,8 @@ class CCourse
         void CompulsoryControls(std::list<long>& a_Controls);
         void GetControls(QStringList& a_Controls) const;
         QString GetName() {return m_Name;};
+        QString GetClimb() {return m_Climb;};
+        QString SetName(QString a_Name) {return (m_Name = a_Name);};
         CLeg GetLeg(int a_Index);
         int GetLegCount() {return m_Controls.size();};
         QString TextDescStr();

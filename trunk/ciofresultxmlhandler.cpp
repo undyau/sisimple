@@ -15,7 +15,7 @@ bool CIofResultXmlHandler::endElement( const QString&, const QString&, const QSt
     if (name == "Course")
         {
         CCourse* course = new CCourse(m_Name, m_Length, m_Climb, m_Controls);
-        CEvent::Event()->newCourse(course);
+        CEvent::Event()->addNewCourse(course);
         }
     return true;
 }
@@ -26,8 +26,9 @@ bool CIofResultXmlHandler::characters(const QString &ch)
         {
         case inName: m_Name = ch; break;
         case inLength: m_Length = ch; break;
-        case inClimb: m_Climb = h; break;
-        case inControls: m_Controls.append(ch);
+        case inClimb: m_Climb = ch; break;
+        case inControls: m_Controls.append(ch); break;
+        case inOther: break;
         }
     return true;
     }
