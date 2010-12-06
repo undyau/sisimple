@@ -136,7 +136,7 @@ void CEvent::LoadCourseData(bool& a_Guess)
     QMessageBox msgBox;
     QPushButton *importButton = msgBox.addButton(tr("Import"), QMessageBox::AcceptRole);
     QPushButton *guessButton = msgBox.addButton(tr("Guess"), QMessageBox::AcceptRole);
-    QPushButton *deferButton = msgBox.addButton(tr("Later"), QMessageBox::AcceptRole);
+    msgBox.addButton(tr("Later"), QMessageBox::AcceptRole);
 
     msgBox.setText(tr("<p>If you have a file containing the course data in XML format from Purple Pen or OCAD, you can load that data now.</p><p>Alternatively SI Simple can guess the courses based on the controls visited or you can define the courses later.</p><p>Whichever approach you choose now, you can always alter the courses later.</p>"));
     msgBox.exec();
