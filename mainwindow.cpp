@@ -29,6 +29,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 #include "alterdialog.h"
 #include "coursesdialog.h"
+#include "importsidialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -124,6 +125,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionImport, SIGNAL(triggered()), this, SLOT(importCourses()));
     connect(this, SIGNAL(importCourses(QString)), CEvent::Event(), SLOT(importCourses(QString)));
     connect(CEvent::Event(), SIGNAL(coursesGuessed()), this, SLOT(runcoursesdialog()));
+    connect(ui->actionManageSI, SIGNAL(triggered()), this, SLOT(importSI()));
 }
 
 MainWindow::~MainWindow()
@@ -279,4 +281,10 @@ void MainWindow::importCourses()
     else
         emit importCourses(file);
 
+}
+
+void MainWindow::importSI()
+{
+    ImportSIDialog dlg(this);
+    dlg.exec();
 }

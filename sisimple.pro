@@ -25,7 +25,8 @@ SOURCES += main.cpp\
     alterdialog.cpp \
     coursesdialog.cpp \
     coursedialog.cpp \
-    ciofresultxmlhandler.cpp
+    ciofresultxmlhandler.cpp \
+    importsidialog.cpp
 
 HEADERS  += mainwindow.h \
     Utils.h \
@@ -41,12 +42,14 @@ HEADERS  += mainwindow.h \
     alterdialog.h \
     coursesdialog.h \
     coursedialog.h \
-    ciofresultxmlhandler.h
+    ciofresultxmlhandler.h \
+    importsidialog.h
 
 FORMS    += mainwindow.ui \
     alterdialog.ui \
     coursesdialog.ui \
-    coursedialog.ui
+    coursedialog.ui \
+    importsidialog.ui
 
 RESOURCES += \
     sisimple.qrc
