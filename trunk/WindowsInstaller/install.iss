@@ -29,13 +29,14 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Documents and Settings\asimpson\My Documents\source\sisimple\WindowsInstaller\sisimple.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Documents and Settings\asimpson\My Documents\source\sisimple\WindowsInstaller\libgcc_s_dw2-1.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Documents and Settings\asimpson\My Documents\source\sisimple\WindowsInstaller\mingwm10.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Documents and Settings\asimpson\My Documents\source\sisimple\WindowsInstaller\QtCore4.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Documents and Settings\asimpson\My Documents\source\sisimple\WindowsInstaller\QtGui4.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Documents and Settings\asimpson\My Documents\source\sisimple\WindowsInstaller\QtXml4.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: sisimple.exe; DestDir: {app}; Flags: ignoreversion; 
+Source: libgcc_s_dw2-1.dll; DestDir: {app}; Flags: ignoreversion; 
+Source: mingwm10.dll; DestDir: {app}; Flags: ignoreversion; 
+Source: QtCore4.dll; DestDir: {app}; Flags: ignoreversion; 
+Source: QtGui4.dll; DestDir: {app}; Flags: ignoreversion; 
+Source: QtXml4.dll; DestDir: {app}; Flags: ignoreversion; 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+Source: QtSvg4.dll; DestDir: {app}; Flags: IgnoreVersion; 
 
 [Icons]
 Name: "{group}\SI Simple"; Filename: "{app}\sisimple.exe"
@@ -43,4 +44,3 @@ Name: "{commondesktop}\SI Simple"; Filename: "{app}\sisimple.exe"; Tasks: deskto
 
 [Run]
 Filename: "{app}\sisimple.exe"; Description: "{cm:LaunchProgram,SI Simple}"; Flags: nowait postinstall skipifsilent
-
