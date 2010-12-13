@@ -15,10 +15,10 @@ AppSupportURL=http://sisimple.sourceforge.net
 AppUpdatesURL=http://sisimple.sourceforge.net
 DefaultDirName={pf}\SI Simple
 DefaultGroupName=SI Simple
-LicenseFile=C:\Documents and Settings\asimpson\My Documents\source\sisimple\gpl.txt
-OutputDir=C:\Documents and Settings\asimpson\My Documents\source\sisimple\WindowsInstaller
+LicenseFile=D:\Andy Documents\Projects\sisimple\gpl.txt
+OutputDir=D:\Andy Documents\Projects\sisimple\WindowsInstaller
 OutputBaseFilename=SISimpleSetup
-SetupIconFile=C:\Documents and Settings\asimpson\My Documents\source\sisimple\sisimple.ico
+SetupIconFile=D:\Andy Documents\Projects\sisimple\sisimple.ico
 Compression=lzma
 SolidCompression=yes
 
@@ -36,7 +36,7 @@ Source: QtCore4.dll; DestDir: {app}; Flags: ignoreversion;
 Source: QtGui4.dll; DestDir: {app}; Flags: ignoreversion; 
 Source: QtXml4.dll; DestDir: {app}; Flags: ignoreversion; 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
-Source: QtSvg4.dll; DestDir: {app}; Flags: IgnoreVersion; 
+Source: QtSvg4.dll; DestDir: {app}; Flags: ignoreversion; 
 
 [Icons]
 Name: "{group}\SI Simple"; Filename: "{app}\sisimple.exe"

@@ -148,11 +148,6 @@ void MainWindow::open()
         SIMessageBox("No raw data file in specified directory !", QMessageBox::Warning);
         return;
         }
-     if (oevent->FindCourseFile(dir).isEmpty())
-        {
-        SIMessageBox("No courses file in specified directory !", QMessageBox::Warning);
-        return;
-        }
      oevent->SetDirectory(dir);
 }
 
