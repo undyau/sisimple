@@ -38,6 +38,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include <QXmlSimpleReader>
 #include "ciofresultxmlhandler.h"
 #include <QFileDialog>
+#include <QSettings>
 
 
 
@@ -65,6 +66,18 @@ CEvent* CEvent::Event()
     return &instance;
 }
 
+QString CEvent::Directory()
+{
+    if (m_Dir.isEmpty())
+        {
+        QSettings settings("undy","SI Simple");
+        settings.beginGroup("General");
+        m_Dir = settings.value("lastDir","").toString();
+        settings.endGroup();
+        }
+    return m_Dir;
+};
+
 bool CEvent::SetDirectory(QString a_Dir)
 {
     if (a_Dir != m_Dir && m_Changed)
@@ -78,7 +91,7 @@ bool CEvent::SetDirectory(QString a_Dir)
     m_RawDataFile = FindRawDataFile(a_Dir);
     m_SINamesFile = FindSINamesFile(a_Dir);
     QFileInfo dirInfo(a_Dir);
-    m_SINamesGlobalFile = FindSINamesGlobalFile(dirInfo.absoluteFilePath());
+    m_SINamesGlobalFile = FindSINamesGlobalFile(dirInfo.dir().absolutePath());
     emit filesChanged(m_RawDataFile, m_CourseFile, m_SINamesFile, m_SINamesGlobalFile);
 
     bool guess(false);
@@ -90,6 +103,11 @@ bool CEvent::SetDirectory(QString a_Dir)
     DisplayRawData();
 
     RecalcResults();
+
+    QSettings settings("undy","SI Simple");
+    settings.beginGroup("General");
+    settings.setValue("lastDir", a_Dir);
+    settings.endGroup();
 
     return true;
 }

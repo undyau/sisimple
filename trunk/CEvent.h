@@ -57,7 +57,7 @@ signals:
         ~CEvent();
         // Singleton access/creation
         static CEvent* Event();
-        QString Directory() {return m_Dir;};
+        QString Directory();
         bool SetDirectory(QString a_Dir);
         QString SINamesGlobalFile() {return m_SINamesGlobalFile;};
 
