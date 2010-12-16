@@ -126,6 +126,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, SIGNAL(importCourses(QString)), CEvent::Event(), SLOT(importCourses(QString)));
     connect(CEvent::Event(), SIGNAL(coursesGuessed()), this, SLOT(runcoursesdialog()));
     connect(ui->actionManageSI, SIGNAL(triggered()), this, SLOT(importSI()));
+    connect(CEvent::Event(), SIGNAL(resetLog()), ui->textEdit, SLOT(clear()));
 }
 
 MainWindow::~MainWindow()
@@ -217,6 +218,16 @@ void MainWindow::showDownloadContextMenu(const QPoint& a_Pos)
     QPoint globalPos = a_Pos;
     QTextCursor cursor = ui->textEdit->cursorForPosition(globalPos);
     cursor.select(QTextCursor::LineUnderCursor);
+
+    QTextEdit::ExtraSelection highlight;
+    highlight.cursor = cursor;
+    highlight.format.setProperty(QTextFormat::FullWidthSelection, true);
+    highlight.format.setBackground( Qt::green );
+
+    QList<QTextEdit::ExtraSelection> extras;
+    extras << highlight;
+    ui->textEdit->setExtraSelections( extras );
+
     QString line = cursor.selectedText();
     int i = line.indexOf("(");
     int j = line.indexOf(")");

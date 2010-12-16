@@ -51,6 +51,7 @@ signals:
     void deletedCourse(QString);
     void coursesGuessed();
     void findImportFile();
+    void resetLog();
 
     public:
         // class destructor
