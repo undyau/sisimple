@@ -99,7 +99,10 @@ bool CEvent::SetDirectory(QString a_Dir)
     LoadSIData();
     LoadRawData();
     if (guess)
+        {
         guessCourses();    // Should be a decision made by user here
+        LoadRawData();     // Reload now courses are known
+        }
     DisplayRawData();
 
     RecalcResults();
@@ -248,6 +251,7 @@ void CEvent::LoadRawData()
     for (std::vector<CResult*>::iterator i = m_Results.begin(); i != m_Results.end(); i++)
         delete (*i);
     m_Results.clear();
+    emit(resetLog());
 
     // Load new file, marking duplicates
     QFile tfile(m_RawDataFile);
