@@ -125,7 +125,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionImport, SIGNAL(triggered()), this, SLOT(importCourses()));
     connect(this, SIGNAL(importCourses(QString)), CEvent::Event(), SLOT(importCourses(QString)));
     connect(CEvent::Event(), SIGNAL(coursesGuessed()), this, SLOT(runcoursesdialog()));
-    connect(ui->actionManageSI, SIGNAL(triggered()), this, SLOT(importSI()));
+    connect(ui->actionManageSI, SIGNAL(triggered()), this, SLOT(manageSI()));
+    connect(ui->actionLoadSI, SIGNAL(triggered()), this, SLOT(loadSI()));
     connect(CEvent::Event(), SIGNAL(resetLog()), ui->textEdit, SLOT(clear()));
 }
 
@@ -289,8 +290,13 @@ void MainWindow::importCourses()
 
 }
 
-void MainWindow::importSI()
+void MainWindow::loadSI()
 {
     ImportSIDialog dlg(this);
     dlg.exec();
+}
+
+void MainWindow::manageSI()
+{
+
 }
