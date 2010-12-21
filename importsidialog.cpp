@@ -19,15 +19,62 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "importsidialog.h"
 #include "ui_importsidialog.h"
+#include "Utils.h"
+#include <QUrl>
+#include <QFileInfo>
 
 ImportSIDialog::ImportSIDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ImportSIDialog)
 {
     ui->setupUi(this);
+    connect(ui->fileEdit, SIGNAL(textChanged(QString)), this, SLOT(textChanged(QString)));
+    connect(ui->webEdit, SIGNAL(textChanged(QString)), this, SLOT(textChanged(QString)));
+    EnableCtrls();
 }
 
 ImportSIDialog::~ImportSIDialog()
 {
     delete ui;
+}
+
+void ImportSIDialog::accept()
+{
+    if (ui->radioButtonWeb->isChecked())
+        {
+        Download();
+        }
+    if (ui->radioButtonFile->isChecked())
+        {
+        ReadFile();
+        }
+}
+
+void ImportSIDialog::Download()
+{
+
+}
+
+void ImportSIDialog::ReadFile()
+{
+
+}
+
+void ImportSIDialog::textChanged(QString)
+{
+    EnableCtrls();
+}
+
+void ImportSIDialog::EnableCtrls()
+{
+    if (ui->radioButtonWeb->isChecked())
+        {
+        QUrl url(ui->webEdit->text());
+        ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(url.isValid());
+        }
+    if (ui->radioButtonFile->isChecked())
+        {
+        QFileInfo file(ui->fileEdit->text());
+        ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(file.exists());
+        }
 }

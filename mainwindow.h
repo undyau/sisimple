@@ -57,7 +57,8 @@ private slots:
     void showDownloadContextMenu(const QPoint& a_Pos); // Show the context menu for the download pane
     void runcoursesdialog(); // Show the course management dialog
     void importCourses(); // Identify a course file for loading
-    void importSI(); // Identify a file or URL to load SI data from
+    void manageSI(); // manage the SI database
+    void loadSI(); // download an SI database
 
 private:
     Ui::MainWindow *ui;
