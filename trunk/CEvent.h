@@ -103,6 +103,7 @@ signals:
         void deleteCourse(CCourse* a_Course);  // Remove course from event
         void guessCourses();  // Guess what courses exist from punching records
         void importCourses(QString a_FileName); // import courses in IOF XML format
+        void newSIData(QString); // new SI data has been loaded
 
     private:
         bool CanClose();

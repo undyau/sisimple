@@ -37,6 +37,9 @@ public:
     explicit ImportSIDialog(QWidget *parent = 0);
     ~ImportSIDialog();
 
+signals:
+    void SIDataRead(QString);
+
 private slots:
     void accept(); // Load the SI data
     void textChanged(QString); // Some text changed in an edit box

@@ -1155,3 +1155,12 @@ void CEvent::addNewCourse(CCourse* a_Course)
     a_Course->SetName(name);
     this->newCourse(a_Course);
 }
+
+void CEvent::newSIData(QString input)
+{
+// split on line endings
+QStringList records = input.split(QRegExp("\n|\r|\r\n"));
+for (int i = 0; i < records.count(); i++)
+    qDebug() << records[i];
+
+}
