@@ -22,6 +22,9 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QDialog>
 
+class QNetworkReply;
+class QNetworkAccessManager;
+
 namespace Ui {
     class ImportSIDialog;
 }
@@ -37,9 +40,11 @@ public:
 private slots:
     void accept(); // Load the SI data
     void textChanged(QString); // Some text changed in an edit box
+    void replyFinished(QNetworkReply* reply); // got a reply from web
 
 private:
     Ui::ImportSIDialog *ui;
+    QNetworkAccessManager* m_Manager;
     void Download();
     void ReadFile();
     void EnableCtrls();

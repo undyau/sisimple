@@ -22,10 +22,13 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include "Utils.h"
 #include <QUrl>
 #include <QFileInfo>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
 
 ImportSIDialog::ImportSIDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::ImportSIDialog)
+    ui(new Ui::ImportSIDialog), m_Manager(NULL)
 {
     ui->setupUi(this);
     connect(ui->fileEdit, SIGNAL(textChanged(QString)), this, SLOT(textChanged(QString)));
@@ -35,6 +38,8 @@ ImportSIDialog::ImportSIDialog(QWidget *parent) :
 
 ImportSIDialog::~ImportSIDialog()
 {
+    if (m_Manager != NULL)
+        delete m_Manager;
     delete ui;
 }
 
@@ -52,7 +57,22 @@ void ImportSIDialog::accept()
 
 void ImportSIDialog::Download()
 {
+    if (m_Manager == NULL)
+        m_Manager = new QNetworkAccessManager(this);
+    connect(m_Manager, SIGNAL(finished(QNetworkReply*)),
+            this, SLOT(replyFinished(QNetworkReply*)));
 
+    m_Manager->get(QNetworkRequest(QUrl(ui->webEdit->text())));
+
+}
+
+void replyFinished(QNetworkReply* reply)
+{
+    if (reply->error() != QNetworkReply::NoError)
+        {
+        // show message
+        return;
+        }
 }
 
 void ImportSIDialog::ReadFile()
