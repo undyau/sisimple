@@ -25,6 +25,9 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QByteArray>
+#include "CEvent.h"
+#include <QSettings>
 
 ImportSIDialog::ImportSIDialog(QWidget *parent) :
     QDialog(parent),
@@ -33,6 +36,14 @@ ImportSIDialog::ImportSIDialog(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->fileEdit, SIGNAL(textChanged(QString)), this, SLOT(textChanged(QString)));
     connect(ui->webEdit, SIGNAL(textChanged(QString)), this, SLOT(textChanged(QString)));
+    connect(this, SIGNAL(SIDataRead(QString)),CEvent::Event(), SLOT(newSIData(QString)));
+
+    QSettings settings("undy","SI Simple");
+    settings.beginGroup("General");
+    ui->fileEdit->setText(settings.value("SIGlobalFile","").toString());
+    ui->webEdit->setText(settings.value("SIGlobalWeb","").toString());
+    settings.endGroup();
+
     EnableCtrls();
 }
 
@@ -62,22 +73,45 @@ void ImportSIDialog::Download()
     connect(m_Manager, SIGNAL(finished(QNetworkReply*)),
             this, SLOT(replyFinished(QNetworkReply*)));
 
+    setCursor(Qt::BusyCursor);
+    setEnabled(false);
     m_Manager->get(QNetworkRequest(QUrl(ui->webEdit->text())));
 
 }
 
-void replyFinished(QNetworkReply* reply)
+void ImportSIDialog::replyFinished(QNetworkReply* reply)
 {
+    setCursor(Qt::ArrowCursor);
+    setEnabled(true);
     if (reply->error() != QNetworkReply::NoError)
         {
-        // show message
+        SIMessageBox(tr("Unable to read ") + reply->url().toString() + tr(". Error: ") + reply->errorString());
         return;
+        }
+    else
+        {
+        QSettings settings("undy","SI Simple");
+        settings.beginGroup("General");
+        settings.setValue("SIGlobalWeb",reply->url().toString());
+        settings.endGroup();
+        QByteArray bytes = reply->readAll();  // bytes
+        QString string(bytes); // string
+        emit SIDataRead(string);
         }
 }
 
 void ImportSIDialog::ReadFile()
 {
+    QSettings settings("undy","SI Simple");
+    settings.beginGroup("General");
+    settings.setValue("SIGlobalFile",ui->fileEdit->text());
+    settings.endGroup();
 
+ // Load new file
+    QFile tfile(ui->fileEdit->text());
+    QByteArray bytes = tfile.readAll();
+    QString string(bytes); // string
+    emit SIDataRead(string);
 }
 
 void ImportSIDialog::textChanged(QString)

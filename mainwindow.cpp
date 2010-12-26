@@ -35,11 +35,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-//    QFont* plainfont = new QFont("Lucinda Console");
-//    plainfont->setStyleHint(QFont::TypeWriter);
-
-//    ui->textEdit->setFont(*plainfont);
-
     // Maybe need to use Tango theme ??
     ui->setupUi(this);
 
