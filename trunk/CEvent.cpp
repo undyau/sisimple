@@ -179,14 +179,14 @@ void CEvent::LoadCourseData(bool& a_Guess)
 void CEvent::LoadSIData()
 {
     // Clear out old data
-    for (std::map<long, CSiDetails*>::iterator i = m_SiDetails.begin(); i != m_SiDetails.end(); i++)
-        delete i->second;
-    m_SiDetails.clear();
+   // for (std::map<long, CSiDetails*>::iterator i = m_SiDetails.begin(); i != m_SiDetails.end(); i++)
+   //     delete i->second;
+   // m_SiDetails.clear();
 
-    if (!m_SINamesGlobalFile.isEmpty())
-        LoadSIFile(m_SINamesGlobalFile);
-    if (!m_SINamesFile.isEmpty())
-        LoadSIFile(m_SINamesFile);
+    //if (!m_SINamesGlobalFile.isEmpty())
+    //    LoadSIFile(m_SINamesGlobalFile);
+ //   if (!m_SINamesFile.isEmpty())
+  //      LoadSIFile(m_SINamesFile);
 }
 
 void CEvent::LoadSIFile(QString& a_File)
@@ -1159,8 +1159,79 @@ void CEvent::addNewCourse(CCourse* a_Course)
 void CEvent::newSIData(QString input)
 {
 // split on line endings
-QStringList records = input.split(QRegExp("\n|\r|\r\n"));
-for (int i = 0; i < records.count(); i++)
-    qDebug() << records[i];
+    QStringList records = input.split(QRegExp("\n|\r|\r\n"));
+    QRegExp sidRegex("[0-9]{2,10} [A-Za-z][^,]*");
+    QRegExp sisimpleRegex("[0-9]{2,10} [A-Za-z][^,]*,[A-Za-z0-9]*");
+    int sidCount(0), sisimpleCount(0);
+
+    for (int i = 0; i < records.count(); i++)
+        {
+        if (sidRegex.exactMatch(records.at(i)))
+            ++sidCount;
+        if (sisimpleRegex.exactMatch(records.at(i)))
+            ++sisimpleCount;
+        }
+qDebug() << sidCount << sisimpleCount;
+    if (sidCount > sisimpleCount)
+        ProcessSIDData(records, false);
+    else if (sisimpleCount > sidCount)
+        ProcessSISimpleData(records, false);
+    else
+        SIMessageBox("Unknown data format, no records loaded");
+}
+
+void CEvent::ProcessSIDData(QStringList& a_Records, bool a_Append)
+{
+    ProcessSISimpleData(a_Records, a_Append);  // schema is a subset
+}
+
+void CEvent::ProcessSISimpleData(QStringList& a_Records, bool a_Append)
+{
+    if (!a_Append)
+        {
+        for (std::map<long, CSiDetails*>::iterator i = m_SiDetails.begin(); i != m_SiDetails.end(); i++)
+            delete i->second;
+        m_SiDetails.clear();
+        }
+
+    for (int i = 0; i < a_Records.count(); i++)
+        {
+        QString str = a_Records.at(i);
+
+        long number;
+        QStringList split1 = str.split(" ");
+        if (split1.count() > 1)
+            {
+            number = split1[0].toLong();
+            str = str.mid(1 + split1[0].length());
+            QStringList split2 = str.split(",");
+            QString name = split2[0];
+            QString club = split2.count() > 1 ? split2[1] : "";
+
+            if (m_SiDetails.find(number) != m_SiDetails.end())
+                {
+                if (m_SiDetails[number]->GetName() != name)
+                    {
+                    QString msg("Duplicate entry for %1, using %2 instead of %3");
+                    msg = msg.arg(number).arg(name).arg(m_SiDetails[number]->GetName());
+                    LogMsg(msg);
+                    m_SiDetails[number]->SetName(name);
+                    m_SiDetails[number]->SetClub(club);
+                    }
+                else if (m_SiDetails[number]->GetClub() != club && !club.isEmpty() && !m_SiDetails[number]->GetClub().isEmpty())
+                    {
+                    QString msg("Duplicate entry in %1 for %2, using club%3 instead of %4");
+                    msg=msg.arg(number).arg(club).arg(m_SiDetails[number]->GetClub());
+                    LogMsg(msg);
+                    m_SiDetails[number]->SetName(name);
+                    m_SiDetails[number]->SetClub(club);
+                    }
+                }
+            else
+                {
+                m_SiDetails[number] = new CSiDetails(number, name, club);
+                }
+            }
+       }
 
 }
