@@ -70,7 +70,8 @@ signals:
         QString LastDisplayMsg() {return m_LastDisplayMsg;};
         void GetCourseNames(QStringList& a_Names);
         void addNewCourse(CCourse* a_Course);  // Add a new course to event
-
+        void ProcessSIDData(QStringList& a_Records, bool a_Append);
+        void ProcessSISimpleData(QStringList& a_Records, bool a_Append);
         void RecalcResults();
 
         CSiDetails* GetSIData(long a_SINumber);

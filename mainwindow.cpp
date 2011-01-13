@@ -38,6 +38,12 @@ MainWindow::MainWindow(QWidget *parent) :
     // Maybe need to use Tango theme ??
     ui->setupUi(this);
 
+    QFont font("Monospace");
+    font.setStyleHint(QFont::TypeWriter);
+    ui->textEdit->setFont(font);
+    ui->textEdit->font();
+    ui->textEdit_2->setFont(font);
+
     ui->textEdit->setReadOnly(true);
     ui->textEdit_2->setReadOnly(true);
 

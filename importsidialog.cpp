@@ -28,6 +28,8 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include <QByteArray>
 #include "CEvent.h"
 #include <QSettings>
+#include <QDebug>
+#include <QFileDialog>
 
 ImportSIDialog::ImportSIDialog(QWidget *parent) :
     QDialog(parent),
@@ -37,6 +39,7 @@ ImportSIDialog::ImportSIDialog(QWidget *parent) :
     connect(ui->fileEdit, SIGNAL(textChanged(QString)), this, SLOT(textChanged(QString)));
     connect(ui->webEdit, SIGNAL(textChanged(QString)), this, SLOT(textChanged(QString)));
     connect(this, SIGNAL(SIDataRead(QString)),CEvent::Event(), SLOT(newSIData(QString)));
+    connect(ui->browseButton, SIGNAL(clicked()), this, SLOT(chooseFile()));
 
     QSettings settings("undy","SI Simple");
     settings.beginGroup("General");
@@ -97,6 +100,7 @@ void ImportSIDialog::replyFinished(QNetworkReply* reply)
         QByteArray bytes = reply->readAll();  // bytes
         QString string(bytes); // string
         emit SIDataRead(string);
+        QDialog::accept();
         }
 }
 
@@ -131,4 +135,14 @@ void ImportSIDialog::EnableCtrls()
         QFileInfo file(ui->fileEdit->text());
         ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(file.exists());
         }
+}
+
+void ImportSIDialog::chooseFile()
+{
+    QString file = QFileDialog::getOpenFileName(this, tr("Select SI data file"), CEvent::Event()->Directory());
+
+    if (file.isEmpty())
+        return;
+
+    ui->fileEdit->setText(file);
 }

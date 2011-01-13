@@ -44,6 +44,7 @@ private slots:
     void accept(); // Load the SI data
     void textChanged(QString); // Some text changed in an edit box
     void replyFinished(QNetworkReply* reply); // got a reply from web
+    void chooseFile(); //browse button clicked
 
 private:
     Ui::ImportSIDialog *ui;
