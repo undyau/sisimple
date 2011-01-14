@@ -52,6 +52,7 @@ signals:
     void coursesGuessed();
     void findImportFile();
     void resetLog();
+    void loadedSIArchive(QString);
 
     public:
         // class destructor
