@@ -30,6 +30,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include "alterdialog.h"
 #include "coursesdialog.h"
 #include "importsidialog.h"
+#include <QInputDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -130,6 +131,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionLoadSI, SIGNAL(triggered()), this, SLOT(loadSI()));
     connect(CEvent::Event(), SIGNAL(resetLog()), ui->textEdit, SLOT(clear()));
     connect(CEvent::Event(), SIGNAL(loadedSIArchive(QString)), ui->statusBar, SLOT(showMessage(QString)));
+    connect(ui->actionRental_Sticks, SIGNAL(triggered()), this, SLOT(rentalStickNames()));
 }
 
 MainWindow::~MainWindow()
@@ -294,5 +296,11 @@ void MainWindow::loadSI()
 
 void MainWindow::manageSI()
 {
+
+}
+
+void MainWindow::rentalStickNames()
+{
+    QInputDialog dlg(this);
 
 }

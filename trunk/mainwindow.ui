@@ -99,6 +99,7 @@
     <addaction name="actionManageSI"/>
     <addaction name="actionImportSI"/>
     <addaction name="actionLoadSI"/>
+    <addaction name="actionRental_Sticks"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Results"/>
@@ -184,6 +185,11 @@
   <action name="actionLoadSI">
    <property name="text">
     <string>Load...</string>
+   </property>
+  </action>
+  <action name="actionRental_Sticks">
+   <property name="text">
+    <string>Rental Sticks...</string>
    </property>
   </action>
  </widget>
