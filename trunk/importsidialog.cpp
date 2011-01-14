@@ -40,8 +40,10 @@ ImportSIDialog::ImportSIDialog(QWidget *parent) :
     connect(ui->webEdit, SIGNAL(textChanged(QString)), this, SLOT(textChanged(QString)));
     connect(this, SIGNAL(SIDataRead(QString)),CEvent::Event(), SLOT(newSIData(QString)));
     connect(ui->browseButton, SIGNAL(clicked()), this, SLOT(chooseFile()));
+    connect(ui->radioButtonFile, SIGNAL(clicked()), this, SLOT(choiceChanged()));
+    connect(ui->radioButtonWeb, SIGNAL(clicked()), this, SLOT(choiceChanged()));
 
-    QSettings settings("undy","SI Simple");
+    QSettings settings(QSettings::IniFormat,  QSettings::SystemScope, "undy","SI Simple");
     settings.beginGroup("General");
     ui->fileEdit->setText(settings.value("SIGlobalFile","").toString());
     ui->webEdit->setText(settings.value("SIGlobalWeb","").toString());
@@ -106,19 +108,26 @@ void ImportSIDialog::replyFinished(QNetworkReply* reply)
 
 void ImportSIDialog::ReadFile()
 {
-    QSettings settings("undy","SI Simple");
+    QSettings settings(QSettings::IniFormat,  QSettings::SystemScope, "undy","SI Simple");
     settings.beginGroup("General");
     settings.setValue("SIGlobalFile",ui->fileEdit->text());
     settings.endGroup();
 
  // Load new file
     QFile tfile(ui->fileEdit->text());
+    tfile.open(QIODevice::ReadOnly);
     QByteArray bytes = tfile.readAll();
     QString string(bytes); // string
     emit SIDataRead(string);
+    QDialog::accept();
 }
 
 void ImportSIDialog::textChanged(QString)
+{
+    EnableCtrls();
+}
+
+void ImportSIDialog::choiceChanged()
 {
     EnableCtrls();
 }

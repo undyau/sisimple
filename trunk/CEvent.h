@@ -59,13 +59,7 @@ signals:
         // Singleton access/creation
         static CEvent* Event();
         QString Directory();
-        bool SetDirectory(QString a_Dir);
-        QString SINamesGlobalFile() {return m_SINamesGlobalFile;};
-
-        QString FindCourseFile(QString a_Dir) const;
-        QString FindRawDataFile(QString a_Dir) const;
-        QString FindSINamesFile(QString a_Dir) const;
-        QString FindSINamesGlobalFile(QString a_Dir) const;
+        bool SetRawDataFile(QString a_File);
         QString LastLogMsg() {return m_LastLogMsg;};
         QString LastDisplayMsg() {return m_LastDisplayMsg;};
         void GetCourseNames(QStringList& a_Names);
@@ -112,8 +106,6 @@ signals:
         QString FindDataFile(QStringList& a_Candidates, QString a_Dir) const;
         void LoadRawData();
         void LoadCourseData(bool& a_Guess);
-        void LoadSIData();
-        void LoadSIFile(QString& a_File);
 
         void SetCourse(CResult* a_Result);
         void DisplayRawData();
@@ -138,10 +130,7 @@ signals:
         bool m_ShowHTML;
         QString m_EventName;
         QString m_Dir;
-        QString m_CourseFile;
         QString m_RawDataFile;
-        QString m_SINamesFile;
-        QString m_SINamesGlobalFile;
         QString m_LastLogMsg;
         QString m_LastDisplayMsg;
         bool m_SavingResults;

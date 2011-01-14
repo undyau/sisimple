@@ -140,18 +140,12 @@ MainWindow::~MainWindow()
 void MainWindow::open()
 {
     CEvent* oevent = CEvent::Event();
-    QString dir = QFileDialog::getExistingDirectory(this,tr("Select event directory"), oevent->Directory());
+    QString file = QFileDialog::getOpenFileName(this,tr("Select event directory"), oevent->Directory(), "*.csv");
 
-    if (dir.isEmpty())
+    if (file.isEmpty())
         return;
 
-// Test that each required file exists
-    if (oevent->FindRawDataFile(dir).isEmpty())
-        {
-        SIMessageBox("No raw data file in specified directory !", QMessageBox::Warning);
-        return;
-        }
-     oevent->SetDirectory(dir);
+     oevent->SetRawDataFile(file);
 }
 
 void MainWindow::save()
