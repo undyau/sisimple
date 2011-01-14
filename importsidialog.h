@@ -45,6 +45,7 @@ private slots:
     void textChanged(QString); // Some text changed in an edit box
     void replyFinished(QNetworkReply* reply); // got a reply from web
     void chooseFile(); //browse button clicked
+    void choiceChanged(); // toggled between modes
 
 private:
     Ui::ImportSIDialog *ui;

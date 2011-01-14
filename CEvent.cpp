@@ -70,7 +70,7 @@ QString CEvent::Directory()
 {
     if (m_Dir.isEmpty())
         {
-        QSettings settings("undy","SI Simple");
+        QSettings settings(QSettings::IniFormat,  QSettings::SystemScope, "undy","SI Simple");
         settings.beginGroup("General");
         m_Dir = settings.value("lastDir","").toString();
         settings.endGroup();
@@ -78,25 +78,21 @@ QString CEvent::Directory()
     return m_Dir;
 };
 
-bool CEvent::SetDirectory(QString a_Dir)
+bool CEvent::SetRawDataFile(QString a_File)
 {
-    if (a_Dir != m_Dir && m_Changed)
+    if (m_RawDataFile != m_RawDataFile && m_Changed)
         if (!CanClose())
             return false;
 
-    m_Dir = a_Dir;
+    m_RawDataFile = a_File;
+    QFileInfo fileInfo(a_File);
+    m_Dir = fileInfo.dir().canonicalPath ();
     m_GoodThreshold = 4; // if n people have done the same course, aways mark it legitimate
     m_Changed = false;
-    m_CourseFile = FindCourseFile(a_Dir);
-    m_RawDataFile = FindRawDataFile(a_Dir);
-    m_SINamesFile = FindSINamesFile(a_Dir);
-    QFileInfo dirInfo(a_Dir);
-    m_SINamesGlobalFile = FindSINamesGlobalFile(dirInfo.dir().absolutePath());
-    emit filesChanged(m_RawDataFile, m_CourseFile, m_SINamesFile, m_SINamesGlobalFile);
+
 
     bool guess(false);
     LoadCourseData(guess);
-    LoadSIData();
     LoadRawData();
     if (guess)
         {
@@ -107,9 +103,9 @@ bool CEvent::SetDirectory(QString a_Dir)
 
     RecalcResults();
 
-    QSettings settings("undy","SI Simple");
+    QSettings settings(QSettings::IniFormat,  QSettings::SystemScope, "undy","SI Simple");
     settings.beginGroup("General");
-    settings.setValue("lastDir", a_Dir);
+    settings.setValue("lastDir", m_Dir);
     settings.endGroup();
 
     return true;
@@ -174,75 +170,6 @@ void CEvent::LoadCourseData(bool& a_Guess)
      else if (msgBox.clickedButton() == (QAbstractButton*)guessButton)
          a_Guess = true;
 
-}
-
-void CEvent::LoadSIData()
-{
-    // Clear out old data
-   // for (std::map<long, CSiDetails*>::iterator i = m_SiDetails.begin(); i != m_SiDetails.end(); i++)
-   //     delete i->second;
-   // m_SiDetails.clear();
-
-    //if (!m_SINamesGlobalFile.isEmpty())
-    //    LoadSIFile(m_SINamesGlobalFile);
- //   if (!m_SINamesFile.isEmpty())
-  //      LoadSIFile(m_SINamesFile);
-}
-
-void CEvent::LoadSIFile(QString& a_File)
-{
-    // Load new file
-    QFile tfile(a_File);
-    if (!tfile.open(QIODevice::ReadOnly))
-        {
-        QMessageBox msg;
-        msg.setText("Unable to open SI file " + m_CourseFile);
-        msg.exec();
-        return;
-        }
-
-    QString str;
-    QTextStream input(&tfile);
-    while (!input.atEnd())
-        {
-        str = input.readLine();
-
-        long number;
-        QStringList split1 = str.split(" ");
-        if (split1.count() > 1)
-            {
-            number = split1[0].toLong();
-            str = str.mid(1 + split1[0].length());
-            QStringList split2 = str.split(",");
-            QString name = split2[0];
-            QString club = split2.count() > 1 ? split2[1] : "";
-
-            if (m_SiDetails.find(number) != m_SiDetails.end())
-                {
-                if (m_SiDetails[number]->GetName() != name)
-                    {
-                    QString msg("Duplicate entry in %1 for %2, using %3 instead of %4");
-                    msg=msg.arg(SimplifyPath(a_File)).arg(number).arg(name).arg(m_SiDetails[number]->GetName());
-                    LogMsg(msg);
-                    m_SiDetails[number]->SetName(name);
-                    m_SiDetails[number]->SetClub(club);
-                    }
-                else if (m_SiDetails[number]->GetClub() != club && !club.isEmpty() && !m_SiDetails[number]->GetClub().isEmpty())
-                    {
-                    QString msg("Duplicate entry in %1 for %2, using club%3 instead of %4");
-                    msg=msg.arg(SimplifyPath(a_File)).arg(number).arg(club).arg(m_SiDetails[number]->GetClub());
-                    LogMsg(msg);
-                    m_SiDetails[number]->SetName(name);
-                    m_SiDetails[number]->SetClub(club);
-                    }
-                }
-            else
-                {
-                m_SiDetails[number] = new CSiDetails(number, name, club);
-                }
-            }
-        }
-    tfile.close();
 }
 
 void CEvent::LoadRawData()
@@ -326,62 +253,6 @@ msg.setText("OK to close current event " + m_Dir + " ?");
 msg.setIcon(QMessageBox::Question);
 msg.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
 return msg.exec() == QMessageBox::Yes;
-}
-
-QString CEvent::FindCourseFile(QString a_Dir) const
-{
-    QStringList files;
-    files.append("courses.txt");
-    files.append("Courses.txt");
-    files.append("course");
-    files.append("Course");
-    files.append("course.txt");
-    files.append("Course.txt");
-
-    return FindDataFile(files,a_Dir);
-}
-
-QString CEvent::FindRawDataFile(QString a_Dir) const
-{
-    QStringList files;
-    files.append("RawData.csv");
-    files.append("rawdata.csv");
-
-    return FindDataFile(files,a_Dir);
-}
-
-QString CEvent::FindSINamesFile(QString a_Dir) const
-{
-    QStringList files;
-    files.append("SINames");
-    files.append("SINames.txt");
-    files.append("SINamesEvent");
-    files.append("SINamesEvent.txt");
-
-    return FindDataFile(files,a_Dir);
-}
-
-QString CEvent::FindSINamesGlobalFile(QString a_Dir) const
-{
-    QStringList files;
-    files.append("SINames");
-    files.append("SINames.txt");
-    files.append("SINamesGlobal");
-    files.append("SINamesGlobal.txt");
-
-    return FindDataFile(files,a_Dir);
-}
-
-QString CEvent::FindDataFile(QStringList& a_Candidates, QString a_Dir) const
-{
-    for (int i = 0; i < a_Candidates.count(); i++)
-        {
-        QDir dir(a_Dir);
-        QFileInfo fname(dir, a_Candidates[i]);
-        if (fname.exists() && fname.isReadable())
-            return fname.filePath();
-        }
-    return "";
 }
 
 void CEvent::LogMsg(QString a_Msg)
