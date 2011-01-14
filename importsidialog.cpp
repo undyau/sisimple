@@ -95,7 +95,7 @@ void ImportSIDialog::replyFinished(QNetworkReply* reply)
         }
     else
         {
-        QSettings settings("undy","SI Simple");
+        QSettings settings(QSettings::IniFormat,  QSettings::SystemScope, "undy","SI Simple");
         settings.beginGroup("General");
         settings.setValue("SIGlobalWeb",reply->url().toString());
         settings.endGroup();

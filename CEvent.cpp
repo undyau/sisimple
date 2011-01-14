@@ -43,7 +43,8 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 
 
 // class constructor
-CEvent::CEvent() : m_Changed(false), m_ShowSplits(true), m_SavingResults(false)
+CEvent::CEvent() : m_Changed(false), m_ShowSplits(true), m_SavingResults(false),
+  m_GoodThreshold(3)
 {
     // insert your code here
 }
@@ -87,9 +88,7 @@ bool CEvent::SetRawDataFile(QString a_File)
     m_RawDataFile = a_File;
     QFileInfo fileInfo(a_File);
     m_Dir = fileInfo.dir().canonicalPath ();
-    m_GoodThreshold = 4; // if n people have done the same course, aways mark it legitimate
-    m_Changed = false;
-
+    m_Changed = false;    
 
     bool guess(false);
     LoadCourseData(guess);
@@ -1042,13 +1041,16 @@ void CEvent::newSIData(QString input)
         if (sisimpleRegex.exactMatch(records.at(i)))
             ++sisimpleCount;
         }
-qDebug() << sidCount << sisimpleCount;
+
     if (sidCount > sisimpleCount)
         ProcessSIDData(records, false);
     else if (sisimpleCount > sidCount)
         ProcessSISimpleData(records, false);
     else
         SIMessageBox("Unknown data format, no records loaded");
+
+    QString msg = QString(tr("%1 cards in SI archive")).arg(records.count());
+    emit(loadedSIArchive(msg));
 }
 
 void CEvent::ProcessSIDData(QStringList& a_Records, bool a_Append)

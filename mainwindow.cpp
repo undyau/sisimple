@@ -129,6 +129,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionManageSI, SIGNAL(triggered()), this, SLOT(manageSI()));
     connect(ui->actionLoadSI, SIGNAL(triggered()), this, SLOT(loadSI()));
     connect(CEvent::Event(), SIGNAL(resetLog()), ui->textEdit, SLOT(clear()));
+    connect(CEvent::Event(), SIGNAL(loadedSIArchive(QString)), ui->statusBar, SLOT(showMessage(QString)));
 }
 
 MainWindow::~MainWindow()
