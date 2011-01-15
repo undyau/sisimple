@@ -46,7 +46,11 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 CEvent::CEvent() : m_Changed(false), m_ShowSplits(true), m_SavingResults(false),
   m_GoodThreshold(3)
 {
-    // insert your code here
+    QSettings settings(QSettings::IniFormat,  QSettings::SystemScope, "undy","SI Simple");
+    settings.beginGroup("General");
+    m_Dir = settings.value("lastDir","").toString();
+    m_RentalNames = settings.value("rentalNames","").toString();
+    settings.endGroup();
 }
 
 // class destructor
@@ -58,6 +62,12 @@ CEvent::~CEvent()
         delete (*j);
     for (std::map<long, CSiDetails*>::iterator k = m_SiDetails.begin(); k != m_SiDetails.end(); k++)
         delete k->second;
+
+    QSettings settings(QSettings::IniFormat,  QSettings::SystemScope, "undy","SI Simple");
+    settings.beginGroup("General");
+    settings.setValue("lastDir", m_Dir);
+    settings.setValue("rentalNames", m_RentalNames);
+    settings.endGroup();
 }
 
 CEvent* CEvent::Event()
@@ -69,15 +79,18 @@ CEvent* CEvent::Event()
 
 QString CEvent::Directory()
 {
-    if (m_Dir.isEmpty())
-        {
-        QSettings settings(QSettings::IniFormat,  QSettings::SystemScope, "undy","SI Simple");
-        settings.beginGroup("General");
-        m_Dir = settings.value("lastDir","").toString();
-        settings.endGroup();
-        }
     return m_Dir;
 };
+
+QString CEvent::GetRentalNames()
+{
+    return m_RentalNames;
+}
+
+void CEvent::SetRentalNames(QString& a_Names)
+{
+    m_RentalNames = a_Names.trimmed();
+}
 
 bool CEvent::SetRawDataFile(QString a_File)
 {
@@ -88,7 +101,7 @@ bool CEvent::SetRawDataFile(QString a_File)
     m_RawDataFile = a_File;
     QFileInfo fileInfo(a_File);
     m_Dir = fileInfo.dir().canonicalPath ();
-    m_Changed = false;    
+    m_Changed = false;
 
     bool guess(false);
     LoadCourseData(guess);
@@ -101,11 +114,6 @@ bool CEvent::SetRawDataFile(QString a_File)
     DisplayRawData();
 
     RecalcResults();
-
-    QSettings settings(QSettings::IniFormat,  QSettings::SystemScope, "undy","SI Simple");
-    settings.beginGroup("General");
-    settings.setValue("lastDir", m_Dir);
-    settings.endGroup();
 
     return true;
 }
@@ -200,15 +208,13 @@ void CEvent::LoadRawData()
         if (CResult::ValidData(str))
             {
             CResult* result = new CResult(str);
-            if (result->GetName().isEmpty())
-                LogResultProblem(result, "No name supplied to match SI number - please fix");
             SetCourse(result);
             if (uniqueList.find(CUniquePunch(result)) != uniqueList.end())
                 {
                 if (uniqueList[CUniquePunch(result)]->GetRawData().length() < result->GetRawData().length())
                     {
                     // want to replace entry in m_Results with new one
-                    LogResultProblem(result, "Duplicate download found - replacing old data");
+                    //LogResultProblem(result, tr("Duplicate download found - replacing old data"));
                     std::replace(m_Results.begin(),m_Results.end(), uniqueList[CUniquePunch(result)], result);
                     uniqueList[CUniquePunch(result)] = result;
                     }
@@ -219,7 +225,12 @@ void CEvent::LoadRawData()
                     }
                 }
             else
-                {
+                    {
+                if (result->GetName().isEmpty())
+                    LogResultProblem(result, tr("No name supplied to match SI number - please fix"));
+                else if (IsRental(result->GetName()))
+                    LogResultProblem(result, tr("Looks like rental stick - please fix"));
+
                 uniqueList[CUniquePunch(result)] = result;
                 m_Results.push_back(result);
                 if (usedSIs.find(result->GetSINumber()) != usedSIs.end())
@@ -1107,4 +1118,33 @@ void CEvent::ProcessSISimpleData(QStringList& a_Records, bool a_Append)
             }
        }
 
+}
+
+bool CEvent::IsRental(QString a_Name)
+{
+    QStringList parts = m_RentalNames.split(",");
+    for (int i = 0; i < parts.count(); i++)
+        if (a_Name.contains(parts.at(i)) && !parts.at(i).isEmpty())
+            return true;
+    return false;
+}
+
+long CEvent::LookupResult(QString a_Name, QString a_Result)
+{
+    long index(-1);
+    int count(0);
+    for (unsigned int i = 0; i < m_Results.size(); i++)
+        {
+        if( m_Results[i]->GetName() == a_Name || a_Name.isEmpty())
+            {
+            if (a_Result == FormatTimeTaken(m_Results[i]->TimeTaken()))
+                {
+                index = m_Results[i]->GetRawIndex();
+                ++count;
+                }
+            }
+        }
+    if (count == 1)
+        return index;
+    return -1;
 }

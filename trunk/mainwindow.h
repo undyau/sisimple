@@ -55,6 +55,7 @@ private slots:
     void setEventTitle(QString a_Title); // Set title of event
     void showResults(std::vector<QString>& a_Lines); // Show the results
     void showDownloadContextMenu(const QPoint& a_Pos); // Show the context menu for the download pane
+    void showResultContextMenu(const QPoint& a_Pos); // Show the context menu for the download pane
     void runcoursesdialog(); // Show the course management dialog
     void importCourses(); // Identify a course file for loading
     void manageSI(); // manage the SI database

@@ -52,6 +52,10 @@ MainWindow::MainWindow(QWidget *parent) :
     viewPort->setCursor(Qt::ArrowCursor);
     ui->textEdit->setViewport(viewPort);
 
+    viewPort = ui->textEdit_2->viewport();
+    viewPort->setCursor(Qt::ArrowCursor);
+    ui->textEdit_2->setViewport(viewPort);
+
     m_OpenAct = new QAction(QIcon::fromTheme("document-open", QIcon(":icons/icons/document-open.svg")), tr("&Open..."), this);
     m_OpenAct->setShortcuts(QKeySequence::Open);
     m_OpenAct->setStatusTip(tr("Open an existing CSV dump"));
@@ -60,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->menu_File->addAction(m_OpenAct);
     ui->mainToolBar->addAction(m_OpenAct);
     ui->textEdit->setContextMenuPolicy(Qt::CustomContextMenu);
-    ui->textEdit_2->setContextMenuPolicy(Qt::NoContextMenu);
+    ui->textEdit_2->setContextMenuPolicy(Qt::CustomContextMenu);
 
     m_SaveAct = new QAction(QIcon::fromTheme("document-save", QIcon(":icons/icons/document-save.svg")), tr("&Save..."), this);
     m_SaveAct->setShortcuts(QKeySequence::Save);
@@ -120,6 +124,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(CEvent::Event(), SIGNAL(logMsg(QString)), ui->textEdit, SLOT(append(QString)));
     connect(CEvent::Event(), SIGNAL(updatedResultsOutput(std::vector<QString>&)), this, SLOT(showResults(std::vector<QString>&)));
     connect(ui->textEdit, SIGNAL(customContextMenuRequested(const QPoint&)),this, SLOT(showDownloadContextMenu(const QPoint&)));
+    connect(ui->textEdit_2, SIGNAL(customContextMenuRequested(const QPoint&)),this, SLOT(showResultContextMenu(const QPoint&)));
     connect(this, SIGNAL(dnf(long)), CEvent::Event(), SLOT(dnfResult(long)));
     connect(this, SIGNAL(reinstate(long)), CEvent::Event(), SLOT(reinstateResult(long)));
     connect(ui->actionManage, SIGNAL(triggered()), this, SLOT(runcoursesdialog()));
@@ -260,6 +265,64 @@ void MainWindow::showDownloadContextMenu(const QPoint& a_Pos)
 
 }
 
+void MainWindow::showResultContextMenu(const QPoint& a_Pos)
+{
+    QPoint globalPos = a_Pos;
+    QTextCursor cursor = ui->textEdit_2->cursorForPosition(globalPos);
+    cursor.select(QTextCursor::LineUnderCursor);
+
+    QTextEdit::ExtraSelection highlight;
+    highlight.cursor = cursor;
+    highlight.format.setProperty(QTextFormat::FullWidthSelection, true);
+    highlight.format.setBackground( Qt::green );
+
+    QList<QTextEdit::ExtraSelection> extras;
+    extras << highlight;
+    ui->textEdit_2->setExtraSelections( extras );
+
+    QString line = cursor.selectedText();
+    QRegExp resultRE("^[ ]*[0-9]{1,4} ([^:]{10,26}) [^:]*([^ ]*:[0-9][0-9])$");
+    QRegExp dnfRE("^ ([^:]*) ({DNF|DSQ})$");
+    if (!resultRE.exactMatch(line) && !dnfRE.exactMatch(line))
+        return;
+
+    long index(0);
+    if (resultRE.exactMatch(line))
+        {
+        QString name, time;
+        index = CEvent::Event()->LookupResult(resultRE.capturedTexts().at(1).trimmed(),resultRE.capturedTexts().at(2));
+        if (index <0)
+            return;
+        }
+    else
+        {
+        QString name, time;
+        index = CEvent::Event()->LookupResult(dnfRE.capturedTexts().at(1),resultRE.capturedTexts().at(2));
+        if (index <0)
+            return;
+        }
+
+    QMenu myMenu;
+    if (!CEvent::Event()->GetResultFinished(index) && !CEvent::Event()->GetResultInvalid(index))
+        myMenu.addAction("Reinstate");
+    if (CEvent::Event()->GetResultFinished(index))
+        myMenu.addAction("DNF");
+    myMenu.addAction("Alter");
+
+    QAction* selectedItem = myMenu.exec(ui->textEdit_2->viewport()->mapToGlobal(a_Pos));
+    if (selectedItem)
+    {
+    if (selectedItem->text() == "Reinstate")
+        emit reinstate(index);
+    else if (selectedItem->text() == "DNF")
+        emit dnf(index);
+    else if (selectedItem->text() == "Alter")
+        runAlterDialog(index);
+    }
+
+}
+
+
 void MainWindow::runAlterDialog(long a_Index)
 {
     if (!CEvent::Event()->ResultExists(a_Index))
@@ -301,6 +364,12 @@ void MainWindow::manageSI()
 
 void MainWindow::rentalStickNames()
 {
-    QInputDialog dlg(this);
+     bool ok;
+     QString names = CEvent::Event()->GetRentalNames();
+     QString text = QInputDialog::getText(this, tr("Rental Stick Names"),
+                                          tr("Rental stick names (comma separated):"), QLineEdit::Normal,
+                                          names, &ok);
+     if (ok && !text.isEmpty())
+         CEvent::Event()->SetRentalNames(text);
 
 }
