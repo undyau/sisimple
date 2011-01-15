@@ -116,7 +116,7 @@ signals:
         void CalcResults();
         void SetPositions(std::vector<CResult*>& a_SortedResults);
         void SetLegStats(std::vector<CResult*>& a_SortedResults);
-        void SetCourseLegStats(CCourse* a_Course, std::vector<CResult*>& a_SortedResults, std::vector<CResult*>::iterator& a_Start, std::vector<CResult*>::iterator& a_End);
+        void SetCourseLegStats(CCourse* a_Course, std::vector<CResult*>::iterator& a_Start, std::vector<CResult*>::iterator& a_End);
         void SetPunchTimes(CResult* a_Result);
         void DisplayTextResults(std::vector<QString>& a_Lines);
         void DisplayTextSplits(std::vector<QString>& a_Lines);
