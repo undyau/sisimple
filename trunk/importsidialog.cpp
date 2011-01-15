@@ -46,7 +46,7 @@ ImportSIDialog::ImportSIDialog(QWidget *parent) :
     QSettings settings(QSettings::IniFormat,  QSettings::SystemScope, "undy","SI Simple");
     settings.beginGroup("General");
     ui->fileEdit->setText(settings.value("SIGlobalFile","").toString());
-    ui->webEdit->setText(settings.value("SIGlobalWeb","").toString());
+    ui->webEdit->setText(settings.value("SIGlobalWeb","http://sportident.itsdamp.com/SINamesGlobal.txt").toString());
     settings.endGroup();
 
     EnableCtrls();

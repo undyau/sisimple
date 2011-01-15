@@ -388,7 +388,7 @@ void CEvent::SetLegStats(std::vector<CResult*>& a_SortedResults)
         // Handle course break
         if (lastCourse && (*i)->GetCourse() != lastCourse)
             {
-            SetCourseLegStats(lastCourse, a_SortedResults, startCourse, i);
+            SetCourseLegStats(lastCourse, startCourse, i);
             startCourse = i;
             }
         lastCourse = (*i)->GetCourse();
@@ -396,7 +396,7 @@ void CEvent::SetLegStats(std::vector<CResult*>& a_SortedResults)
     if (lastCourse)
         {
         i = a_SortedResults.end();
-        SetCourseLegStats(lastCourse, a_SortedResults, startCourse, i);
+        SetCourseLegStats(lastCourse, startCourse, i);
         }
 
 }
@@ -417,7 +417,7 @@ bool legTimeLessThan(long a_Lhs, long a_Rhs)
     return a_Lhs < a_Rhs;
 }
 
-void CEvent::SetCourseLegStats(CCourse* a_Course, std::vector<CResult*>& a_SortedResults, std::vector<CResult*>::iterator& a_Start, std::vector<CResult*>::iterator& a_End)
+void CEvent::SetCourseLegStats(CCourse* a_Course, std::vector<CResult*>::iterator& a_Start, std::vector<CResult*>::iterator& a_End)
 {
     // for each leg on course, get all leg times in a sorted array. Use as a look-up
     std::vector<long> legTimes;
