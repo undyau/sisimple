@@ -43,7 +43,7 @@ ImportSIDialog::ImportSIDialog(QWidget *parent) :
     connect(ui->radioButtonFile, SIGNAL(clicked()), this, SLOT(choiceChanged()));
     connect(ui->radioButtonWeb, SIGNAL(clicked()), this, SLOT(choiceChanged()));
 
-    QSettings settings(QSettings::IniFormat,  QSettings::SystemScope, "undy","SI Simple");
+    QSettings settings(QSettings::IniFormat,  QSettings::UserScope, "undy","SI Simple");
     settings.beginGroup("General");
     ui->fileEdit->setText(settings.value("SIGlobalFile","").toString());
     ui->webEdit->setText(settings.value("SIGlobalWeb","http://sportident.itsdamp.com/SINamesGlobal.txt").toString());
@@ -95,7 +95,7 @@ void ImportSIDialog::replyFinished(QNetworkReply* reply)
         }
     else
         {
-        QSettings settings(QSettings::IniFormat,  QSettings::SystemScope, "undy","SI Simple");
+        QSettings settings(QSettings::IniFormat,  QSettings::UserScope, "undy","SI Simple");
         settings.beginGroup("General");
         settings.setValue("SIGlobalWeb",reply->url().toString());
         settings.endGroup();
@@ -108,7 +108,7 @@ void ImportSIDialog::replyFinished(QNetworkReply* reply)
 
 void ImportSIDialog::ReadFile()
 {
-    QSettings settings(QSettings::IniFormat,  QSettings::SystemScope, "undy","SI Simple");
+    QSettings settings(QSettings::IniFormat,  QSettings::UserScope, "undy","SI Simple");
     settings.beginGroup("General");
     settings.setValue("SIGlobalFile",ui->fileEdit->text());
     settings.endGroup();

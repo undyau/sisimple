@@ -31,6 +31,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include "coursesdialog.h"
 #include "importsidialog.h"
 #include <QInputDialog>
+#include <QSettings>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -38,6 +39,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     // Maybe need to use Tango theme ??
     ui->setupUi(this);
+
+    QSettings settings(QSettings::IniFormat,  QSettings::UserScope, "undy","SI Simple");
+    settings.beginGroup("General");
+    bool showSplits = settings.value("showSplits", false).toBool();
+    bool showHtml = settings.value("showHtml", false).toBool();
+    settings.endGroup();
 
     QFont font("Monospace");
     font.setStyleHint(QFont::TypeWriter);
@@ -111,6 +118,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_AboutAct->setToolTip(tr("About"));
     ui->menuHelp->addAction(m_AboutAct);
 
+    m_UseHtmlCheck->setChecked(showHtml);
+    m_ShowSplitsCheck->setChecked(showSplits);
 
     connect(m_OpenAct, SIGNAL(triggered()), this, SLOT(open()));
     connect(m_SaveAct, SIGNAL(triggered()), this, SLOT(save()));
@@ -141,6 +150,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    QSettings settings(QSettings::IniFormat,  QSettings::UserScope, "undy","SI Simple");
+    settings.beginGroup("General");
+    settings.setValue("showSplits", m_ShowSplitsCheck->isChecked());
+    settings.setValue("showHtml", m_UseHtmlCheck->isChecked());
+    settings.endGroup();
+
     delete m_OpenAct;
     delete ui;
 }
