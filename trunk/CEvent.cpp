@@ -46,7 +46,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 CEvent::CEvent() : m_Changed(false), m_ShowSplits(true), m_SavingResults(false),
   m_GoodThreshold(3)
 {
-    QSettings settings(QSettings::IniFormat,  QSettings::SystemScope, "undy","SI Simple");
+    QSettings settings(QSettings::IniFormat,  QSettings::UserScope, "undy","SI Simple");
     settings.beginGroup("General");
     m_Dir = settings.value("lastDir","").toString();
     m_RentalNames = settings.value("rentalNames","").toString();
@@ -63,7 +63,7 @@ CEvent::~CEvent()
     for (std::map<long, CSiDetails*>::iterator k = m_SiDetails.begin(); k != m_SiDetails.end(); k++)
         delete k->second;
 
-    QSettings settings(QSettings::IniFormat,  QSettings::SystemScope, "undy","SI Simple");
+    QSettings settings(QSettings::IniFormat,  QSettings::UserScope, "undy","SI Simple");
     settings.beginGroup("General");
     settings.setValue("lastDir", m_Dir);
     settings.setValue("rentalNames", m_RentalNames);
