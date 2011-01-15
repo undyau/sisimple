@@ -68,6 +68,8 @@ signals:
         void ProcessSIDData(QStringList& a_Records, bool a_Append);
         void ProcessSISimpleData(QStringList& a_Records, bool a_Append);
         void RecalcResults();
+        QString GetRentalNames();
+        void SetRentalNames(QString& a_Names);
 
         CSiDetails* GetSIData(long a_SINumber);
         void LogMsg(QString a_Msg);
@@ -91,6 +93,7 @@ signals:
         bool GetResultInvalid(long a_Index);
         bool ResultExists(long a_Index);
         CCourse* CourseFromName(QString a_Name);
+        long LookupResult(QString a_Name, QString a_Result);
 
     private slots:
         void dnfResult(long a_Index); // DNF someone
@@ -125,6 +128,7 @@ signals:
         void EliminateMispunchSequences(std::map<std::list<long>, int >& a_Sequences);
         int ControlsMissing(const std::list<long>& a_Good, const std::list<long>& a_Candidate);
         void LoadCoursesFromXML(QString a_FileName);
+        bool IsRental(QString a_Name);
 
         bool m_Changed;
         bool m_ShowSplits;
@@ -137,6 +141,7 @@ signals:
         bool m_SavingResults;
         QFile* m_SaveFile;
         int m_GoodThreshold;
+        QString m_RentalNames;
 
         static CEvent* _instance;
         std::vector<CCourse*> m_Courses;
