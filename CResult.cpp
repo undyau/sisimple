@@ -29,7 +29,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 // class constructor
 CResult::CResult(QString& a_RawData) : m_RawData(a_RawData), m_ProcessedResult(false),
     m_Invalid(false), m_Finished(true), m_Pos(0), m_FinishedOverride(false), m_FinishedOverrideSet(false),
-    m_Course(NULL)
+    m_Course(NULL), m_Altered(false)
     {
     QStringList array = m_RawData.split(',');
 
@@ -535,4 +535,22 @@ QString CResult::ClubID()
 void CResult::SetCourse(QString a_Course)
     {
     CEvent::Event()->SetResultCourse(this, a_Course);
+    }
+
+void CResult::SetName(QString a_Name)
+    {
+    if (m_Name != a_Name)
+        {
+        m_Name = a_Name;
+        m_Altered = true;
+        }
+    }
+
+void CResult::SetClub(QString a_Club)
+    {
+    if (m_Club != a_Club)
+        {
+        m_Club = a_Club;
+        m_Altered = true;
+        }
     }

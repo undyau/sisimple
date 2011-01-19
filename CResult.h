@@ -73,11 +73,12 @@ class CResult  : public QObject
         void AddXML(CXmlWriter& a_Writer);
         void SetCourse(CCourse* a_Course) {m_Course = a_Course;}
         QString DebugStr();
+        bool Altered() {return m_Altered;}
 
     public slots:
-        void SetName(QString a_Name) {m_Name = a_Name;}
+        void SetName(QString a_Name);
         void SetCourse(QString a_Course);
-        void SetClub(QString a_Club) {m_Club = a_Club;}
+        void SetClub(QString a_Club);
 
     private:
         void DoTimeSanityCheck();
@@ -94,6 +95,7 @@ class CResult  : public QObject
         long m_Pos;
         bool m_FinishedOverride;
         bool m_FinishedOverrideSet;
+        bool m_Altered;
         CCourse* m_Course;
 
 

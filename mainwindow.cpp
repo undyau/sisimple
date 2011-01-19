@@ -372,11 +372,6 @@ void MainWindow::loadSI()
     dlg.exec();
 }
 
-void MainWindow::manageSI()
-{
-
-}
-
 void MainWindow::rentalStickNames()
 {
      bool ok;
@@ -386,5 +381,10 @@ void MainWindow::rentalStickNames()
                                           names, &ok);
      if (ok && !text.isEmpty())
          CEvent::Event()->SetRentalNames(text);
+}
 
+bool MainWindow::close()
+{
+    if (CEvent::Event()->CanClose())
+        return QWidget::close();
 }

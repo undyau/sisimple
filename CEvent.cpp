@@ -258,11 +258,27 @@ CSiDetails* CEvent::GetSIData(long a_SINumber)
 
 bool CEvent::CanClose()
 {
-QMessageBox msg;
-msg.setText("OK to close current event " + m_Dir + " ?");
-msg.setIcon(QMessageBox::Question);
-msg.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
-return msg.exec() == QMessageBox::Yes;
+    int count(0);
+    for (std::vector<CResult*>::iterator j = m_Results.begin(); j != m_Results.end(); j++)
+        if (j->Altered)
+            ++count;
+
+    if (count > 0)
+        {
+        QString msg = QString(tr("You have altered %1 SI %2 - do you want to save them ?"))
+                    .arg(count).arg(count > 1 ? tr("cards") : tr("card") );
+        if (SIMessageBox(msg, QMessageBox::Question, QMessageBox::Yes|QMessageBox::No) == QMessageBox::Yes)
+            {
+
+            }
+
+        }
+
+    QMessageBox msg;
+    msg.setText("OK to close current event " + m_Dir + " ?");
+    msg.setIcon(QMessageBox::Question);
+    msg.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
+    return msg.exec() == QMessageBox::Yes;
 }
 
 void CEvent::LogMsg(QString a_Msg)
