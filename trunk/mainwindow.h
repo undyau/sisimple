@@ -37,6 +37,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    virtual bool close();
 
 signals:
     void reinstate(long a_Index);
