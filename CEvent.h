@@ -94,6 +94,7 @@ signals:
         bool ResultExists(long a_Index);
         CCourse* CourseFromName(QString a_Name);
         long LookupResult(QString a_Name, QString a_Result);
+        bool CanClose();
 
     private slots:
         void dnfResult(long a_Index); // DNF someone
@@ -105,7 +106,7 @@ signals:
         void newSIData(QString); // new SI data has been loaded
 
     private:
-        bool CanClose();
+
 
         QString FindDataFile(QStringList& a_Candidates, QString a_Dir) const;
         void LoadRawData();
@@ -129,6 +130,7 @@ signals:
         int ControlsMissing(const std::list<long>& a_Good, const std::list<long>& a_Candidate);
         void LoadCoursesFromXML(QString a_FileName);
         bool IsRental(QString a_Name);
+        void SaveChangedSIDetails();
 
         bool m_Changed;
         bool m_ShowSplits;

@@ -94,9 +94,9 @@ class CResult  : public QObject
         bool m_Finished;
         long m_Pos;
         bool m_FinishedOverride;
-        bool m_FinishedOverrideSet;
-        bool m_Altered;
+        bool m_FinishedOverrideSet;        
         CCourse* m_Course;
+        bool m_Altered;
 
 
         long m_SINumber;

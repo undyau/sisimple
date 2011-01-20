@@ -255,13 +255,47 @@ CSiDetails* CEvent::GetSIData(long a_SINumber)
     return i == m_SiDetails.end() ? NULL : i->second;
 }
 
+void CEvent::SaveChangedSIDetails()
+{
+// open file
+    QString filter;
+    filter = "Text files (*.csv)";
+    QString file = QFileDialog::getSaveFileName(NULL, "Save new SI details to", Directory(), filter);
+    if (!file.isEmpty())
+        {
+        QFile tfile(file);
+        if (tfile.exists())
+            {
+            tfile.remove(file);
+            }
+
+        if (!tfile.open(QIODevice::WriteOnly | QIODevice::Text))
+            {
+            SIMessageBox(tr("Unable to open file ") + file + tr(" to save changed SI card details."));
+            return;
+            }
+        QTextStream out(&tfile);
+        for (std::vector<CResult*>::iterator j = m_Results.begin(); j != m_Results.end(); j++)
+            {
+            QString line = QString("%1,\"%2\",\"%3\"")
+                           .arg((*j)->GetSINumber())
+                           .arg((*j)->GetName())
+                           .arg((*j)->GetClub());
+            out << line << endl;
+            }
+
+        tfile.close();
+        }
+}
 
 bool CEvent::CanClose()
 {
     int count(0);
     for (std::vector<CResult*>::iterator j = m_Results.begin(); j != m_Results.end(); j++)
-        if (j->Altered)
+        {
+        if ((*j)->Altered())
             ++count;
+        }
 
     if (count > 0)
         {
@@ -269,9 +303,8 @@ bool CEvent::CanClose()
                     .arg(count).arg(count > 1 ? tr("cards") : tr("card") );
         if (SIMessageBox(msg, QMessageBox::Question, QMessageBox::Yes|QMessageBox::No) == QMessageBox::Yes)
             {
-
+            SaveChangedSIDetails();
             }
-
         }
 
     QMessageBox msg;

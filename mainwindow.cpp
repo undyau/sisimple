@@ -141,7 +141,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionImport, SIGNAL(triggered()), this, SLOT(importCourses()));
     connect(this, SIGNAL(importCourses(QString)), CEvent::Event(), SLOT(importCourses(QString)));
     connect(CEvent::Event(), SIGNAL(coursesGuessed()), this, SLOT(runcoursesdialog()));
-    connect(ui->actionManageSI, SIGNAL(triggered()), this, SLOT(manageSI()));
     connect(ui->actionLoadSI, SIGNAL(triggered()), this, SLOT(loadSI()));
     connect(CEvent::Event(), SIGNAL(resetLog()), ui->textEdit, SLOT(clear()));
     connect(CEvent::Event(), SIGNAL(loadedSIArchive(QString)), ui->statusBar, SLOT(showMessage(QString)));
@@ -387,4 +386,5 @@ bool MainWindow::close()
 {
     if (CEvent::Event()->CanClose())
         return QWidget::close();
+    return false;
 }
