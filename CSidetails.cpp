@@ -48,15 +48,9 @@ QString CSiDetails::ExportText()
     QString result;
     if (!m_Club.isEmpty())
         {
-        result = "%1 %2,%3";
+        result = "%1,\"%2\",\"%3\"";
         result.arg(m_Number).arg(m_Name, m_Club);
         }
-    else
-        {
-        result = "%1 %2";
-        result.arg(m_Number).arg(m_Name);
-        }
-
     return result;
 }
 

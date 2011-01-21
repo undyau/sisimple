@@ -50,24 +50,37 @@ CEvent::CEvent() : m_Changed(false), m_ShowSplits(true), m_SavingResults(false),
     settings.beginGroup("General");
     m_Dir = settings.value("lastDir","").toString();
     m_RentalNames = settings.value("rentalNames","").toString();
+
+    int size = settings.beginReadArray("SiArchive");
+    for (int i = 0; i < size; ++i)
+        {
+        settings.setArrayIndex(i);
+        QString name,club;
+        long number;
+        number = settings.value("number").toLongLong();
+        name = settings.value("name").toString();
+        club = settings.value("club").toString();
+        m_SiDetails[number] = new CSiDetails(number, name, club);
+        }
+    settings.endArray();
     settings.endGroup();
 }
 
 // class destructor
 CEvent::~CEvent()
 {
+    QSettings settings(QSettings::IniFormat,  QSettings::UserScope, "undy","SI Simple");
+    settings.beginGroup("General");
+    settings.setValue("lastDir", m_Dir);
+    settings.setValue("rentalNames", m_RentalNames);
+    settings.endGroup();
+
     for (std::vector<CCourse*>::iterator i = m_Courses.begin(); i != m_Courses.end(); i++)
         delete (*i);
     for (std::vector<CResult*>::iterator j = m_Results.begin(); j != m_Results.end(); j++)
         delete (*j);
     for (std::map<long, CSiDetails*>::iterator k = m_SiDetails.begin(); k != m_SiDetails.end(); k++)
         delete k->second;
-
-    QSettings settings(QSettings::IniFormat,  QSettings::UserScope, "undy","SI Simple");
-    settings.beginGroup("General");
-    settings.setValue("lastDir", m_Dir);
-    settings.setValue("rentalNames", m_RentalNames);
-    settings.endGroup();
 }
 
 CEvent* CEvent::Event()
@@ -277,11 +290,14 @@ void CEvent::SaveChangedSIDetails()
         QTextStream out(&tfile);
         for (std::vector<CResult*>::iterator j = m_Results.begin(); j != m_Results.end(); j++)
             {
-            QString line = QString("%1,\"%2\",\"%3\"")
+            if ((*j)->Altered())
+                {
+                QString line = QString("%1,\"%2\",\"%3\"")
                            .arg((*j)->GetSINumber())
                            .arg((*j)->GetName())
                            .arg((*j)->GetClub());
-            out << line << endl;
+                out << line << endl;
+                }
             }
 
         tfile.close();
@@ -299,19 +315,16 @@ bool CEvent::CanClose()
 
     if (count > 0)
         {
-        QString msg = QString(tr("You have altered %1 SI %2 - do you want to save them ?"))
+        QString msg = QString(tr("You have altered %1 SI %2 - do you want to save the list of cards ?"))
                     .arg(count).arg(count > 1 ? tr("cards") : tr("card") );
-        if (SIMessageBox(msg, QMessageBox::Question, QMessageBox::Yes|QMessageBox::No) == QMessageBox::Yes)
+        int result = SIMessageBox(msg, QMessageBox::Question, QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel);
+        if (result == QMessageBox::Yes)
             {
             SaveChangedSIDetails();
             }
+        return result != QMessageBox::Cancel;
         }
-
-    QMessageBox msg;
-    msg.setText("OK to close current event " + m_Dir + " ?");
-    msg.setIcon(QMessageBox::Question);
-    msg.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
-    return msg.exec() == QMessageBox::Yes;
+    return true;
 }
 
 void CEvent::LogMsg(QString a_Msg)
@@ -1108,6 +1121,21 @@ void CEvent::newSIData(QString input)
         ProcessSISimpleData(records, false);
     else
         SIMessageBox("Unknown data format, no records loaded");
+
+    QSettings settings(QSettings::IniFormat,  QSettings::UserScope, "undy","SI Simple");
+    settings.beginGroup("General");
+    settings.beginWriteArray("SiArchive");
+    int index(0);
+    for (std::map<long, CSiDetails*>::iterator j = m_SiDetails.begin();
+         j != m_SiDetails.end(); ++j)
+        {
+        settings.setArrayIndex(index++);
+        settings.setValue("number", (long long)j->first);
+        settings.setValue("name", (j->second)->GetName());
+        settings.setValue("club", (j->second)->GetClub());
+        }
+    settings.endArray();
+    settings.endGroup();
 
     QString msg = QString(tr("%1 cards in SI archive")).arg(records.count());
     emit(loadedSIArchive(msg));
