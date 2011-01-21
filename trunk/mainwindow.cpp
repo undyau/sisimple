@@ -32,6 +32,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include "importsidialog.h"
 #include <QInputDialog>
 #include <QSettings>
+#include <QCloseEvent>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -120,6 +121,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_UseHtmlCheck->setChecked(showHtml);
     m_ShowSplitsCheck->setChecked(showSplits);
+    CEvent::Event()->SetShowSplits(showSplits);
+    CEvent::Event()->SetShowHTML(showHtml);
 
     connect(m_OpenAct, SIGNAL(triggered()), this, SLOT(open()));
     connect(m_SaveAct, SIGNAL(triggered()), this, SLOT(save()));
@@ -145,6 +148,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(CEvent::Event(), SIGNAL(resetLog()), ui->textEdit, SLOT(clear()));
     connect(CEvent::Event(), SIGNAL(loadedSIArchive(QString)), ui->statusBar, SLOT(showMessage(QString)));
     connect(ui->actionRental_Sticks, SIGNAL(triggered()), this, SLOT(rentalStickNames()));
+    connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
 }
 
 MainWindow::~MainWindow()
@@ -382,9 +386,10 @@ void MainWindow::rentalStickNames()
          CEvent::Event()->SetRentalNames(text);
 }
 
-bool MainWindow::close()
+void MainWindow::closeEvent ( QCloseEvent * event )
 {
-    if (CEvent::Event()->CanClose())
-        return QWidget::close();
-    return false;
+    if (!CEvent::Event()->CanClose())
+       event->ignore();
+    else
+        event->accept();
 }

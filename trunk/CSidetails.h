@@ -38,7 +38,7 @@ class CSiDetails
         QString SetClub(QString a_Club) {return (m_Club = a_Club);};
         bool SetRental(bool a_Rental) {return (m_Rental = a_Rental);};
 
-                QString ExportText();
+        QString ExportText();
 
         // class destructor
         ~CSiDetails();

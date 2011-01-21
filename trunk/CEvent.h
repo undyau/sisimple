@@ -131,6 +131,7 @@ signals:
         void LoadCoursesFromXML(QString a_FileName);
         bool IsRental(QString a_Name);
         void SaveChangedSIDetails();
+        void SICardsAsList(QStringList& a_List);
 
         bool m_Changed;
         bool m_ShowSplits;
