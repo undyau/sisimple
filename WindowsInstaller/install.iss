@@ -7,8 +7,8 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{E60CAA80-80BE-4FE4-BA63-F5321FF6A18C}
 AppName=SI Simple
-AppVersion=0.5
-;AppVerName=SI Simple 0.5
+AppVersion=0.6
+;AppVerName=SI Simple 0.6
 AppPublisher=undy
 AppPublisherURL=http://sisimple.sourceforge.net
 AppSupportURL=http://sisimple.sourceforge.net
@@ -29,14 +29,15 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
+; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: sisimple.exe; DestDir: {app}; Flags: ignoreversion; 
 Source: libgcc_s_dw2-1.dll; DestDir: {app}; Flags: ignoreversion; 
 Source: mingwm10.dll; DestDir: {app}; Flags: ignoreversion; 
 Source: QtCore4.dll; DestDir: {app}; Flags: ignoreversion; 
 Source: QtGui4.dll; DestDir: {app}; Flags: ignoreversion; 
 Source: QtXml4.dll; DestDir: {app}; Flags: ignoreversion; 
-; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: QtSvg4.dll; DestDir: {app}; Flags: ignoreversion; 
+Source: QtNetwork4.dll; DestDir: {app}; Flags: ignoreversion; 
 
 [Icons]
 Name: "{group}\SI Simple"; Filename: "{app}\sisimple.exe"

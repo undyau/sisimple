@@ -1214,7 +1214,8 @@ long CEvent::LookupResult(QString a_Name, QString a_Result)
         {
         if( m_Results[i]->GetName() == a_Name || a_Name.isEmpty())
             {
-            if (a_Result == FormatTimeTaken(m_Results[i]->TimeTaken()))
+            if (a_Result == FormatTimeTaken(m_Results[i]->TimeTaken()) ||
+                (a_Result == "DNF" && !m_Results[i]->GetFinished()))
                 {
                 index = m_Results[i]->GetRawIndex();
                 ++count;
