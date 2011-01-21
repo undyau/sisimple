@@ -38,6 +38,8 @@ Source: QtGui4.dll; DestDir: {app}; Flags: ignoreversion;
 Source: QtXml4.dll; DestDir: {app}; Flags: ignoreversion; 
 Source: QtSvg4.dll; DestDir: {app}; Flags: ignoreversion; 
 Source: QtNetwork4.dll; DestDir: {app}; Flags: ignoreversion; 
+Source: qsvgicon4.dll; DestDir: {app}\iconengines; Flags: ignoreversion; 
+
 
 [Icons]
 Name: "{group}\SI Simple"; Filename: "{app}\sisimple.exe"
