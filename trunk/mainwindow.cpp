@@ -220,8 +220,8 @@ void MainWindow::setShowSplits(int a_Value)
 void MainWindow::about()
 {
 QMessageBox::about(this, tr("About SI Simple"),
-    tr("<h2>SI Simple 0.5</h2>"
-       "<p>&copy; 2010 Andy Simpson</p>"
+    tr("<h2>SI Simple 0.6</h2>"
+       "<p>&copy; 2010-2011 Andy Simpson</p>"
        "<p>This is an Open Source project hosted at "
        "http://sisimple.sourceforge.net, licensed under the GPL</p>"
        "<p>Acknowledgement and thanks to Ken Hanson and his amazing TCL program SIDResults</p>"
@@ -300,22 +300,20 @@ void MainWindow::showResultContextMenu(const QPoint& a_Pos)
 
     QString line = cursor.selectedText();
     QRegExp resultRE("^[ ]*[0-9]{1,4} ([^:]{10,26}) [^:]*([^ ]*:[0-9][0-9])$");
-    QRegExp dnfRE("^ ([^:]*) ({DNF|DSQ})$");
+    QRegExp dnfRE("^([^:]*).{3,3}\\s(DSQ|DNF)$");
     if (!resultRE.exactMatch(line) && !dnfRE.exactMatch(line))
         return;
 
     long index(0);
     if (resultRE.exactMatch(line))
         {
-        QString name, time;
         index = CEvent::Event()->LookupResult(resultRE.capturedTexts().at(1).trimmed(),resultRE.capturedTexts().at(2));
         if (index <0)
             return;
         }
     else
         {
-        QString name, time;
-        index = CEvent::Event()->LookupResult(dnfRE.capturedTexts().at(1),resultRE.capturedTexts().at(2));
+        index = CEvent::Event()->LookupResult(dnfRE.capturedTexts().at(1).trimmed(),dnfRE.capturedTexts().at(2));
         if (index <0)
             return;
         }
