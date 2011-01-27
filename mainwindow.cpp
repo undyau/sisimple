@@ -224,7 +224,8 @@ QMessageBox::about(this, tr("About SI Simple"),
        "<p>&copy; 2010-2011 Andy Simpson</p>"
        "<p>This is an Open Source project hosted at "
        "http://sisimple.sourceforge.net, licensed under the GPL</p>"
-       "<p>Acknowledgement and thanks to Ken Hanson and his amazing TCL program SIDResults</p>"
+       "<p>Acknowledgement and thanks to Ken Hanson and his amazing TCL program SIDResults"
+       "and Terry Bluett for testing the program at numerous events.</p>"
        ));
 }
 
