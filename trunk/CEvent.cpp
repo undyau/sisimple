@@ -1013,7 +1013,7 @@ int CEvent::ControlsMissing(const std::list<long>& a_Good, const std::list<long>
     return missing;
     }
 
-void CEvent::EliminateMispunchSequences(std::map<std::list<long>, int> &a_Sequences)
+void CEvent::EliminateMispunchSequences(std::map<std::list<long>, int>& a_Sequences)
 {
     std::set<std::list<long> > eliminate;
     for (std::map<std::list<long>,int >::iterator x = a_Sequences.begin(); x != a_Sequences.end(); x++)
@@ -1024,14 +1024,16 @@ void CEvent::EliminateMispunchSequences(std::map<std::list<long>, int> &a_Sequen
                 {
                 // Eliminate courses which are only 1 punch out from being a "good" course (ignoring order)
                 int missing, extra;
-                if ((missing = ControlsMissing(y->first, x->first)) < 2 && missing > 0)
+                if ((missing = ControlsMissing(y->first, x->first)) < 3 && missing > 0)
                     {
+                    qDebug() << "Eliminating a course (1)";
                     eliminate.insert(x->first);
                     break;
                     }
                 // find extra controls
-                if ((extra = ControlsMissing(x->first, y->first)) < 2 && extra > 0)
+                if ((extra = ControlsMissing(x->first, y->first)) < 3 && extra > 0)
                     {
+                    qDebug() << "Eliminating a course (2)";
                     eliminate.insert(x->first);
                     break;
                     }
