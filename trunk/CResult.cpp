@@ -494,22 +494,22 @@ void CResult::AddXML(CXmlWriter& a_Writer)
 
     for (int i = 0; i < m_Course->GetLegCount() -1; i++)
         {
+        QString temp = QString("sequence=\"%1\"").arg(i+1);
+        a_Writer.StartElement("SplitTime", temp);
+
+        a_Writer.StartElement("ControlCode");
+        temp = QString("%1").arg(m_Course->GetLeg(i).GetEndCN());
+        a_Writer.AddValue(temp);
+        a_Writer.EndElement();
+
+        a_Writer.StartElement("Time");
         if (GetLegStat(i) && GetLegStat(i)->m_LegTime != 0)
-            {
-            QString temp = QString("sequence=\"%1\"").arg(i+1);
-            a_Writer.StartElement("SplitTime", temp);
-
-            a_Writer.StartElement("ControlCode");
-            temp = QString("%1").arg(m_Course->GetLeg(i).GetEndCN());
-            a_Writer.AddValue(temp);
-            a_Writer.EndElement();
-
-            a_Writer.StartElement("Time");
             a_Writer.AddValue(FormatTimeTaken(GetLegStat(i)->m_ElapsedTime));
-            a_Writer.EndElement();
+        else
+            a_Writer.AddValue("-----");
+        a_Writer.EndElement();
 
-            a_Writer.EndElement(); //SplitTime
-            }
+        a_Writer.EndElement(); //SplitTime
         }
 
     a_Writer.EndElement(); // Result
