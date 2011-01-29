@@ -248,7 +248,7 @@ QString CResult::TextElapsedStr()
     for (int i = 0; i < m_Course->GetLegCount(); i++)
         {
         if (!GetLegStat(i))
-            s.fill(' ',10);
+            s = "  --:--   ";
         else
             {
             /*           if (CEvent::Event()->GetShowHTML() &&
@@ -292,7 +292,10 @@ QString CResult::TextLegStr()
         {
 
         if (!GetLegStat(i) || GetLegStat(i)->m_LegTime <= 0)
+            {
             s.fill(' ',10);
+           // s = "  --:--   ";
+            }
         else
             {
             /*          if (CEvent::Event()->GetShowHTML() &&
