@@ -965,7 +965,7 @@ void CEvent::AddGuessedCourses(std::map<std::list<long>, int >& a_Sequences)
             QString name;
             do
                 name = QString(tr("Course_%1 (%3 people, %2 ctls, first CN: %4)")).arg(i++)
-                       .arg(sl.size()).arg(x->second).arg(sl.first());
+                       .arg(sl.size()).arg(x->second).arg(sl.size() > 0 ? sl.first() : "n.a.");
             while (std::find(existingNames.begin(), existingNames.end(), name) != existingNames.end());
 
             QString len = tr("not set");
