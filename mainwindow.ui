@@ -91,6 +91,8 @@
     <addaction name="actionManage"/>
     <addaction name="actionImport"/>
     <addaction name="actionGuess"/>
+    <addaction name="separator"/>
+    <addaction name="actionFix_Clock_Errors"/>
    </widget>
    <widget class="QMenu" name="menu_SI_Numbers">
     <property name="title">
@@ -181,6 +183,11 @@
   <action name="actionRental_Sticks">
    <property name="text">
     <string>Rental Sticks...</string>
+   </property>
+  </action>
+  <action name="actionFix_Clock_Errors">
+   <property name="text">
+    <string>Fix Clock Errors...</string>
    </property>
   </action>
  </widget>

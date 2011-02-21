@@ -191,7 +191,7 @@ QString CCourse::TextDescStr()
         }
     else
         {
-        s = "%s Course: %s km";
+        s = "%1 Course: %2 km";
         s = s.arg(m_Name).arg(m_Length);
         }
     return s;

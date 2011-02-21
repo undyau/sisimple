@@ -24,7 +24,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include "CCourse.h"
 #include "CLegstat.h"
 #include <QStringList>
-//#include <QDebug>
+#include <QDebug>
 
 // class constructor
 CResult::CResult(QString& a_RawData) : m_RawData(a_RawData), m_ProcessedResult(false),
@@ -51,8 +51,8 @@ CResult::CResult(QString& a_RawData) : m_RawData(a_RawData), m_ProcessedResult(f
 
     m_Clear.SetData(ToLong(array[16]), array[17], ToDateTime(array[18]));
     m_Check.SetData(ToLong(array[19]), array[20], ToDateTime(array[21]));
-    m_Start.SetData(ToLong(array[22]), array[23], ToDateTime(array[24]));
-    m_Finish.SetData(ToLong(array[25]), array[26], ToDateTime(array[27]));
+    m_Start.SetData(-1, array[23], ToDateTime(array[24]));
+    m_Finish.SetData(-2, array[26], ToDateTime(array[27]));
 
     // Now try to find all the punch data
     unsigned long punches = ToLong(array[28]);
@@ -265,7 +265,6 @@ QString CResult::TextElapsedStr()
             s = QString("%1%2").arg(FormatTimeTaken(GetLegStat(i)->m_ElapsedTime),7)
                 .arg(GetLegStat(i)->m_ElapsedPos,3);
             }
-            //s.Printf("%7s%3s", FormatTimeTaken(GetLegStat(i)->m_ElapsedTime).c_str(), QString::Format(QT("%ld"),GetLegStat(i)->m_ElapsedPos).c_str());
         result += s;
         }
     if (m_Finished)
@@ -274,7 +273,6 @@ QString CResult::TextElapsedStr()
         len = m_Course->GetLength().toDouble();
         speed = (double (TimeTaken()))/ (len * 60);
         s = QString("   %1   %2").arg(FormatTimeTaken(TimeTaken())).arg(speed, 6, 'f', 2);
-        //s.Printf("   %s   %6.2f",FormatTimeTaken(TimeTaken()).c_str(),speed);
         result += s;
         }
     return result;

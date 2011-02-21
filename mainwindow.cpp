@@ -30,6 +30,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include "alterdialog.h"
 #include "coursesdialog.h"
 #include "importsidialog.h"
+#include "clockerrorsdialog.h"
 #include <QInputDialog>
 #include <QSettings>
 #include <QCloseEvent>
@@ -141,6 +142,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, SIGNAL(reinstate(long)), CEvent::Event(), SLOT(reinstateResult(long)));
     connect(ui->actionManage, SIGNAL(triggered()), this, SLOT(runcoursesdialog()));
     connect(ui->actionGuess, SIGNAL(triggered()), CEvent::Event(), SLOT(guessCourses()));
+    connect(ui->actionFix_Clock_Errors, SIGNAL(triggered()), this, SLOT(runclockerrorsdialog()));
     connect(ui->actionImport, SIGNAL(triggered()), this, SLOT(importCourses()));
     connect(this, SIGNAL(importCourses(QString)), CEvent::Event(), SLOT(importCourses(QString)));
     connect(CEvent::Event(), SIGNAL(coursesGuessed()), this, SLOT(runcoursesdialog()));
@@ -220,7 +222,7 @@ void MainWindow::setShowSplits(int a_Value)
 void MainWindow::about()
 {
 QMessageBox::about(this, tr("About SI Simple"),
-    tr("<h2>SI Simple 0.6.1</h2>"
+    tr("<h2>SI Simple 0.7.0</h2>"
        "<p>&copy; 2010-2011 Andy Simpson</p>"
        "<p>This is an Open Source project hosted at "
        "http://sisimple.sourceforge.net, licensed under the GPL</p>"
@@ -354,6 +356,12 @@ void MainWindow::runAlterDialog(long a_Index)
 void MainWindow::runcoursesdialog()
 {
     coursesdialog dlg(this);
+    dlg.exec();
+}
+
+void MainWindow::runclockerrorsdialog()
+{
+    clockerrorsdialog dlg(this);
     dlg.exec();
 }
 
