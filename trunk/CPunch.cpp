@@ -19,11 +19,14 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CPunch.h" // class's header file
 #include "Utils.h"
+#include "CControlAdjustments.h"
+#include <QDebug>
+
 
 // class constructor
 CPunch::CPunch(int a_CN, QString a_DOW, QDateTime a_When) : m_CN(a_CN), m_DOW(a_DOW), m_When(a_When),m_Ignore(false)
 {
-    // insert your code here
+    m_When = m_When.addSecs(CControlAdjustments::ControlAdjustments()->GetAdjustment(a_CN));
 }
 
 CPunch::CPunch(const CPunch& a_Copy) : m_CN(a_Copy.m_CN), m_DOW(a_Copy.m_DOW), m_When(a_Copy.m_When),m_Ignore(false)
@@ -62,6 +65,7 @@ void CPunch::SetData(long a_CN, QString a_DOW, QDateTime a_When)
     m_CN = a_CN;
     m_DOW = a_DOW;
     m_When = a_When;
+    m_When = m_When.addSecs(CControlAdjustments::ControlAdjustments()->GetAdjustment(a_CN));
 }
 
 // class destructor

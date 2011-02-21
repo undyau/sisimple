@@ -58,6 +58,7 @@ private slots:
     void showDownloadContextMenu(const QPoint& a_Pos); // Show the context menu for the download pane
     void showResultContextMenu(const QPoint& a_Pos); // Show the context menu for the download pane
     void runcoursesdialog(); // Show the course management dialog
+    void runclockerrorsdialog(); // Show the clock errors dilog
     void importCourses(); // Identify a course file for loading
     void loadSI(); // download an SI database
     void rentalStickNames(); // obtain the names present on rental sticks

@@ -74,6 +74,8 @@ class CResult  : public QObject
         void SetCourse(CCourse* a_Course) {m_Course = a_Course;}
         QString DebugStr();
         bool Altered() {return m_Altered;}
+        int GetStartCN() {return m_Start.GetCN();}
+        int GetFinishCN() {return m_Finish.GetCN();}
 
     public slots:
         void SetName(QString a_Name);
@@ -94,7 +96,7 @@ class CResult  : public QObject
         bool m_Finished;
         long m_Pos;
         bool m_FinishedOverride;
-        bool m_FinishedOverrideSet;        
+        bool m_FinishedOverrideSet;
         CCourse* m_Course;
         bool m_Altered;
 
