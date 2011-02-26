@@ -499,7 +499,10 @@ void CEvent::SetCourseLegStats(CCourse* a_Course, std::vector<CResult*>::iterato
                     stat->m_LegBehind = stat->m_LegTime - legTimes[0];
                     for (int k = 0; k < (int)legTimes.size(); k++)
                         if (stat->m_LegTime == legTimes[k])
+                            {
                             stat->m_LegPos = k + 1;
+                            break;
+                            }
                     }
             }
         legTimes.clear();
@@ -522,7 +525,10 @@ void CEvent::SetCourseLegStats(CCourse* a_Course, std::vector<CResult*>::iterato
                     stat->m_ElapsedBehind = stat->m_ElapsedTime - legTimes[0];
                     for (int k = 0; k < (int)legTimes.size(); k++)
                         if (stat->m_ElapsedTime == legTimes[k])
+                            {
                             stat->m_ElapsedPos = k + 1;
+                            break;
+                            }
                     }
             }
         legTimes.clear();
