@@ -62,6 +62,7 @@ private slots:
     void importCourses(); // Identify a course file for loading
     void loadSI(); // download an SI database
     void rentalStickNames(); // obtain the names present on rental sticks
+    void rundownloaddialog(); // download data from an SI unit
 
 private:
     Ui::MainWindow *ui;

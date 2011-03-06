@@ -34,6 +34,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include <QInputDialog>
 #include <QSettings>
 #include <QCloseEvent>
+#include "downloaddialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -159,6 +160,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(CEvent::Event(), SIGNAL(loadedSIArchive(QString)), ui->statusBar, SLOT(showMessage(QString)));
     connect(ui->actionRental_Sticks, SIGNAL(triggered()), this, SLOT(rentalStickNames()));
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
+    connect(m_DownloadAct, SIGNAL(triggered()), this,SLOT(rundownloaddialog()));
 }
 
 MainWindow::~MainWindow()
@@ -407,4 +409,10 @@ void MainWindow::closeEvent ( QCloseEvent * event )
        event->ignore();
     else
         event->accept();
+}
+
+void MainWindow::rundownloaddialog()
+{
+    DownloadDialog dlg(this);
+    dlg.exec();
 }

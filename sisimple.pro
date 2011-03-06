@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     clockerrorsdialog.cpp \
     sidumprecord.cpp \
     csidumper.cpp \
-    qextserial\qextserialport.cpp
+    qextserial\qextserialport.cpp \
+    downloaddialog.cpp
 
 HEADERS  += mainwindow.h \
     Utils.h \
@@ -54,7 +55,8 @@ HEADERS  += mainwindow.h \
     qextserial\qextserialport_global.h \
     qextserial\qextserialport.h \
     qextserial\qextserialenumerator.h \
-    csidumper.h
+    csidumper.h \
+    downloaddialog.h
 
 INCLUDEPATH += qextserial
 
@@ -77,7 +79,8 @@ FORMS    += mainwindow.ui \
     coursesdialog.ui \
     coursedialog.ui \
     importsidialog.ui \
-    clockerrorsdialog.ui
+    clockerrorsdialog.ui \
+    downloaddialog.ui
 
 RESOURCES += \
     sisimple.qrc
