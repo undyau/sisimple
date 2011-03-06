@@ -38,4 +38,6 @@ QDateTime ToDateTime(const QString& a_Value);
 int DOWToInt(const QString& a_DOW);
 //QString FormatTimeTaken(long a_Secs, bool a_NullOK = false);
 QString FormatTimeTaken(long a_Secs);
+
+unsigned int crc(unsigned int uiCount,unsigned char *pucDat);    // Supplied by SI
 #endif
