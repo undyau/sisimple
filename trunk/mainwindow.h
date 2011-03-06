@@ -68,6 +68,7 @@ private:
     QAction* m_OpenAct;
     QAction* m_SaveAct;
     QAction* m_ExportAct;
+    QAction* m_DownloadAct;
     QAction* m_QuitAct;
     QAction* m_RefreshAct;
     QAction* m_AboutAct;
