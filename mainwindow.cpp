@@ -64,6 +64,8 @@ MainWindow::MainWindow(QWidget *parent) :
     viewPort = ui->textEdit_2->viewport();
     viewPort->setCursor(Qt::ArrowCursor);
     ui->textEdit_2->setViewport(viewPort);
+    ui->textEdit->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui->textEdit_2->setContextMenuPolicy(Qt::CustomContextMenu);
 
     m_OpenAct = new QAction(QIcon::fromTheme("document-open", QIcon(":icons/icons/document-open.svg")), tr("&Open..."), this);
     m_OpenAct->setShortcuts(QKeySequence::Open);
@@ -72,13 +74,19 @@ MainWindow::MainWindow(QWidget *parent) :
     m_OpenAct->setIconVisibleInMenu(true);
     ui->menu_File->addAction(m_OpenAct);
     ui->mainToolBar->addAction(m_OpenAct);
-    ui->textEdit->setContextMenuPolicy(Qt::CustomContextMenu);
-    ui->textEdit_2->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    m_DownloadAct = new QAction( QIcon(":icons/icons/device-siunit.svg"), tr("&Download..."), this);
+    //m_DownloadAct->setShortcuts(QKeySequence::Download);
+    m_DownloadAct->setStatusTip(tr("Download from SI unit"));
+    m_DownloadAct->setToolTip(tr("Download SI unit"));
+    m_DownloadAct->setIconVisibleInMenu(true);
+    ui->menu_File->addAction(m_DownloadAct);
+    ui->mainToolBar->addAction(m_DownloadAct);
 
     m_SaveAct = new QAction(QIcon::fromTheme("document-save", QIcon(":icons/icons/document-save.svg")), tr("&Save..."), this);
     m_SaveAct->setShortcuts(QKeySequence::Save);
     m_SaveAct->setStatusTip(tr("Save Results"));
-    m_SaveAct->setToolTip(tr("SaveResults"));
+    m_SaveAct->setToolTip(tr("Save Results"));
     m_SaveAct->setIconVisibleInMenu(true);
     ui->menu_File->addAction(m_SaveAct);
     ui->mainToolBar->addAction(m_SaveAct);

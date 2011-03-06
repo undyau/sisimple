@@ -3,5 +3,6 @@
         <file>icons/document-open.svg</file>
         <file>icons/document-save.svg</file>
         <file>icons/view-refresh.svg</file>
+		<file>icons/device-siunit.svg</file>
     </qresource>
 </RCC>
