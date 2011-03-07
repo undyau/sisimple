@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "sidumprecord.h"
+#include "QStringList"
 class QextSerialPort;
 
 enum StateType
@@ -29,7 +30,7 @@ public:
     explicit CSIDumper(QObject *parent = 0);
     ~CSIDumper();
     void SetSerialPort(QString a_SerialPort);
-    std::vector<SIDumpRecord> AllCards() {return m_AllCards;}
+    QStringList GetAllDataCsv();
     void Clear() {m_AllCards.clear();}
 
 signals:

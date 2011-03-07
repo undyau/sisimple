@@ -26,6 +26,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include <QObject>
 #include <vector>
 #include <map>
+#include <QStringList>
 class CSiDetails;
 class CResult;
 class CCourse;
@@ -104,10 +105,9 @@ signals:
         void guessCourses();  // Guess what courses exist from punching records
         void importCourses(QString a_FileName); // import courses in IOF XML format
         void newSIData(QString); // new SI data has been loaded
+        void NewDownloadData(QStringList a_NewData); // new download data has been read
 
     private:
-
-
         QString FindDataFile(QStringList& a_Candidates, QString a_Dir) const;
         void LoadRawData();
         void LoadCourseData(bool& a_Guess);
@@ -132,6 +132,7 @@ signals:
         bool IsRental(QString a_Name);
         void SaveChangedSIDetails();
         void SICardsAsList(QStringList& a_List);
+        void ProcessRawData();
 
         bool m_Changed;
         bool m_ShowSplits;
@@ -145,6 +146,7 @@ signals:
         QFile* m_SaveFile;
         int m_GoodThreshold;
         QString m_RentalNames;
+        QStringList m_RawData;
 
         static CEvent* _instance;
         std::vector<CCourse*> m_Courses;

@@ -744,3 +744,11 @@ QString CSIDumper::LookupDay(int a_Day)
     default: return "";
     }
 }
+
+QStringList CSIDumper::GetAllDataCsv()
+{
+    QStringList result;
+    for (unsigned int i = 0; i < m_AllCards.size(); i++)
+        result += m_AllCards.at(i).getAsCsv();
+    return result;
+}

@@ -105,6 +105,17 @@ void CEvent::SetRentalNames(QString& a_Names)
     m_RentalNames = a_Names.trimmed();
 }
 
+void CEvent::NewDownloadData(QStringList a_NewData)
+{
+    if (m_Changed && !CanClose())
+        return;
+
+    m_RawData.empty();
+    m_RawData.append(a_NewData);
+
+    ProcessRawData();
+}
+
 bool CEvent::SetRawDataFile(QString a_File)
 {
     if (m_RawDataFile != m_RawDataFile && m_Changed)
@@ -115,7 +126,29 @@ bool CEvent::SetRawDataFile(QString a_File)
     QFileInfo fileInfo(a_File);
     m_Dir = fileInfo.dir().canonicalPath ();
     m_Changed = false;
+    m_RawData.empty();
 
+    QFile tfile(m_RawDataFile);
+    if (!tfile.open(QIODevice::ReadOnly))
+        {
+        QMessageBox msg;
+        msg.setText("Unable to open raw data file " + m_RawDataFile);
+        msg.exec();
+        return false;
+        }
+
+    QTextStream stream( &tfile );
+    while ( !stream.atEnd() )
+        m_RawData += stream.readLine();
+    tfile.close();
+
+    ProcessRawData();
+
+    return true;
+}
+
+void CEvent::ProcessRawData()
+{
     bool guess(false);
     LoadCourseData(guess);
     LoadRawData();
@@ -127,8 +160,6 @@ bool CEvent::SetRawDataFile(QString a_File)
     DisplayRawData();
 
     RecalcResults();
-
-    return true;
 }
 
 void CEvent::RecalcResults()
@@ -200,23 +231,14 @@ void CEvent::LoadRawData()
     m_Results.clear();
     emit(resetLog());
 
-    // Load new file, marking duplicates
-    QFile tfile(m_RawDataFile);
-    if (!tfile.open(QIODevice::ReadOnly))
-        {
-        QMessageBox msg;
-        msg.setText("Unable to open raw data file " + m_RawDataFile);
-        msg.exec();
-        return;
-        }
+    // Load new data, marking duplicates
 
     QString str;
-    QTextStream input(&tfile);
     std::map<CUniquePunch, CResult*>uniqueList;
     std::map<long, int> usedSIs;
-    while (!input.atEnd())
+    for (int i = 0; i < m_RawData.size(); i++)
         {
-        str = input.readLine();
+        str = m_RawData.at(i);
 
         if (CResult::ValidData(str))
             {
