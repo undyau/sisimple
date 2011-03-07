@@ -3,6 +3,7 @@
 #include "qextserialenumerator.h"
 #include "qextserialport.h"
 #include <QColorGroup>
+#include "CEvent.h"
 
 DownloadDialog::DownloadDialog(QWidget *parent) :
     QDialog(parent),
@@ -26,6 +27,8 @@ DownloadDialog::DownloadDialog(QWidget *parent) :
     connect(m_Sdw, SIGNAL(deviceDiscovered(QextPortInfo)), this, SLOT(addDevice(QextPortInfo)));
     connect(m_Sdw, SIGNAL(deviceRemoved(QextPortInfo)), this, SLOT(removeDevice(QextPortInfo)));
     m_Sdw->setUpNotifications( );
+
+    connect (this, SIGNAL(DownloadDataRead(QStringList)), CEvent::Event(), SLOT(NewDownloadData(QStringList)));
 }
 
 DownloadDialog::~DownloadDialog()
@@ -78,6 +81,12 @@ void DownloadDialog::tryDownload()
 void DownloadDialog::dumperFinished(int a_Count, QString a_Summary)
 {
     // send out the data and close the dialog
+    ui->labelStatus->setText(a_Summary);
+    if (a_Count > 0)
+        {
+        QStringList rawdata = m_Dumper->GetAllDataCsv();
+        emit DownloadDataRead(rawdata);
+        }
     delete m_Dumper;
     m_Dumper = NULL;
 }
