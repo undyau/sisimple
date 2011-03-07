@@ -56,7 +56,8 @@ HEADERS  += mainwindow.h \
     qextserial\qextserialport.h \
     qextserial\qextserialenumerator.h \
     csidumper.h \
-    downloaddialog.h
+    downloaddialog.h \
+    sidumprecord.h
 
 INCLUDEPATH += qextserial
 

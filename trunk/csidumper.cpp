@@ -64,7 +64,8 @@ bool CSIDumper::OpenPort()
         return true;
     }
     else {
-        qDebug() << "device failed to open:" << m_Port->errorString();
+        QString msg = QString(tr("Device failed to open: %1")).arg(m_Port->errorString());
+        emit StatusUpdate(msg);
         return false;
     }
 }
@@ -170,7 +171,7 @@ void CSIDumper::onDsrChanged(bool status)
 {
     if (!status)
         {
-        qDebug() << "device was turned off";
+        emit StatusUpdate(tr("Device was turned off"));
         ClosePort();
         }
 }
@@ -213,7 +214,7 @@ void CSIDumper::DumpMessage(QString a_Prefix, QByteArray& a_Data)
 
 bool CSIDumper::SetMSMode()
 {
-    qDebug() << "Sending SICmdSetMSMode";
+    emit StatusUpdate(tr("Sending SICmdSetMSMode"));
     m_State = STATE_SETMSMODE;
     if (!SendSmallCmd(SICmdSetMSMode, SIParamDirectComm))
         {
@@ -243,7 +244,7 @@ void CSIDumper::HandleSetMSModeResponse(QByteArray& a_Data)
 
 bool CSIDumper::GetEndMemoryAddr()
 {
-    qDebug() << "Sending SICmdGetSystemValue to get mem pointer";
+    emit StatusUpdate(tr("Sending SICmdGetSystemValue to get mem pointer"));
     m_State = STATE_GETBUFPTR;
     QByteArray params;
     params.append((char)0x1C);  // from SI manual
@@ -331,6 +332,7 @@ void CSIDumper::GetNextBlock()
         ClosePort();
         QString summary = QString(tr("%1 SI 5 cards, %2 SI 6 cards, %3 SI 8/9 cards"))
         .arg(m_SI5).arg(m_SI6).arg(m_SI89);
+        emit StatusUpdate(summary);
         emit Finished(m_AllCards.size(), summary);
         qDebug() << "Read" << m_AllCards.size() << summary;
         return;
@@ -368,6 +370,7 @@ CardType CSIDumper::GuessCardType(QByteArray& a_Rec)
     bool isSI89(true), isSI6(true);
     for (int i = 4; i <= 7; i++)
         {
+        //DumpMessage("Suspect SI card", a_Rec);
         if ((unsigned char)a_Rec[i] != 0xEA)
             isSI89 = false;
         if ((unsigned char)a_Rec[i] != 0xED)
@@ -459,6 +462,7 @@ void CSIDumper::HandleReadingCard89(QByteArray& a_Rec)
     rec.setStart(cn, dow, when);
 
     qDebug() << "SI 89 card from" << m_CardData.size() << "bytes";
+    emit StatusUpdate("SI 8 or 9 card found in documented format - freaky");
     AddNewCard(rec);
     m_SI89++;
 
@@ -727,7 +731,8 @@ void CSIDumper::AddNewCard(SIDumpRecord& a_Card)
     a_Card.setNo(m_AllCards.size() + 1);
     m_AllCards.push_back(a_Card);
     emit CardCsv(a_Card.getAsCsv());
-    qDebug() << a_Card.getAsCsv();
+    QString msg = QString("Reading card %1").arg(a_Card.getSICard());
+    emit StatusUpdate(msg);
 }
 
 QString CSIDumper::LookupDay(int a_Day)

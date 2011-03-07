@@ -36,6 +36,7 @@ public:
 signals:
     void Finished(int a_Count, QString a_Summary);
     void CardCsv(QString a_CardCsv);
+    void StatusUpdate(QString a_Msg);
 
 public slots:
     void tryDownload();

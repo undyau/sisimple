@@ -7,7 +7,7 @@
 
 DownloadDialog::DownloadDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::DownloadDialog),m_CardCount(0)
+    ui(new Ui::DownloadDialog),m_CardCount(0),m_Dumper(NULL)
 {
     ui->setupUi(this);
     ui->lcdNumber->setSegmentStyle( QLCDNumber::Filled );
@@ -20,7 +20,7 @@ DownloadDialog::DownloadDialog(QWidget *parent) :
 
     ui->comboBox->setModel(&m_SerialPorts);
     connect(ui->downloadButton, SIGNAL(clicked()), this, SLOT(tryDownload()));
-    connect(ui->closeButton, SIGNAL(clicked()), this, SLOT(close()));
+    connect(ui->closeButton, SIGNAL(clicked()), this, SLOT(closeDialog()));
     connect(ui->comboBox, SIGNAL(activated(QString)), this, SLOT(setSerialPort(QString)));
 
     m_Sdw = new QextSerialEnumerator();
@@ -69,10 +69,14 @@ void DownloadDialog::tryDownload()
         {
         if (m_Dumper == NULL)
             {
+            m_DownloadOK = false;
+            ui->closeButton->setEnabled(false);
+            ui->downloadButton->setEnabled(false);
             m_Dumper = new CSIDumper();
             m_Dumper->SetSerialPort(m_SerialPort);
             connect(m_Dumper, SIGNAL(CardCsv(QString)), this, SLOT(processCardCsv(QString)));
-            connect(m_Dumper, SIGNAL(Finished(QString)), this, SLOT(dumperFinished(QString)));
+            connect(m_Dumper, SIGNAL(Finished(int, QString)), this, SLOT(dumperFinished(int, QString)));
+            connect(m_Dumper, SIGNAL(StatusUpdate(QString)), ui->labelStatus, SLOT(setText(QString)));
             m_Dumper->tryDownload();
             }
         }
@@ -82,17 +86,27 @@ void DownloadDialog::dumperFinished(int a_Count, QString a_Summary)
 {
     // send out the data and close the dialog
     ui->labelStatus->setText(a_Summary);
-    if (a_Count > 0)
-        {
-        QStringList rawdata = m_Dumper->GetAllDataCsv();
-        emit DownloadDataRead(rawdata);
-        }
-    delete m_Dumper;
-    m_Dumper = NULL;
+    ui->closeButton->setEnabled(true);
+    ui->downloadButton->setEnabled(true);
+    m_DownloadOK = a_Count > 0;
+
 }
 
 void DownloadDialog::processCardCsv(QString a_CardData)
 {
     m_CardCount++;
     ui->lcdNumber->display(m_CardCount);
+}
+
+void DownloadDialog::closeDialog()
+{
+    if (m_DownloadOK && m_Dumper)
+        {
+        hide();
+        QStringList rawdata = m_Dumper->GetAllDataCsv();
+        emit DownloadDataRead(rawdata);
+        }
+    delete m_Dumper;
+    m_Dumper = NULL;
+    done(1);
 }

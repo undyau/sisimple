@@ -25,6 +25,7 @@ public slots:
  void dumperFinished(int, QString);
  void tryDownload();
  void setSerialPort(const QString& a_SerialPort);
+ void closeDialog();
 
 signals:
     void DownloadDataRead(QStringList);
@@ -36,6 +37,7 @@ private:
     CSIDumper* m_Dumper;
     QString m_SerialPort;
     int m_CardCount;
+    bool m_DownloadOK;
 };
 
 #endif // DOWNLOADDIALOG_H
