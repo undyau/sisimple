@@ -28,6 +28,7 @@ public:
 
     bool getBadRead() {return m_BadRead;}
     QString getAsCsv();
+    QString getSICard() {return m_SICard;}
 
 signals:
 
