@@ -133,7 +133,8 @@ if ((unsigned char)a_Msg[1] >= 0x80)    // new command
             }
         return false;
         }
-
+    else if (a_Msg.length() < len + 6)
+        a_Error = false;  // not enough data yet
     return false;
     }
 else
@@ -319,6 +320,7 @@ bool CSIDumper::GetBackupData()
 
 bool CSIDumper::DumpData()
 {
+    emit StatusUpdate(tr("Starting dump of backup memory"));
     m_State = STATE_DUMPING;
     return GetBackupData();
 }
@@ -391,6 +393,7 @@ Processing card data - return true if response forms a complete card download, o
 */
 bool CSIDumper::ProcessResp(QByteArray& a_Rec)
 {
+    DumpMessage("in ProcessResp", a_Rec);
     TrimDataResp(a_Rec);
 
     switch (GuessCardType(a_Rec))
