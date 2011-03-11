@@ -7,7 +7,7 @@
 
 DownloadDialog::DownloadDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::DownloadDialog),m_CardCount(0),m_Dumper(NULL)
+    ui(new Ui::DownloadDialog),m_Dumper(NULL),m_CardCount(0)
 {
     ui->setupUi(this);
     ui->lcdNumber->setSegmentStyle( QLCDNumber::Filled );

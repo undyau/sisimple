@@ -72,7 +72,7 @@ bool CSIDumper::OpenPort()
 
 void CSIDumper::tryDownload()
 {
-    m_SI5 = m_SI6 = m_SI89 = 0;
+    m_SI5 = m_SI6 = m_SI8 = m_SI9 = 0;
     if (m_SerialPort.isEmpty() || m_Port)
         return;
     CreatePort();
@@ -332,8 +332,8 @@ void CSIDumper::GetNextBlock()
     if (m_Address >= m_EndAddress)
         {
         ClosePort();
-        QString summary = QString(tr("%1 SI 5 cards, %2 SI 6 cards, %3 SI 8/9 cards"))
-        .arg(m_SI5).arg(m_SI6).arg(m_SI89);
+        QString summary = QString(tr("%1 SI 5 cards, %2 SI 6 cards, %3 SI 8 cards, %4 SI 9 cards"))
+        .arg(m_SI5).arg(m_SI6).arg(m_SI8).arg(m_SI9);
         emit StatusUpdate(summary);
         emit Finished(m_AllCards.size(), summary);
         qDebug() << "Read" << m_AllCards.size() << summary;
@@ -444,13 +444,14 @@ void CSIDumper::HandleReadingCard89(QByteArray& a_Rec)
     else
         m_CardData.append(a_Rec);
 
-    long temp(0);
+    long SINumber(0);
     for (int i = 25; i < 28; i++)
         {
-        temp *= 256;
-        temp += (unsigned char)m_CardData[i];
+        SINumber *= 256;
+        SINumber += (unsigned char)m_CardData[i];
         }
-    rec.setSICard(QString::number(temp));
+    rec.setSICard(QString::number(SINumber));
+    bool isSI9 = SINumber < 2000000;
 
     QStringList names = QString(m_CardData.mid(32,24)).split(";");
     rec.setFirstName(names.at(0));
@@ -459,15 +460,37 @@ void CSIDumper::HandleReadingCard89(QByteArray& a_Rec)
     QString cn, when, dow;
     Read4ByteControlData(m_CardData, 8, cn, dow, when, false);
     rec.setCheck(cn, dow, when);
+    rec.setClear(cn, dow, when);
     Read4ByteControlData(m_CardData, 12, cn, dow, when, true);
     rec.setStart(cn, dow, when);
     Read4ByteControlData(m_CardData, 16, cn, dow, when, true);
-    rec.setStart(cn, dow, when);
+    rec.setFinish(cn, dow, when);
 
-    qDebug() << "SI 89 card from" << m_CardData.size() << "bytes";
-    emit StatusUpdate("SI 8 or 9 card found in documented format - freaky");
+    int offset = isSI9 ? 56 : 136;
+    int max_punches = isSI9 ? 50 : 30;
+
+    if (!rec.getBadRead())
+        {
+        for (int i = 0; i < max_punches; i++)
+            {
+            if ((unsigned char)m_CardData[offset] != 0xEE ||
+                (unsigned char)m_CardData[offset + 1] != 0xEE ||
+                (unsigned char)m_CardData[offset + 2] != 0xEE ||
+                (unsigned char)m_CardData[offset + 3] != 0xEE)
+                {
+                Read4ByteControlData(m_CardData, offset, cn, dow, when, false);
+                rec.setControl(i, cn, dow, when);
+                }
+            offset += 4;
+            }
+        }
+
+
     AddNewCard(rec);
-    m_SI89++;
+    if (isSI9)
+        m_SI9++;
+    else
+        m_SI8++;
 
     GetNextBlock();
 }
