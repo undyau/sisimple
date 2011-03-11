@@ -55,7 +55,7 @@ private:
     QByteArray m_ReadBuf;
     QByteArray m_CardData;
     int m_Timer;
-    int m_SI5,m_SI6,m_SI89;
+    int m_SI5,m_SI6,m_SI8, m_SI9;
     std::vector<SIDumpRecord> m_AllCards;
 
     bool SendSmallCmd(unsigned char a_Cmd, unsigned char a_ParamData);
