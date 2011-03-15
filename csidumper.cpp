@@ -1,9 +1,9 @@
 #include "csidumper.h"
 #include "qextserialport.h"
 #include <QMessageBox>
-#include <Qtdebug>
+#include <QtDebug>
 #include "sidumprecord.h"
-#include "utils.h"
+#include "Utils.h"
 #include <QTimerEvent>
 
 #define STX 2
