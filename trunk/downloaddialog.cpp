@@ -65,6 +65,9 @@ void DownloadDialog::setSerialPort(const QString& a_SerialPort)
 
 void DownloadDialog::tryDownload()
 {
+    if (m_SerialPort.isEmpty())
+        m_SerialPort = ui->comboBox->currentText();
+
     if (!m_SerialPort.isEmpty())
         {
         if (m_Dumper == NULL)
