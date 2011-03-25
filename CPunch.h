@@ -27,7 +27,7 @@ class CPunch
 {
     public:
         // class constructor
-                CPunch(int a_CN, QString a_DOW, QDateTime a_When);
+        CPunch(int a_CN, QString a_DOW, QDateTime a_When, bool a_Ignore = false);
         CPunch();
         CPunch(const CPunch& a_Copy);
         CPunch& operator=(const CPunch& a_Other);
@@ -40,22 +40,25 @@ class CPunch
         // class destructor
         ~CPunch();
         void SetCN(long x); // sets the value of m_CN
-        long GetCN(); // returns the value of m_CN
+        long GetCN() const; // returns the value of m_CN
         void SetDOW(QString x); // sets the value of m_DOW
-        QString GetDOW(); // returns the value of m_DOW
+        QString GetDOW() const; // returns the value of m_DOW
         void SetWhen(QDateTime x); // sets the value of m_When
-        QDateTime GetWhen(); // returns the value of m_When
+        QDateTime GetWhen() const; // returns the value of m_When
         void SetIgnore(bool a_Ignore) {m_Ignore = a_Ignore;};
-        bool GetIgnore() {return m_Ignore;};
+        bool GetIgnore() const {return m_Ignore;};
 
     private:
         // Control Number
         long m_CN;
         // Day of week
-                QString m_DOW;
+        QString m_DOW;
         // Tme that runner punched control
-                QDateTime m_When;
+        QDateTime m_When;
         bool m_Ignore;
 };
+
+QDataStream &operator<<(QDataStream &out, const CPunch &a_Punch);
+QDataStream &operator>>(QDataStream &in, CPunch &a_Punch);
 
 #endif // CPUNCH_H

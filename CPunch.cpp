@@ -24,7 +24,8 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 
 
 // class constructor
-CPunch::CPunch(int a_CN, QString a_DOW, QDateTime a_When) : m_CN(a_CN), m_DOW(a_DOW), m_When(a_When),m_Ignore(false)
+CPunch::CPunch(int a_CN, QString a_DOW, QDateTime a_When, bool a_Ignore) :
+        m_CN(a_CN), m_DOW(a_DOW), m_When(a_When),m_Ignore(a_Ignore)
 {
     m_When = m_When.addSecs(CControlAdjustments::ControlAdjustments()->GetAdjustment(a_CN));
 }
@@ -76,7 +77,7 @@ CPunch::~CPunch()
 
 
 // returns the value of m_CN
-long CPunch::GetCN()
+long CPunch::GetCN() const
 {
     return m_CN;
 }
@@ -90,7 +91,7 @@ void CPunch::SetCN(long x)
 
 
 // returns the value of m_DOW
-QString CPunch::GetDOW()
+QString CPunch::GetDOW() const
 {
     return m_DOW;
 }
@@ -104,7 +105,7 @@ void CPunch::SetDOW(QString x)
 
 
 // returns the value of m_When
-QDateTime CPunch::GetWhen()
+QDateTime CPunch::GetWhen() const
 {
     return m_When;
 }
@@ -114,4 +115,25 @@ QDateTime CPunch::GetWhen()
 void CPunch::SetWhen(QDateTime x)
 {
     m_When = x;
+}
+
+
+QDataStream &operator<<(QDataStream &out, const CPunch &a_Punch)
+{
+    out << (qint32) a_Punch.GetCN() << a_Punch.GetDOW()
+        << a_Punch.GetWhen()<< a_Punch.GetIgnore();
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, CPunch &a_Punch)
+{
+    qint32 CN;
+    QString DOW;
+    QDateTime When;
+    bool Ignore;
+
+    in >> CN >> DOW >> When >> Ignore;
+
+    a_Punch = CPunch((long)CN, DOW, When, Ignore);
+    return in;
 }

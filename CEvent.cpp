@@ -657,7 +657,7 @@ void CEvent::SetPunchTimes(CResult* a_Result)
                 if ((*punchIter).GetCN() == a_Result->GetCourse()->GetLeg(i).GetEndCN() ||
                     ((*punchIter) == a_Result->GetFinish() && a_Result->GetCourse()->GetLeg(i).GetEndCN() == -2))  // match
                     {
-                    CLegStat* statistic = new CLegStat(a_Result, i, *punchIter); // been here
+                    CLegStat* statistic = new CLegStat(i, *punchIter); // been here
                     a_Result->AddLegStat(statistic);
                     statistic->m_ElapsedTime = a_Result->GetStart().GetWhen().secsTo((*punchIter).GetWhen());
                     if (i > 0 && a_Result->GetLegStat(i-1) != NULL)
