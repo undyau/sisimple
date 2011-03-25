@@ -30,11 +30,11 @@ class CLeg
         // class destructor
         ~CLeg();
 
-        long GetStartCN() {return m_StartCN;};
-        long GetEndCN() {return m_EndCN;};
-        bool GetUntimed() {return m_Untimed;};
-        bool GetOptional() {return m_Optional;};
-        bool IsFinishLeg() {return m_EndCN < 0;};
+        long GetStartCN() const {return m_StartCN;};
+        long GetEndCN() const {return m_EndCN;};
+        bool GetUntimed() const {return m_Untimed;};
+        bool GetOptional() const {return m_Optional;};
+        bool IsFinishLeg() const {return m_EndCN < 0;};
 
         void SetOptional(bool a_Optional) {m_Optional = a_Optional;};
         void SetUntimed(bool a_Untimed) {m_Untimed = a_Untimed;};
@@ -46,5 +46,6 @@ class CLeg
         bool m_Untimed;
         bool m_Optional;
 };
-
+QDataStream &operator<<(QDataStream &out, const CLeg &a_Leg);
+QDataStream &operator>>(QDataStream &in, CLeg &a_Leg);
 #endif // CLEG_H

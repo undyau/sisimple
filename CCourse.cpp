@@ -168,7 +168,7 @@ void CCourse::CompulsoryControls(std::list<long>& a_Controls)
     {
     a_Controls = m_UntimedControls;
     }*/
-CLeg CCourse::GetLeg(int a_Index)
+CLeg CCourse::GetLeg(int a_Index) const
     {
     return *m_Controls[a_Index];
     }
@@ -240,3 +240,33 @@ void CCourse::Alter(QString& a_Name, QString& a_Length, QString& a_Climb, QStrin
         }
     m_Controls.push_back(new CLeg(lastCN, -2));
     }
+
+QDataStream &operator<<(QDataStream &out, const CCourse &a_Course)
+{
+    out << a_Course.GetName() << a_Course.GetLength()
+        << a_Course.GetClimb()<< (qint32) a_Course.GetLegCount();
+
+    for (int i = 0; i < a_Course.GetLegCount(); i++)
+        out << a_Course.GetLeg(i);
+
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, CCourse &a_Course)
+{
+    QString name, length, climb;
+    qint32 count;
+
+    in >> name >> length >> climb >> count;
+    QStringList controls;
+    for (int i = 0; i < count; i++)
+        {
+        CLeg leg(0,0);
+        in >> leg;
+        QString end = QString("%1").arg(leg.GetEndCN());
+        controls.push_back(end);
+        }
+
+    a_Course = CCourse(name, length, climb, controls);
+    return in;
+}

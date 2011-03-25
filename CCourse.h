@@ -40,15 +40,15 @@ class CCourse
         void SetOptionalLeg(int a_Index);
         bool GetUntimedLeg(int a_Index);
         bool GetOptionalLeg(int a_Index);
-        QString GetLength() {return m_Length;};
+        QString GetLength() const {return m_Length;};
 
         void CompulsoryControls(std::list<long>& a_Controls);
         void GetControls(QStringList& a_Controls) const;
-        QString GetName() {return m_Name;};
-        QString GetClimb() {return m_Climb;};
+        QString GetName() const {return m_Name;};
+        QString GetClimb() const {return m_Climb;};
         QString SetName(QString a_Name) {return (m_Name = a_Name);};
-        CLeg GetLeg(int a_Index);
-        int GetLegCount() {return m_Controls.size();};
+        CLeg GetLeg(int a_Index)  const;
+        int GetLegCount() const {return m_Controls.size();};
         QString TextDescStr();
         QString TextSplitHdrStr();
 
@@ -61,5 +61,7 @@ class CCourse
 
         std::vector<CLeg*> m_Controls;
 };
+QDataStream &operator<<(QDataStream &out, const CCourse &a_Course);
+QDataStream &operator>>(QDataStream &in, CCourse &a_Course);
 
 #endif // CCOURSE_H
