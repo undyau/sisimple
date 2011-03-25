@@ -21,19 +21,17 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #define CLEGSTAT_H
 #include <QDateTime>
 #include "CPunch.h"
-
-class CResult;
+#include <QDataStream>
 
 // lightweight class holding statistical information for a single leg for a single runner
 class CLegStat
 {
     public:
         // class constructor
-        CLegStat(CResult* a_Result, int a_Index, CPunch a_Punch);
+        CLegStat(int a_Index, CPunch a_Punch);
         // class destructor
         ~CLegStat();
 
-       CResult* m_Result;
        long m_Index; // index of leg within course
        long m_ElapsedTime; // elapsed time in seconds
        long m_ElapsedPos;
@@ -43,7 +41,10 @@ class CLegStat
        long m_LegBehind;
        CPunch m_Punch;
        long m_LegPos;
-
 };
+
+QDataStream &operator<<(QDataStream &out, const CLegStat &a_LegStat);
+QDataStream &operator>>(QDataStream &in, CLegStat &a_LegStat);
+
 
 #endif // CLEGSTAT_H

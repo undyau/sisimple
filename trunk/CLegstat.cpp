@@ -20,7 +20,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLegstat.h" // class's header file
 
 // class constructor
-CLegStat::CLegStat(CResult* a_Result, int a_Index, CPunch a_Punch): m_Result(a_Result),
+CLegStat::CLegStat(int a_Index, CPunch a_Punch):
 m_Index(a_Index), m_ElapsedTime(-1), m_ElapsedPos(-1),
 m_ElapsedBehind(-1), m_LegTime(-1), m_Punch(a_Punch), m_LegPos(-1)
 {
@@ -32,3 +32,21 @@ CLegStat::~CLegStat()
 {
     // insert your code here
 }
+
+QDataStream &operator<<(QDataStream &out, const CLegStat &a_LegStat)
+{
+    out << (qint32) a_LegStat.m_Index << a_LegStat.m_Punch;
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, CLegStat &a_LegStat)
+{
+   qint32 Index;
+   CPunch Punch;
+
+   in >> Index >> Punch;
+
+   a_LegStat = CLegStat(Index, Punch);
+   return in;
+}
+
