@@ -20,7 +20,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include "CPunch.h" // class's header file
 #include "Utils.h"
 #include "CControlAdjustments.h"
-#include <QDebug>
+//#include <QDebug>
 
 
 // class constructor
