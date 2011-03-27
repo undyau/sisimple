@@ -18,7 +18,6 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "CLeg.h" // class's header file
-#include <QDataStream>
 
 // class constructor
 CLeg::CLeg(long a_StartCN, long a_EndCN): m_StartCN(a_StartCN), m_EndCN(a_EndCN),
@@ -41,26 +40,4 @@ QString CLeg::Label()
     QString s("%1");
     s.arg(m_EndCN);
     return s;
-}
-
-
-QDataStream &operator<<(QDataStream &out, const CLeg &a_Leg)
-{
-    out << (qint32) a_Leg.GetStartCN() << (qint32) a_Leg.GetEndCN()
-        << a_Leg.GetUntimed() << a_Leg.GetOptional();
-    return out;
-}
-
-QDataStream &operator>>(QDataStream &in, CLeg &a_Leg)
-{
-    qint32 StartCN;
-    qint32 EndCN;
-    bool untimed, optional;
-
-    in >> StartCN >> EndCN >> untimed >> optional;
-
-    a_Leg = CLeg(StartCN, EndCN);
-    a_Leg.SetOptional(optional);
-    a_Leg.SetUntimed(untimed);
-    return in;
 }

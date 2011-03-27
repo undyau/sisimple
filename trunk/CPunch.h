@@ -57,8 +57,4 @@ class CPunch
         QDateTime m_When;
         bool m_Ignore;
 };
-
-QDataStream &operator<<(QDataStream &out, const CPunch &a_Punch);
-QDataStream &operator>>(QDataStream &in, CPunch &a_Punch);
-
 #endif // CPUNCH_H

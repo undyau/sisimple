@@ -32,21 +32,3 @@ CLegStat::~CLegStat()
 {
     // insert your code here
 }
-
-QDataStream &operator<<(QDataStream &out, const CLegStat &a_LegStat)
-{
-    out << (qint32) a_LegStat.m_Index << a_LegStat.m_Punch;
-    return out;
-}
-
-QDataStream &operator>>(QDataStream &in, CLegStat &a_LegStat)
-{
-   qint32 Index;
-   CPunch Punch;
-
-   in >> Index >> Punch;
-
-   a_LegStat = CLegStat(Index, Punch);
-   return in;
-}
-
