@@ -46,6 +46,4 @@ class CLeg
         bool m_Untimed;
         bool m_Optional;
 };
-QDataStream &operator<<(QDataStream &out, const CLeg &a_Leg);
-QDataStream &operator>>(QDataStream &in, CLeg &a_Leg);
 #endif // CLEG_H

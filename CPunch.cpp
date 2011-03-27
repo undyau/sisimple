@@ -117,23 +117,3 @@ void CPunch::SetWhen(QDateTime x)
     m_When = x;
 }
 
-
-QDataStream &operator<<(QDataStream &out, const CPunch &a_Punch)
-{
-    out << (qint32) a_Punch.GetCN() << a_Punch.GetDOW()
-        << a_Punch.GetWhen()<< a_Punch.GetIgnore();
-    return out;
-}
-
-QDataStream &operator>>(QDataStream &in, CPunch &a_Punch)
-{
-    qint32 CN;
-    QString DOW;
-    QDateTime When;
-    bool Ignore;
-
-    in >> CN >> DOW >> When >> Ignore;
-
-    a_Punch = CPunch((long)CN, DOW, When, Ignore);
-    return in;
-}
