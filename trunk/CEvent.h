@@ -111,6 +111,7 @@ signals:
         QString FindDataFile(QStringList& a_Candidates, QString a_Dir) const;
         void LoadRawData();
         void LoadCourseData(bool& a_Guess);
+        void LoadEventFromXML(QString a_FileName);
 
         void SetCourse(CResult* a_Result);
         void DisplayRawData();

@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     sidumprecord.cpp \
     csidumper.cpp \
     qextserial\qextserialport.cpp \
-    downloaddialog.cpp
+    downloaddialog.cpp \
+    ciofcoursexmlhandler.cpp
 
 HEADERS  += mainwindow.h \
     Utils.h \
@@ -57,7 +58,8 @@ HEADERS  += mainwindow.h \
     qextserial\qextserialenumerator.h \
     csidumper.h \
     downloaddialog.h \
-    sidumprecord.h
+    sidumprecord.h \
+    ciofcoursexmlhandler.h
 
 INCLUDEPATH += qextserial
 

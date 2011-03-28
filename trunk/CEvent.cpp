@@ -36,7 +36,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDialogButtonBox>
 #include <set>
 #include <QXmlSimpleReader>
-#include "ciofresultxmlhandler.h"
+#include "ciofcoursexmlhandler.h"
 #include <QFileDialog>
 #include <QSettings>
 
@@ -1091,7 +1091,7 @@ void CEvent::LoadCoursesFromXML(QString a_FileName)
 {
   QFile file(a_FileName);
   QXmlInputSource source( &file );
-  CIofResultXmlHandler handler;
+  CIofCourseXmlHandler handler;
 
   QXmlSimpleReader reader;
   reader.setContentHandler( &handler );
@@ -1255,4 +1255,15 @@ long CEvent::LookupResult(QString a_Name, QString a_Result)
     if (count == 1)
         return index;
     return -1;
+}
+
+void CEvent::LoadEventFromXML(QString a_FileName)
+{
+  QFile file(a_FileName);
+  QXmlInputSource source( &file );
+  CIofCourseXmlHandler handler;
+
+  QXmlSimpleReader reader;
+  reader.setContentHandler( &handler );
+  reader.parse( source );
 }
