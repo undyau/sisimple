@@ -2,12 +2,15 @@
 #include "CCourse.h"
 #include "CEvent.h"
 #include "QDebug"
+#include "CResult.h"
+
+int CIofResultXmlHandler::m_ResultCount = 0;
 
 CIofResultXmlHandler::CIofResultXmlHandler()
     {
     m_States["ClassShortName"] = inClassName;
-    m_States["Family"] = inName;
-    m_States["Given"] = inName;
+    m_States["Family"] = inFamilyName;
+    m_States["Given"] = inGivenName;
     m_States["ShortName"] = inClub;
     m_States["CCardId"] = inCardId;
     m_States["Time"] = inTime;
@@ -19,18 +22,27 @@ bool CIofResultXmlHandler::endElement( const QString&, const QString&, const QSt
 {
     if (name == "PersonResult")
         {
-       /* if (m_LengthType == "m")
-            m_Length = QString("%1").arg(m_Length.toFloat()/1000,0,'g',3);
-        else if (m_LengthType == "ft")
-            m_Length = QString("%1").arg(m_Length.toFloat()/3280.8399,0,'g',3);
-        CCourse* course = new CCourse(m_Name, m_Length, m_Climb, m_Controls);
-        CEvent::Event()->addNewCourse(course);*/
+        CResult* result = new CResult(CIofResultXmlHandler::m_ResultCount++,
+                            m_SINumber.toLong(),
+                            QString(m_GivenName + ' ' + m_FamilyName),
+                            m_Club,
+                            m_Time,
+                            m_Status,
+                            m_Controls,
+                            m_Splits);
+        CEvent::Event()->AddRecoveredResult(result);
         if (m_Controls.size() > m_CourseControls.size())
             m_CourseControls = m_Controls;
+        m_CourseResults.push_back(result);
         }
+
     if (name == "ClassResult")
         {
-
+        QString len, climb;
+        CCourse* course = new CCourse(m_CourseName, len, climb, m_CourseControls);
+        CEvent::Event()->addNewCourse(course);
+        for (unsigned int i = 0; i < m_CourseResults.size(); i++)
+            m_CourseResults.at(i)->SetCourse(course);
         }
     m_State = inOther;
     return true;
@@ -41,7 +53,8 @@ bool CIofResultXmlHandler::characters(const QString &ch)
     switch (m_State)
         {
         case inClassName: m_CourseName = ch; break;
-        case inName: m_Name = m_Name + (m_Name.isEmpty() ? "" : " ") + ch; break;
+        case inFamilyName: m_FamilyName = m_FamilyName + (m_FamilyName.isEmpty() ? "" : " ") + ch; break;
+        case inGivenName: m_GivenName = m_GivenName + (m_GivenName.isEmpty() ? "" : " ") + ch; break;
         case inCardId: m_SINumber = ch; break;
         case inTime: m_Time = ch; break;
         case inClub: m_Club = ch; break;
@@ -63,7 +76,8 @@ bool CIofResultXmlHandler::startElement( const QString&, const QString&, const Q
 
     if (name == "PersonResult")
         {
-        m_Name.clear();
+        m_GivenName.clear();
+        m_FamilyName.clear();
         m_SINumber.clear();
         m_Club.clear();
         m_Time.clear();
@@ -76,6 +90,7 @@ bool CIofResultXmlHandler::startElement( const QString&, const QString&, const Q
         {
         m_CourseName.clear();
         m_CourseControls.clear();
+        m_CourseResults.empty();
         }
 
     if (name == "CompetitorStatus")

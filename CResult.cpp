@@ -62,6 +62,29 @@ CResult::CResult(QString& a_RawData) : m_RawData(a_RawData), m_ProcessedResult(f
     DoTimeSanityCheck();
     }
 
+CResult::CResult(long a_RawIndex, long a_SINumber, QString a_Name, QString a_Club, QString a_Time,
+                 QString m_Status, QStringList& a_Controls, QStringList& a_Splits) :
+                 m_ProcessedResult(false), m_Invalid(false), m_Pos(0),
+                 m_FinishedOverride(false),
+                 m_FinishedOverrideSet(false), m_Course(NULL), m_Altered(false),  m_SINumber(a_SINumber),
+                 m_RawIndex(a_RawIndex), m_Name(a_Name), m_Club(a_Club)
+   {
+
+    m_RawData = QString("%1%2%3%4").arg(a_SINumber).arg(a_Name).arg(a_Club).arg(a_Time);
+
+    m_Clear.SetData(10, "", ToDateTime("00:00:00"));
+    m_Check.SetData(20, "", ToDateTime("00:00:00"));
+    m_Start.SetData(-1, "", ToDateTime("00:00:00"));
+    m_Finish.SetData(-2, "", ToDateTime(a_Time));
+
+    unsigned long punches = a_Controls.size();
+    for (unsigned long i = 0; i < punches; i++)
+        m_Punches.push_back(new CPunch(ToLong(a_Controls.at(i)), "", ToDateTime(a_Splits.at(i))));
+
+    m_Finished = m_Status == "OK";
+    m_Invalid = m_Status == "DidNotFinish" ;
+    }
+
 // class destructor
 CResult::~CResult()
     {
