@@ -183,7 +183,7 @@ void MainWindow::open()
     if (file.isEmpty())
         return;
 
-     oevent->SetRawDataFile(file);
+    oevent->SetRawDataFile(file);
 }
 
 void MainWindow::save()
