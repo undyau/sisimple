@@ -223,6 +223,11 @@ void CEvent::LoadCourseData(bool& a_Guess)
 
 }
 
+void CEvent::AddRecoveredResult(CResult *a_Result)
+{
+    m_Results.push_back(a_Result);
+}
+
 void CEvent::LoadRawData()
 {
     // Clear out old data

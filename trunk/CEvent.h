@@ -71,6 +71,7 @@ signals:
         void RecalcResults();
         QString GetRentalNames();
         void SetRentalNames(QString& a_Names);
+        void AddRecoveredResult(CResult* a_Result);
 
         CSiDetails* GetSIData(long a_SINumber);
         void LogMsg(QString a_Msg);
