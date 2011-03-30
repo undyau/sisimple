@@ -3,7 +3,7 @@
 #include "CEvent.h"
 #include "QDebug"
 
-CIofCourseXmlHandler::CIofCourseXmlHandler()
+CIofCourseXmlHandler::CIofCourseXmlHandler(): m_Valid(false)
     {
     m_States["CourseName"] = inName;
     m_States["CourseLength"] = inLength;
@@ -42,6 +42,15 @@ bool CIofCourseXmlHandler::characters(const QString &ch)
 
 bool CIofCourseXmlHandler::startElement( const QString&, const QString&, const QString &name, const QXmlAttributes &attrs )
 {
+    if (!m_Valid)
+        m_Valid = name == "CourseData";
+
+    if (!m_Valid)
+        {
+        CEvent::Event()->LogMsg("Invalid course XML file");
+        return false;
+        }
+
     if (m_States.find(name) != m_States.end())
         m_State = m_States[name];
     else

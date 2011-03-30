@@ -54,6 +54,7 @@ signals:
     void findImportFile();
     void resetLog();
     void loadedSIArchive(QString);
+    void exportIOF();
 
     public:
         // class destructor
@@ -61,7 +62,7 @@ signals:
         // Singleton access/creation
         static CEvent* Event();
         QString Directory();
-        bool SetRawDataFile(QString a_File);
+        bool SetResultsInputFile(QString a_File);
         QString LastLogMsg() {return m_LastLogMsg;};
         QString LastDisplayMsg() {return m_LastDisplayMsg;};
         void GetCourseNames(QStringList& a_Names);
@@ -79,7 +80,7 @@ signals:
         void DisplayMsg(QString a_Msg);
         int  CompareCourseIndex(CCourse* a_Lhs, CCourse* a_Rhs);
         CResult* GetResult(long a_RawIndex);
-        unsigned int GetCourseCount() {return m_Courses.size();};
+        unsigned int GetCourseCount() {return m_Courses.size();}
         void SetResultCourse(CResult* a_Result, QString a_CourseName);
 
         void ExportXML(QString a_File);
@@ -112,7 +113,8 @@ signals:
         QString FindDataFile(QStringList& a_Candidates, QString a_Dir) const;
         void LoadRawData();
         void LoadCourseData(bool& a_Guess);
-        void LoadEventFromXML(QString a_FileName);
+        bool LoadEventFromXML(QString a_FileName);
+        bool LoadEventFromDump();
 
         void SetCourse(CResult* a_Result);
         void DisplayRawData();
@@ -136,19 +138,19 @@ signals:
         void SICardsAsList(QStringList& a_List);
         void ProcessRawData();
 
-        bool m_Changed;
+        bool m_ChangedSinceSave;
         bool m_ShowSplits;
         bool m_ShowHTML;
         QString m_EventName;
         QString m_Dir;
-        QString m_RawDataFile;
+        QString m_ResultsInputFile;
         QString m_LastLogMsg;
         QString m_LastDisplayMsg;
         bool m_SavingResults;
         QFile* m_SaveFile;
         int m_GoodThreshold;
         QString m_RentalNames;
-        QStringList m_RawData;
+        QStringList m_OriginalResultsData;
 
         static CEvent* _instance;
         std::vector<CCourse*> m_Courses;

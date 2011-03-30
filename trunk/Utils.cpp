@@ -94,6 +94,24 @@ QString FormatTimeTaken(long a_Secs)
     return s;
 }
 
+QString TimeTakenTo0BasedTime(QString a_TimeTaken)
+{
+    QRegExp fixableRE("^[0-9]{1,4}:[0-9]{2,2}$");
+    if (!fixableRE.exactMatch(a_TimeTaken))
+        return a_TimeTaken;
+
+    QString secs = a_TimeTaken.right(2);
+    long mins = a_TimeTaken.left(a_TimeTaken.length()-3).toLong();
+    long hours = mins/60;
+    mins %= 60;
+
+    QString result = QString("%1:%2:%3")
+        .arg(hours,2,10, QChar('0'))
+        .arg(mins,2,10, QChar('0'))
+        .arg(secs);
+    return result;
+}
+
 //***************************************************************************
 //** Autor: Jürgen Ehms
 //**

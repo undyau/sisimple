@@ -25,6 +25,7 @@ private:
     QString m_LengthType;
     QStringList m_Controls;
     std::map<QString, e_State> m_States;
+    bool m_Valid;
 };
 
 #endif // CIOFCOURSEXMLHANDLER_H

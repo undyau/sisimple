@@ -3,10 +3,11 @@
 #include "CEvent.h"
 #include "QDebug"
 #include "CResult.h"
+#include "Utils.h"
 
 int CIofResultXmlHandler::m_ResultCount = 0;
 
-CIofResultXmlHandler::CIofResultXmlHandler()
+CIofResultXmlHandler::CIofResultXmlHandler() : m_Valid(false)
     {
     m_States["ClassShortName"] = inClassName;
     m_States["Family"] = inFamilyName;
@@ -15,11 +16,15 @@ CIofResultXmlHandler::CIofResultXmlHandler()
     m_States["CCardId"] = inCardId;
     m_States["Time"] = inTime;
     m_States["ControlCode"] = inControlCode;
+    m_States["EventId"] = inEventId;
     }
 
 
 bool CIofResultXmlHandler::endElement( const QString&, const QString&, const QString &name )
 {
+    if (name == "EventId")
+        CEvent::Event()->SetEventName(m_EventId);
+
     if (name == "PersonResult")
         {
         CResult* result = new CResult(CIofResultXmlHandler::m_ResultCount++,
@@ -44,6 +49,7 @@ bool CIofResultXmlHandler::endElement( const QString&, const QString&, const QSt
         for (unsigned int i = 0; i < m_CourseResults.size(); i++)
             m_CourseResults.at(i)->SetCourse(course);
         }
+    m_PrevState = m_State;
     m_State = inOther;
     return true;
 }
@@ -52,14 +58,15 @@ bool CIofResultXmlHandler::characters(const QString &ch)
     {
     switch (m_State)
         {
+        case inEventId: m_EventId = ch; break;
         case inClassName: m_CourseName = ch; break;
         case inFamilyName: m_FamilyName = m_FamilyName + (m_FamilyName.isEmpty() ? "" : " ") + ch; break;
         case inGivenName: m_GivenName = m_GivenName + (m_GivenName.isEmpty() ? "" : " ") + ch; break;
         case inCardId: m_SINumber = ch; break;
-        case inTime: m_Time = ch; break;
+        case inTime: m_Time = TimeTakenTo0BasedTime(ch); break;
         case inClub: m_Club = ch; break;
         case inControlCode: m_Controls.append(ch); break;
-        case inSplitTime: m_Splits.append(ch); break;
+        case inSplitTime: m_Splits.append(TimeTakenTo0BasedTime(ch)); break;
         case inOther: break;
         }
     return true;
@@ -67,7 +74,16 @@ bool CIofResultXmlHandler::characters(const QString &ch)
 
 bool CIofResultXmlHandler::startElement( const QString&, const QString&, const QString &name, const QXmlAttributes &attrs )
 {
-    if (m_State == inControlCode && name == "Time")
+    if (!m_Valid)
+        m_Valid = name == "ResultList";
+
+    if (!m_Valid)
+        {
+        CEvent::Event()->LogMsg("Invalid results XML file");
+        return false;
+        }
+
+    if (m_PrevState == inControlCode && name == "Time")
         m_State = inSplitTime;
     else if (m_States.find(name) != m_States.end())
         m_State = m_States[name];

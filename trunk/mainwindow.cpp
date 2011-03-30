@@ -78,8 +78,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_OpenAct = new QAction(QIcon::fromTheme("document-open", QIcon(":icons/icons/document-open.svg")), tr("&Open..."), this);
     m_OpenAct->setShortcuts(QKeySequence::Open);
-    m_OpenAct->setStatusTip(tr("Open an existing CSV dump"));
-    m_OpenAct->setToolTip(tr("Open an existing CSV dump"));
+    m_OpenAct->setStatusTip(tr("Open an existing CSV dump or XML results"));
+    m_OpenAct->setToolTip(tr("Open an existing CSV dump or XML results"));
     m_OpenAct->setIconVisibleInMenu(true);
     ui->menu_File->addAction(m_OpenAct);
     ui->mainToolBar->addAction(m_OpenAct);
@@ -161,6 +161,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionRental_Sticks, SIGNAL(triggered()), this, SLOT(rentalStickNames()));
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
     connect(m_DownloadAct, SIGNAL(triggered()), this,SLOT(rundownloaddialog()));
+    connect(CEvent::Event(), SIGNAL(exportIOF()), this, SLOT(exportIOF()));
 }
 
 MainWindow::~MainWindow()
@@ -178,12 +179,12 @@ MainWindow::~MainWindow()
 void MainWindow::open()
 {
     CEvent* oevent = CEvent::Event();
-    QString file = QFileDialog::getOpenFileName(this,tr("Select event directory"), oevent->Directory(), "*.csv");
+    QString file = QFileDialog::getOpenFileName(this,tr("Select event data file"), oevent->Directory(), "*.csv;*.xml");
 
     if (file.isEmpty())
         return;
 
-    oevent->SetRawDataFile(file);
+    oevent->SetResultsInputFile(file);
 }
 
 void MainWindow::save()
