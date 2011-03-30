@@ -12,7 +12,7 @@ class CIofResultXmlHandler : public QXmlDefaultHandler
 {
 
 enum e_State{inClassName, inFamilyName, inGivenName, inClub, inCardId,
-             inTime, inControlCode, inSplitTime,
+             inTime, inControlCode, inSplitTime, inEventId,
              inOther};
 public:
     CIofResultXmlHandler();
@@ -22,7 +22,10 @@ public:
     virtual bool characters(const QString &ch);
 
 private:
+    bool m_Valid;
     e_State m_State;
+    e_State m_PrevState;
+    QString m_EventId;
     QString m_CourseName;
     QString m_FamilyName;
     QString m_GivenName;

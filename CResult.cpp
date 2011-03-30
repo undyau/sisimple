@@ -247,7 +247,7 @@ QString CResult::TextResultStr()
         }
     else
         {
-        s = QString("     %1 %2 DNF").arg(GetName(), -26).arg(m_Club.left(3), 3);
+        s = QString("    %1 %2 DNF").arg(GetName(), -26).arg(m_Club.left(3), 3);
         }
     return s;
     }
@@ -550,10 +550,7 @@ QString CResult::PersonID()
 
 QString CResult::ClubID()
     {
-    if (m_Club.isEmpty())
-        return "None";
-    else
-        return m_Club;
+    return m_Club;
     }
 
 void CResult::SetCourse(QString a_Course)

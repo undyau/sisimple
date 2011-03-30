@@ -37,13 +37,14 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include <set>
 #include <QXmlSimpleReader>
 #include "ciofcoursexmlhandler.h"
+#include "ciofresultxmlhandler.h"
 #include <QFileDialog>
 #include <QSettings>
 
 
 
 // class constructor
-CEvent::CEvent() : m_Changed(false), m_ShowSplits(true), m_SavingResults(false),
+CEvent::CEvent() : m_ChangedSinceSave(false), m_ShowSplits(true), m_SavingResults(false),
   m_GoodThreshold(3)
 {
     QSettings settings(QSettings::IniFormat,  QSettings::UserScope, "undy","SI Simple");
@@ -107,39 +108,45 @@ void CEvent::SetRentalNames(QString& a_Names)
 
 void CEvent::NewDownloadData(QStringList a_NewData)
 {
-    if (m_Changed && !CanClose())
-        return;
-
-    m_RawData.empty();
-    m_RawData.append(a_NewData);
+    m_OriginalResultsData.empty();
+    m_OriginalResultsData.append(a_NewData);
 
     ProcessRawData();
 }
 
-bool CEvent::SetRawDataFile(QString a_File)
+bool CEvent::SetResultsInputFile(QString a_File)
 {
-    if (m_RawDataFile != m_RawDataFile && m_Changed)
+    if (m_ResultsInputFile != m_ResultsInputFile)
         if (!CanClose())
             return false;
 
-    m_RawDataFile = a_File;
+    m_ResultsInputFile = a_File;
     QFileInfo fileInfo(a_File);
     m_Dir = fileInfo.dir().canonicalPath ();
-    m_Changed = false;
-    m_RawData.empty();
 
-    QFile tfile(m_RawDataFile);
+    m_OriginalResultsData.empty();
+
+    if (fileInfo.completeSuffix() == "XML" || fileInfo.completeSuffix() == "xml")
+        return LoadEventFromXML(a_File);
+    else
+        return LoadEventFromDump();
+
+}
+
+bool CEvent::LoadEventFromDump()
+{
+    QFile tfile(m_ResultsInputFile);
     if (!tfile.open(QIODevice::ReadOnly))
         {
         QMessageBox msg;
-        msg.setText("Unable to open raw data file " + m_RawDataFile);
+        msg.setText("Unable to open raw data file " + m_ResultsInputFile);
         msg.exec();
         return false;
         }
 
     QTextStream stream( &tfile );
     while ( !stream.atEnd() )
-        m_RawData += stream.readLine();
+        m_OriginalResultsData += stream.readLine();
     tfile.close();
 
     ProcessRawData();
@@ -164,11 +171,10 @@ void CEvent::ProcessRawData()
 
 void CEvent::RecalcResults()
 {
-    std::vector<QString> lines;
     if (!m_SavingResults)
-    {
-        ;//Notify(NFY_CLEARDISPLAY);
-    }
+        m_ChangedSinceSave = true;
+
+    std::vector<QString> lines;
     CalcResults();
     if (m_ShowHTML)
         {
@@ -241,9 +247,9 @@ void CEvent::LoadRawData()
     QString str;
     std::map<CUniquePunch, CResult*>uniqueList;
     std::map<long, int> usedSIs;
-    for (int i = 0; i < m_RawData.size(); i++)
+    for (int i = 0; i < m_OriginalResultsData.size(); i++)
         {
-        str = m_RawData.at(i);
+        str = m_OriginalResultsData.at(i);
 
         if (CResult::ValidData(str))
             {
@@ -333,6 +339,16 @@ void CEvent::SaveChangedSIDetails()
 
 bool CEvent::CanClose()
 {
+    if (m_ChangedSinceSave)
+        {
+        QString msg = QString(tr("(Re)save results in XML format so that you can reload and adjust them ?"));
+        int result = SIMessageBox(msg, QMessageBox::Question, QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel);
+        if (result == QMessageBox::Yes)
+            emit exportIOF();
+        if (result == QMessageBox::Cancel)
+            return false;
+        }
+
     int count(0);
     for (std::vector<CResult*>::iterator j = m_Results.begin(); j != m_Results.end(); j++)
         {
@@ -808,6 +824,7 @@ void CEvent::ExportXML(QString a_File)
     xml.EndElement();
 
     xml.WriteToFile(a_File);
+    m_ChangedSinceSave = false;
 }
 
 void CEvent::SaveResults(QString a_File)
@@ -1262,13 +1279,17 @@ long CEvent::LookupResult(QString a_Name, QString a_Result)
     return -1;
 }
 
-void CEvent::LoadEventFromXML(QString a_FileName)
+bool CEvent::LoadEventFromXML(QString a_FileName)
 {
   QFile file(a_FileName);
   QXmlInputSource source( &file );
-  CIofCourseXmlHandler handler;
+  CIofResultXmlHandler handler;
 
   QXmlSimpleReader reader;
   reader.setContentHandler( &handler );
-  reader.parse( source );
+  if (!reader.parse( source ))
+    return false;
+
+  RecalcResults();
+  return true;
 }
