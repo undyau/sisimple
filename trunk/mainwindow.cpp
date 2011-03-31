@@ -162,6 +162,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
     connect(m_DownloadAct, SIGNAL(triggered()), this,SLOT(rundownloaddialog()));
     connect(CEvent::Event(), SIGNAL(exportIOF()), this, SLOT(exportIOF()));
+    connect(this, SIGNAL(deleteDownload(long)), CEvent::Event(), SLOT(deleteDownload(long)));
 }
 
 MainWindow::~MainWindow()
@@ -283,6 +284,7 @@ void MainWindow::showDownloadContextMenu(const QPoint& a_Pos)
     if (CEvent::Event()->GetResultFinished(index))
         myMenu.addAction("DNF");
     myMenu.addAction("Alter");
+    myMenu.addAction("Delete");
 
     QAction* selectedItem = myMenu.exec(ui->textEdit->viewport()->mapToGlobal(a_Pos));
     if (selectedItem)
@@ -293,6 +295,13 @@ void MainWindow::showDownloadContextMenu(const QPoint& a_Pos)
         emit dnf(index);
     else if (selectedItem->text() == "Alter")
         runAlterDialog(index);
+    else if (selectedItem->text() == "Delete")
+        {
+        QString msg = QString(tr("Are you sure that you want to delete this download ?"));
+        int result = SIMessageBox(msg, QMessageBox::Question, QMessageBox::Yes|QMessageBox::No);
+        if (result == QMessageBox::Yes)
+            emit deleteDownload(index);
+        }
     }
 
 }
@@ -338,6 +347,7 @@ void MainWindow::showResultContextMenu(const QPoint& a_Pos)
     if (CEvent::Event()->GetResultFinished(index))
         myMenu.addAction("DNF");
     myMenu.addAction("Alter");
+    myMenu.addAction("Delete");
 
     QAction* selectedItem = myMenu.exec(ui->textEdit_2->viewport()->mapToGlobal(a_Pos));
     if (selectedItem)
@@ -348,6 +358,13 @@ void MainWindow::showResultContextMenu(const QPoint& a_Pos)
         emit dnf(index);
     else if (selectedItem->text() == "Alter")
         runAlterDialog(index);
+    else if (selectedItem->text() == "Delete")
+        {
+        QString msg = QString(tr("Are you sure that you want to delete this download ?"));
+        int result = SIMessageBox(msg, QMessageBox::Question, QMessageBox::Yes|QMessageBox::No);
+        if (result == QMessageBox::Yes)
+            emit deleteDownload(index);
+        }
     }
 
 }
