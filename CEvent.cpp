@@ -933,6 +933,18 @@ void CEvent::dnfResult(long a_Index)
         res->SetFinishedOverride(false);
 }
 
+void CEvent::deleteDownload(long a_Index)
+{
+    CResult* res = GetResult(a_Index);
+    for (unsigned long i = 0; i < m_Results.size(); i++)
+        if (m_Results.at(i) == res)
+            {
+            m_Results.erase(m_Results.begin() + i);
+            delete res;
+            break;
+            }
+}
+
 void CEvent::reinstateResult(long a_Index) // Reinstate someone
 {
     CResult* res = GetResult(a_Index);
