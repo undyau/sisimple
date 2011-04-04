@@ -413,6 +413,9 @@ bool FinishTimeLessThan(CResult* a_Lhs, CResult* a_Rhs)
     if (courseCompare != 0)
         return courseCompare < 0;
 
+    if (a_Lhs->GetDisqualified() != a_Rhs->GetDisqualified())
+        return a_Rhs->GetDisqualified();
+
     if (a_Lhs->GetInvalid() != a_Rhs->GetInvalid())
         return a_Rhs->GetInvalid();
 
@@ -933,6 +936,13 @@ void CEvent::dnfResult(long a_Index)
         res->SetFinishedOverride(false);
 }
 
+void CEvent::dsqResult(long a_Index)
+{
+    CResult* res = GetResult(a_Index);
+    if (res)
+        res->SetDisqualified(true);
+}
+
 void CEvent::deleteDownload(long a_Index)
 {
     CResult* res = GetResult(a_Index);
@@ -949,7 +959,10 @@ void CEvent::reinstateResult(long a_Index) // Reinstate someone
 {
     CResult* res = GetResult(a_Index);
     if (res)
+        {
         res->SetFinishedOverride(true);
+        res->SetDisqualified(false);
+        }
 }
 
 CCourse* CEvent::CourseFromName(QString a_Name)
@@ -1279,7 +1292,8 @@ long CEvent::LookupResult(QString a_Name, QString a_Result)
         if( m_Results[i]->GetName() == a_Name || a_Name.isEmpty())
             {
             if (a_Result == FormatTimeTaken(m_Results[i]->TimeTaken()) ||
-                (a_Result == "DNF" && !m_Results[i]->GetFinished()))
+                (a_Result == "DNF" && !m_Results[i]->GetFinished()) ||
+                (a_Result == "DSQ" && !m_Results[i]->GetDisqualified()))
                 {
                 index = m_Results[i]->GetRawIndex();
                 ++count;

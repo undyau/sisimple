@@ -53,6 +53,8 @@ class CResult  : public QObject
         QString GetName() {return m_Name;}
         QString GetClub() {return m_Club;}
 
+        void SetDisqualified(bool a_Disqualified) {m_Disqualified = a_Disqualified;}
+        bool GetDisqualified() {return m_Disqualified;}
         bool GetFinished();
         void SetFinished(bool a_Finished) {m_Finished = a_Finished;}
         void SetFinishedOverride(bool a_Finished);
@@ -95,12 +97,13 @@ class CResult  : public QObject
         QString m_RawData;
         bool m_ProcessedResult;
         bool m_Invalid;
-        bool m_Finished;
+        bool m_Finished;        
         long m_Pos;
         bool m_FinishedOverride;
         bool m_FinishedOverrideSet;
         CCourse* m_Course;
         bool m_Altered;
+        bool m_Disqualified;
 
 
         long m_SINumber;
