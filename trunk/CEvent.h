@@ -83,7 +83,7 @@ signals:
         unsigned int GetCourseCount() {return m_Courses.size();}
         void SetResultCourse(CResult* a_Result, QString a_CourseName);
 
-        void ExportXML(QString a_File);
+        void ExportXML(QString a_File, bool a_ExtendedFormat = false);
         void SaveResults(QString a_File);
 
         bool GetShowSplits();
