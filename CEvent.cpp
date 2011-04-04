@@ -65,6 +65,12 @@ CEvent::CEvent() : m_ChangedSinceSave(false), m_ShowSplits(true), m_SavingResult
         }
     settings.endArray();
     settings.endGroup();
+
+    QDir dir(QFileInfo(settings.fileName()).absolutePath() + "/");
+    QString file = dir.filePath("SISimpleLastEvent.xml");
+    QFileInfo fi(file);
+    if (fi.exists())
+        LoadEventFromXML(file);
 }
 
 // class destructor
@@ -75,6 +81,14 @@ CEvent::~CEvent()
     settings.setValue("lastDir", m_Dir);
     settings.setValue("rentalNames", m_RentalNames);
     settings.endGroup();
+
+    // Save event details (if any) to last event file
+    if (m_Results.size() > 0)
+        {
+        QDir dir(QFileInfo(settings.fileName()).absolutePath() + "/");
+        QString file = dir.filePath("SISimpleLastEvent.xml");
+        ExportXML(file, true);
+        }
 
     for (std::vector<CCourse*>::iterator i = m_Courses.begin(); i != m_Courses.end(); i++)
         delete (*i);
@@ -339,16 +353,6 @@ void CEvent::SaveChangedSIDetails()
 
 bool CEvent::CanClose()
 {
-    if (m_ChangedSinceSave)
-        {
-        QString msg = QString(tr("(Re)save results in XML format so that you can reload and adjust them ?"));
-        int result = SIMessageBox(msg, QMessageBox::Question, QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel);
-        if (result == QMessageBox::Yes)
-            emit exportIOF();
-        if (result == QMessageBox::Cancel)
-            return false;
-        }
-
     int count(0);
     for (std::vector<CResult*>::iterator j = m_Results.begin(); j != m_Results.end(); j++)
         {
@@ -791,7 +795,7 @@ void CEvent::DisplayTextSplits(std::vector<QString>& a_Lines)
 
 }
 
-void CEvent::ExportXML(QString a_File)
+void CEvent::ExportXML(QString a_File, bool a_ExtendedFormat)
 {
     CXmlWriter xml("ResultList","IOFdata.dtd");
     xml.StartElement("ResultList","status=\"complete\"");
@@ -818,6 +822,15 @@ void CEvent::ExportXML(QString a_File)
                 xml.StartElement("ClassShortName");
                 xml.AddValue(lastCourse->GetName());
                 xml.EndElement();
+                if (a_ExtendedFormat)
+                    {
+                    xml.StartElement("CourseLength");
+                    xml.AddValue(lastCourse->GetLength());
+                    xml.EndElement();
+                    xml.StartElement("CourseClimb");
+                    xml.AddValue(lastCourse->GetLength());
+                    xml.EndElement();
+                    }
                 }
             results[i]->AddXML(xml);
             }

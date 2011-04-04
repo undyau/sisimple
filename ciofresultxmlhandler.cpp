@@ -17,6 +17,8 @@ CIofResultXmlHandler::CIofResultXmlHandler() : m_Valid(false)
     m_States["Time"] = inTime;
     m_States["ControlCode"] = inControlCode;
     m_States["EventId"] = inEventId;
+    m_States["CourseLength"] = inCourseLen;
+    m_States["CourseClimb"] = inCourseClimb;
     }
 
 
@@ -43,8 +45,7 @@ bool CIofResultXmlHandler::endElement( const QString&, const QString&, const QSt
 
     if (name == "ClassResult")
         {
-        QString len, climb;
-        CCourse* course = new CCourse(m_CourseName, len, climb, m_CourseControls);
+        CCourse* course = new CCourse(m_CourseName, m_CourseLen, m_CourseClimb, m_CourseControls);
         CEvent::Event()->addNewCourse(course);
         for (unsigned int i = 0; i < m_CourseResults.size(); i++)
             m_CourseResults.at(i)->SetCourse(course);
@@ -67,6 +68,8 @@ bool CIofResultXmlHandler::characters(const QString &ch)
         case inClub: m_Club = ch; break;
         case inControlCode: m_Controls.append(ch); break;
         case inSplitTime: m_Splits.append(TimeTakenTo0BasedTime(ch)); break;
+        case inCourseLen: m_CourseLen = ch; break;
+        case inCourseClimb: m_CourseClimb = ch; break;
         case inOther: break;
         }
     return true;
@@ -105,6 +108,8 @@ bool CIofResultXmlHandler::startElement( const QString&, const QString&, const Q
     if (name == "ClassResult")
         {
         m_CourseName.clear();
+        m_CourseLen.clear();
+        m_CourseClimb.clear();
         m_CourseControls.clear();
         m_CourseResults.empty();
         }

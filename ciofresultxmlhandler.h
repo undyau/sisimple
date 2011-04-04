@@ -12,7 +12,7 @@ class CIofResultXmlHandler : public QXmlDefaultHandler
 {
 
 enum e_State{inClassName, inFamilyName, inGivenName, inClub, inCardId,
-             inTime, inControlCode, inSplitTime, inEventId,
+             inTime, inControlCode, inSplitTime, inEventId, inCourseLen, inCourseClimb,
              inOther};
 public:
     CIofResultXmlHandler();
@@ -27,6 +27,8 @@ private:
     e_State m_PrevState;
     QString m_EventId;
     QString m_CourseName;
+    QString m_CourseLen;   // Not in IOF XML, just used by SI Simple internally
+    QString m_CourseClimb; // Not in IOF XML, just used by SI Simple internally
     QString m_FamilyName;
     QString m_GivenName;
     QString m_SINumber;
