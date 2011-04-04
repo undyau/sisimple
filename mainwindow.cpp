@@ -148,6 +148,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->textEdit, SIGNAL(customContextMenuRequested(const QPoint&)),this, SLOT(showDownloadContextMenu(const QPoint&)));
     connect(ui->textEdit_2, SIGNAL(customContextMenuRequested(const QPoint&)),this, SLOT(showResultContextMenu(const QPoint&)));
     connect(this, SIGNAL(dnf(long)), CEvent::Event(), SLOT(dnfResult(long)));
+    connect(this, SIGNAL(dsq(long)), CEvent::Event(), SLOT(dsqResult(long)));
     connect(this, SIGNAL(reinstate(long)), CEvent::Event(), SLOT(reinstateResult(long)));
     connect(ui->actionManage, SIGNAL(triggered()), this, SLOT(runcoursesdialog()));
     connect(ui->actionGuess, SIGNAL(triggered()), CEvent::Event(), SLOT(guessCourses()));
@@ -250,6 +251,42 @@ void MainWindow::showResults(std::vector<QString>& a_Lines)
         ui->textEdit_2->append(a_Lines[i]);
 }
 
+void MainWindow::populateContextMenu(QMenu& a_Menu, int a_Index)
+{
+    if (!CEvent::Event()->GetResultFinished(a_Index) && !CEvent::Event()->GetResultInvalid(a_Index))
+        a_Menu.addAction("Reinstate");
+    if (CEvent::Event()->GetResultFinished(a_Index))
+        {
+        a_Menu.addAction("DNF");
+        a_Menu.addAction("Disqualify");
+        }
+    a_Menu.addAction("Alter");
+    a_Menu.addAction("Delete");
+}
+
+
+void MainWindow::doContextMenuAction(QAction *selectedItem, int a_Index)
+{
+    if (selectedItem)
+    {
+    if (selectedItem->text() == "Reinstate")
+        emit reinstate(a_Index);
+    else if (selectedItem->text() == "DNF")
+        emit dnf(a_Index);
+    else if (selectedItem->text() == "Disqualify")
+        emit dsq(a_Index);
+    else if (selectedItem->text() == "Alter")
+        runAlterDialog(a_Index);
+    else if (selectedItem->text() == "Delete")
+        {
+        QString msg = QString(tr("Are you sure that you want to delete this download ?"));
+        int result = SIMessageBox(msg, QMessageBox::Question, QMessageBox::Yes|QMessageBox::No);
+        if (result == QMessageBox::Yes)
+            emit deleteDownload(a_Index);
+        }
+    }
+}
+
 void MainWindow::showDownloadContextMenu(const QPoint& a_Pos)
 {
     QPoint globalPos = a_Pos;
@@ -279,31 +316,10 @@ void MainWindow::showDownloadContextMenu(const QPoint& a_Pos)
         return;
 
     QMenu myMenu;
-    if (!CEvent::Event()->GetResultFinished(index) && !CEvent::Event()->GetResultInvalid(index))
-        myMenu.addAction("Reinstate");
-    if (CEvent::Event()->GetResultFinished(index))
-        myMenu.addAction("DNF");
-    myMenu.addAction("Alter");
-    myMenu.addAction("Delete");
+    populateContextMenu(myMenu, index);
 
     QAction* selectedItem = myMenu.exec(ui->textEdit->viewport()->mapToGlobal(a_Pos));
-    if (selectedItem)
-    {
-    if (selectedItem->text() == "Reinstate")
-        emit reinstate(index);
-    else if (selectedItem->text() == "DNF")
-        emit dnf(index);
-    else if (selectedItem->text() == "Alter")
-        runAlterDialog(index);
-    else if (selectedItem->text() == "Delete")
-        {
-        QString msg = QString(tr("Are you sure that you want to delete this download ?"));
-        int result = SIMessageBox(msg, QMessageBox::Question, QMessageBox::Yes|QMessageBox::No);
-        if (result == QMessageBox::Yes)
-            emit deleteDownload(index);
-        }
-    }
-
+    doContextMenuAction(selectedItem, index);
 }
 
 void MainWindow::showResultContextMenu(const QPoint& a_Pos)
@@ -342,31 +358,10 @@ void MainWindow::showResultContextMenu(const QPoint& a_Pos)
         }
 
     QMenu myMenu;
-    if (!CEvent::Event()->GetResultFinished(index) && !CEvent::Event()->GetResultInvalid(index))
-        myMenu.addAction("Reinstate");
-    if (CEvent::Event()->GetResultFinished(index))
-        myMenu.addAction("DNF");
-    myMenu.addAction("Alter");
-    myMenu.addAction("Delete");
+    populateContextMenu(myMenu, index);
 
     QAction* selectedItem = myMenu.exec(ui->textEdit_2->viewport()->mapToGlobal(a_Pos));
-    if (selectedItem)
-    {
-    if (selectedItem->text() == "Reinstate")
-        emit reinstate(index);
-    else if (selectedItem->text() == "DNF")
-        emit dnf(index);
-    else if (selectedItem->text() == "Alter")
-        runAlterDialog(index);
-    else if (selectedItem->text() == "Delete")
-        {
-        QString msg = QString(tr("Are you sure that you want to delete this download ?"));
-        int result = SIMessageBox(msg, QMessageBox::Question, QMessageBox::Yes|QMessageBox::No);
-        if (result == QMessageBox::Yes)
-            emit deleteDownload(index);
-        }
-    }
-
+    doContextMenuAction(selectedItem, index);
 }
 
 

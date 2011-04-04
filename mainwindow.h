@@ -42,6 +42,7 @@ public:
 signals:
     void reinstate(long a_Index);
     void dnf(long a_Index);
+    void dsq(long a_Index);
     void deleteDownload(long a_Index);
     void alter(long a_Index, QString a_Name, QString a_Club);
     void importCourses(QString a_Filename);
@@ -82,6 +83,8 @@ private:
     QLineEdit*  m_EventText;
 
     void runAlterDialog(long a_Index);
+    void populateContextMenu(QMenu& a_Menu, int index);
+    void doContextMenuAction(QAction *selectedItem, int index);
 };
 
 #endif // MAINWINDOW_H

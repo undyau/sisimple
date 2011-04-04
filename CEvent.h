@@ -101,6 +101,7 @@ signals:
 
     private slots:
         void dnfResult(long a_Index); // DNF someone
+        void dsqResult(long a_Index);      // DSQ someone
         void deleteDownload(long a_Index); // Disappear someone
         void reinstateResult(long a_Index); // Reinstate someone
         void newCourse(CCourse* a_Course);  // Add a new course to event

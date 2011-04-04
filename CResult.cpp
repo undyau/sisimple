@@ -29,7 +29,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 // class constructor
 CResult::CResult(QString& a_RawData) : m_RawData(a_RawData), m_ProcessedResult(false),
     m_Invalid(false), m_Finished(true), m_Pos(0), m_FinishedOverride(false), m_FinishedOverrideSet(false),
-    m_Course(NULL), m_Altered(false)
+    m_Course(NULL), m_Altered(false), m_Disqualified(false)
     {
     QStringList array = m_RawData.split(',');
 
@@ -66,7 +66,8 @@ CResult::CResult(long a_RawIndex, long a_SINumber, QString a_Name, QString a_Clu
                  QString m_Status, QStringList& a_Controls, QStringList& a_Splits) :
                  m_ProcessedResult(false), m_Invalid(false), m_Pos(0),
                  m_FinishedOverride(false),
-                 m_FinishedOverrideSet(false), m_Course(NULL), m_Altered(false),  m_SINumber(a_SINumber),
+                 m_FinishedOverrideSet(false), m_Course(NULL), m_Altered(false),
+                 m_Disqualified(false),  m_SINumber(a_SINumber),
                  m_RawIndex(a_RawIndex), m_Name(a_Name), m_Club(a_Club)
    {
 
@@ -83,6 +84,7 @@ CResult::CResult(long a_RawIndex, long a_SINumber, QString a_Name, QString a_Clu
 
     m_Finished = m_Status == "OK";
     m_Invalid = m_Status == "DidNotFinish" ;
+    m_Disqualified = m_Status == "Disqualified";
     }
 
 // class destructor
@@ -223,7 +225,7 @@ QString CResult::DebugStr()
 long CResult::TimeTaken()
     {
     long result;
-    if (m_Invalid || !m_Finish.GetWhen().isValid() || !m_Start.GetWhen().isValid())
+    if (m_Invalid || m_Disqualified || !m_Finish.GetWhen().isValid() || !m_Start.GetWhen().isValid())
         return -1;
 
     result = m_Start.GetWhen().secsTo(m_Finish.GetWhen());
@@ -247,7 +249,10 @@ QString CResult::TextResultStr()
         }
     else
         {
-        s = QString("    %1 %2 DNF").arg(GetName(), -26).arg(m_Club.left(3), 3);
+        s = QString("    %1 %2 %3")
+            .arg(GetName(), -26)
+            .arg(m_Club.left(3), 3)
+        .arg(m_Disqualified ? "DSQ" : "DNF");
         }
     return s;
     }
@@ -290,7 +295,7 @@ QString CResult::TextElapsedStr()
             }
         result += s;
         }
-    if (m_Finished)
+    if (m_Finished && !m_Disqualified)
         {
         double speed, len;
         len = m_Course->GetLength().toDouble();
@@ -394,7 +399,7 @@ bool CResult::GetFinished()
     if (m_FinishedOverrideSet)
         return m_FinishedOverride;
     else
-        return m_Finished;
+        return m_Finished && !m_Disqualified;
     }
 
 void CResult::SetFinishedOverride(bool a_Finished)
@@ -510,6 +515,8 @@ void CResult::AddXML(CXmlWriter& a_Writer)
 
     if (GetFinished() && TimeTaken() > 0)
         a_Writer.StartElement("CompetitorStatus", "value=\"OK\"");
+    else if (GetDisqualified())
+        a_Writer.StartElement("CompetitorStatus", "value=\"Disqualified\"");
     else if (GetInvalid())
         a_Writer.StartElement("CompetitorStatus", "value=\"DidNotFinish\"");
     else
