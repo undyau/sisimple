@@ -48,6 +48,7 @@ signals:
     void importCourses(QString a_Filename);
 
 private slots:
+    void newEvent(); // Clean everything up
     void open(); // Open new dump from SI-Config
     void save(); // Save results to file
     void refresh(); // Refresh display
@@ -68,6 +69,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    QAction* m_NewAct;
     QAction* m_OpenAct;
     QAction* m_SaveAct;
     QAction* m_ExportAct;

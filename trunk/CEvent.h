@@ -55,6 +55,7 @@ signals:
     void resetLog();
     void loadedSIArchive(QString);
     void exportIOF();
+    void eventNameSet(QString);
 
     public:
         // class destructor
@@ -98,6 +99,7 @@ signals:
         CCourse* CourseFromName(QString a_Name);
         long LookupResult(QString a_Name, QString a_Result);
         bool CanClose();
+        void LoadLastEvent();
 
     private slots:
         void dnfResult(long a_Index); // DNF someone

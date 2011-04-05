@@ -65,7 +65,11 @@ CEvent::CEvent() : m_ChangedSinceSave(false), m_ShowSplits(true), m_SavingResult
         }
     settings.endArray();
     settings.endGroup();
+}
 
+void CEvent::LoadLastEvent()
+{
+    QSettings settings(QSettings::IniFormat,  QSettings::UserScope, "undy","SI Simple");
     QDir dir(QFileInfo(settings.fileName()).absolutePath() + "/");
     QString file = dir.filePath("SISimpleLastEvent.xml");
     QFileInfo fi(file);
@@ -194,10 +198,10 @@ void CEvent::RecalcResults()
         {
         lines.push_back("<html>");
         lines.push_back("<head>");
-        lines.push_back( "<title>" + m_EventName + "</title>");
+        lines.push_back( "<title>" + GetEventName() + "</title>");
         lines.push_back( "</head>");
         lines.push_back( "<body>");
-        lines.push_back( "<h1 align=\"center\">" + m_EventName + "</h1>");
+        lines.push_back( "<h1 align=\"center\">" + GetEventName() + "</h1>");
         lines.push_back( "<pre>");
         }
     DisplayTextResults(lines);
@@ -801,7 +805,7 @@ void CEvent::ExportXML(QString a_File, bool a_ExtendedFormat)
     xml.StartElement("ResultList","status=\"complete\"");
 
     xml.StartElement("EventId", "type=\"loc\" idManager=\"anyone\"");
-    xml.AddValue(m_EventName);
+    xml.AddValue(GetEventName());
     xml.EndElement();
 
     std::vector<CResult*> results = m_Results;
@@ -912,7 +916,11 @@ QString CEvent::GetEventName()
 
 void CEvent::SetEventName(QString a_Name)
 {
-    m_EventName = a_Name;
+    if (m_EventName != a_Name)
+        {
+        m_EventName = a_Name;
+        emit eventNameSet(a_Name);
+        }
 }
 
 void CEvent::WriteResults(std::vector<QString>& a_Lines)
