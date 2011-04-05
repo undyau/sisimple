@@ -109,6 +109,21 @@ CEvent* CEvent::Event()
     return &instance;
 }
 
+void CEvent::Reset()
+{
+    for (std::vector<CCourse*>::iterator i = m_Courses.begin(); i != m_Courses.end(); i++)
+        delete (*i);
+    for (std::vector<CResult*>::iterator j = m_Results.begin(); j != m_Results.end(); j++)
+        delete (*j);
+
+    SetEventName(QString(""));
+    m_Courses.clear();
+    m_Results.clear();
+    emit (resetLog());
+    std::vector<QString> lines;
+    emit (updatedResultsOutput(lines));
+}
+
 QString CEvent::Directory()
 {
     return m_Dir;
@@ -1004,6 +1019,10 @@ void CEvent::newCourse(CCourse* a_Course)
 
 void CEvent::deleteCourse(CCourse* a_Course)
 {
+    for (unsigned int i = 0; i < m_Results.size(); i++)
+        if (m_Results[i]->GetCourse() == a_Course)
+            m_Results[i]->SetCourse(NULL);
+
     for (unsigned int i = 0; i < m_Courses.size(); i++)
         if (m_Courses[i] == a_Course)
             {
@@ -1339,4 +1358,18 @@ bool CEvent::LoadEventFromXML(QString a_FileName)
 
   RecalcResults();
   return true;
+}
+
+void CEvent::elevateCourse(CCourse* a_Course)
+{
+    for (unsigned int i = 1; i < m_Courses.size(); i++)
+        if (m_Courses[i] == a_Course)
+            std::swap(m_Courses[i], m_Courses[i-1]);
+}
+
+void CEvent::demoteCourse(CCourse* a_Course)
+{
+    for (unsigned int i = 10; i < m_Courses.size() - 1; i++)
+        if (m_Courses[i] == a_Course)
+            std::swap(m_Courses[i], m_Courses[i+1]);
 }

@@ -100,6 +100,7 @@ signals:
         long LookupResult(QString a_Name, QString a_Result);
         bool CanClose();
         void LoadLastEvent();
+        void Reset();
 
     private slots:
         void dnfResult(long a_Index); // DNF someone
@@ -112,6 +113,8 @@ signals:
         void importCourses(QString a_FileName); // import courses in IOF XML format
         void newSIData(QString); // new SI data has been loaded
         void NewDownloadData(QStringList a_NewData); // new download data has been read
+        void elevateCourse(CCourse* a_Course);  // raise the course up the list of courses
+        void demoteCourse(CCourse* a_Course);   // demote course down list of courses
 
     private:
         QString FindDataFile(QStringList& a_Candidates, QString a_Dir) const;
