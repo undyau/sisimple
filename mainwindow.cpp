@@ -47,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
     settings.beginGroup("General");
     bool showSplits = settings.value("showSplits", false).toBool();
     bool showHtml = settings.value("showHtml", false).toBool();
-    settings.endGroup();
+    settings.endGroup();   
 
     QFont font("Monospace");
     font.setStyleHint(QFont::TypeWriter);
@@ -67,6 +67,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->textEdit_2->setViewport(viewPort);
     ui->textEdit->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->textEdit_2->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    m_NewAct = new QAction(QIcon::fromTheme("document-new", QIcon(":icons/icons/document-new.svg")), tr("&New Event"), this);
+    m_NewAct->setShortcuts(QKeySequence::New);
+    m_NewAct->setStatusTip(tr("New Event"));
+    m_NewAct->setToolTip(tr("New Event"));
+    m_NewAct->setIconVisibleInMenu(true);
+    ui->menu_File->addAction(m_NewAct);
+    ui->mainToolBar->addAction(m_NewAct);
 
     m_DownloadAct = new QAction( QIcon(":icons/icons/device-siunit.svg"), tr("&Download..."), this);
     //m_DownloadAct->setShortcuts(QKeySequence::Download);
@@ -134,6 +142,7 @@ MainWindow::MainWindow(QWidget *parent) :
     CEvent::Event()->SetShowSplits(showSplits);
     CEvent::Event()->SetShowHTML(showHtml);
 
+    connect(m_NewAct, SIGNAL(triggered()), this, SLOT(newEvent()));
     connect(m_OpenAct, SIGNAL(triggered()), this, SLOT(open()));
     connect(m_SaveAct, SIGNAL(triggered()), this, SLOT(save()));
     connect(m_ExportAct, SIGNAL(triggered()), this, SLOT(exportIOF()));
@@ -164,6 +173,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_DownloadAct, SIGNAL(triggered()), this,SLOT(rundownloaddialog()));
     connect(CEvent::Event(), SIGNAL(exportIOF()), this, SLOT(exportIOF()));
     connect(this, SIGNAL(deleteDownload(long)), CEvent::Event(), SLOT(deleteDownload(long)));
+    connect(CEvent::Event(), SIGNAL(eventNameSet(QString)), m_EventText, SLOT(setText(QString)));
+
+    // Initialise the event
+    CEvent::Event()->LoadLastEvent();
 }
 
 MainWindow::~MainWindow()
@@ -181,6 +194,18 @@ MainWindow::~MainWindow()
 void MainWindow::open()
 {
     CEvent* oevent = CEvent::Event();
+    QString file = QFileDialog::getOpenFileName(this,tr("Select event data file"), oevent->Directory(), "*.csv;*.xml");
+
+    if (file.isEmpty())
+        return;
+
+    oevent->SetResultsInputFile(file);
+}
+
+void MainWindow::newEvent()
+{
+    CEvent* oevent = CEvent::Event();
+    oevent->
     QString file = QFileDialog::getOpenFileName(this,tr("Select event data file"), oevent->Directory(), "*.csv;*.xml");
 
     if (file.isEmpty())
