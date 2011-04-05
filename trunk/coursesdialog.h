@@ -38,6 +38,8 @@ public:
 signals:
     void newCourse(CCourse*);
     void deleteCourse(CCourse*);
+    void elevateCourse(CCourse*);
+    void demoteCourse(CCourse*);
 
 
 private slots:
@@ -47,6 +49,8 @@ private slots:
     void deleteSelectedCourses();
     void deleteCourseName(QString a_Course);
     void addNewCourseName(QString a_Course);
+    void moveUpSelectedCourse();
+    void moveDownSelectedCourse();
 
 private:
     Ui::coursesdialog *ui;

@@ -43,6 +43,10 @@ coursesdialog::coursesdialog(QWidget *parent) :
     connect(this, SIGNAL(deleteCourse(CCourse*)), CEvent::Event(), SLOT(deleteCourse(CCourse*)));
     connect(CEvent::Event(), SIGNAL(newCourseExists(QString)), this, SLOT(addNewCourseName(QString)));
     connect(CEvent::Event(), SIGNAL(deletedCourse(QString)), this, SLOT(deleteCourseName(QString)));
+    connect(ui->moveUpButton, SIGNAL(clicked()), this, SLOT(moveUpSelectedCourse()));
+    connect(ui->moveDownButton, SIGNAL(clicked()), this, SLOT(moveDownSelectedCourse()));
+    connect(this,SIGNAL(elevateCourse(CCourse*)), CEvent::Event(), SLOT(elevateCourse(CCourse*)));
+    connect(this,SIGNAL(demoteCourse(CCourse*)), CEvent::Event(), SLOT(demoteCourse(CCourse*)));
     enableCtrls();
 }
 
@@ -111,6 +115,17 @@ void coursesdialog::enableCtrls()
 
     ui->EditButton->setEnabled(count == 1);
     ui->deleteButton->setEnabled(count > 0);
+
+    if (count != 1)
+        {
+        ui->moveUpButton->setEnabled(false);
+        ui->moveDownButton->setEnabled(false);
+        }
+    else
+        {
+        ui->moveUpButton->setEnabled(!ui->coursesList->item(0)->isSelected());
+        ui->moveDownButton->setEnabled(!ui->coursesList->item(ui->coursesList->count()-1)->isSelected());
+        }
 }
 
 void coursesdialog::deleteSelectedCourses()
@@ -125,6 +140,34 @@ void coursesdialog::deleteSelectedCourses()
 
     for (std::set<CCourse*>::iterator c = victims.begin(); c != victims.end(); c++)
         emit (deleteCourse(*c));
+}
+
+void coursesdialog::moveUpSelectedCourse()
+{
+    for (int i = 0; i < ui->coursesList->count(); i++)
+        if (ui->coursesList->item(i)->isSelected())
+            {
+            QString text = ui->coursesList->item(i)->text();
+            ui->coursesList->takeItem(i);
+            ui->coursesList->insertItem(i-1, text);
+            ui->coursesList->item(i-1)->setSelected(true);
+            emit elevateCourse(CEvent::Event()->CourseFromName(text));
+            break;
+            }
+}
+
+void coursesdialog::moveDownSelectedCourse()
+{
+    for (int i = 0; i < ui->coursesList->count(); i++)
+        if (ui->coursesList->item(i)->isSelected())
+            {
+            QString text = ui->coursesList->item(i)->text();
+            ui->coursesList->takeItem(i);
+            ui->coursesList->insertItem(i+1, text);
+            ui->coursesList->item(i+1)->setSelected(true);
+            emit demoteCourse(CEvent::Event()->CourseFromName(text));
+            break;
+            }
 }
 
 void coursesdialog::deleteCourseName(QString a_Course)

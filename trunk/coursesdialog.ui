@@ -62,6 +62,20 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="moveUpButton">
+          <property name="text">
+           <string>Move Up</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="moveDownButton">
+          <property name="text">
+           <string>Move Down</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -84,7 +98,7 @@
        <enum>Qt::Horizontal</enum>
       </property>
       <property name="standardButtons">
-       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       <set>QDialogButtonBox::Close</set>
       </property>
      </widget>
     </item>

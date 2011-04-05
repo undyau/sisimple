@@ -47,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
     settings.beginGroup("General");
     bool showSplits = settings.value("showSplits", false).toBool();
     bool showHtml = settings.value("showHtml", false).toBool();
-    settings.endGroup();   
+    settings.endGroup();
 
     QFont font("Monospace");
     font.setStyleHint(QFont::TypeWriter);
@@ -205,13 +205,7 @@ void MainWindow::open()
 void MainWindow::newEvent()
 {
     CEvent* oevent = CEvent::Event();
-    oevent->
-    QString file = QFileDialog::getOpenFileName(this,tr("Select event data file"), oevent->Directory(), "*.csv;*.xml");
-
-    if (file.isEmpty())
-        return;
-
-    oevent->SetResultsInputFile(file);
+    oevent->Reset();
 }
 
 void MainWindow::save()
