@@ -23,6 +23,7 @@ public slots:
  void removeDevice(const QextPortInfo & info );
  void processCardCsv(QString);
  void dumperFinished(int, QString);
+ void dumperError(QString);
  void tryDownload();
  void setSerialPort(const QString& a_SerialPort);
  void closeDialog();

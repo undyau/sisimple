@@ -24,6 +24,9 @@ DownloadDialog::DownloadDialog(QWidget *parent) :
     connect(ui->comboBox, SIGNAL(activated(QString)), this, SLOT(setSerialPort(QString)));
 
     m_Sdw = new QextSerialEnumerator();
+    QList<QextPortInfo> allports = m_Sdw->getPorts();
+    for (int i = 0; i < allports.count(); i++)
+        addDevice(allports.at(i));
     connect(m_Sdw, SIGNAL(deviceDiscovered(QextPortInfo)), this, SLOT(addDevice(QextPortInfo)));
     connect(m_Sdw, SIGNAL(deviceRemoved(QextPortInfo)), this, SLOT(removeDevice(QextPortInfo)));
     m_Sdw->setUpNotifications( );
@@ -58,7 +61,7 @@ void DownloadDialog::setSerialPort(const QString& a_SerialPort)
     for (i = ports.begin(); i != ports.end(); i++)
         if ((*i).friendName == a_SerialPort)
             {
-            m_SerialPort = (*i).portName;
+            m_SerialPort = (*i).physName;
             break;
             }
 }
@@ -80,6 +83,7 @@ void DownloadDialog::tryDownload()
             connect(m_Dumper, SIGNAL(CardCsv(QString)), this, SLOT(processCardCsv(QString)));
             connect(m_Dumper, SIGNAL(Finished(int, QString)), this, SLOT(dumperFinished(int, QString)));
             connect(m_Dumper, SIGNAL(StatusUpdate(QString)), ui->labelStatus, SLOT(setText(QString)));
+            connect(m_Dumper, SIGNAL(ErrorOcurred(QString)), this, SLOT(dumperError(QString)));
             m_Dumper->tryDownload();
             }
         }
@@ -93,6 +97,15 @@ void DownloadDialog::dumperFinished(int a_Count, QString a_Summary)
     ui->downloadButton->setEnabled(true);
     m_DownloadOK = a_Count > 0;
 
+}
+
+void DownloadDialog::dumperError(QString a_Summary)
+{
+    // send out the data and close the dialog
+    ui->labelStatus->setText(a_Summary);
+    ui->closeButton->setEnabled(true);
+    ui->downloadButton->setEnabled(true);
+    m_DownloadOK = false;
 }
 
 void DownloadDialog::processCardCsv(QString a_CardData)
