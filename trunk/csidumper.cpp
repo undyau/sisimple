@@ -479,7 +479,7 @@ void CSIDumper::HandleReadingCard89(QByteArray& a_Rec)
                 (unsigned char)m_CardData[offset + 3] != 0xEE)
                 {
                 Read4ByteControlData(m_CardData, offset, cn, dow, when, false);
-                rec.setControl(i, cn, dow, when);
+                rec.setControl(cn, dow, when);
                 }
             offset += 4;
             }
@@ -562,7 +562,7 @@ void CSIDumper::HandleReadingCard6(QByteArray& a_Rec)
                 (unsigned char)m_CardData[offset + 3] != 0xEE)
                 {
                 Read4ByteControlData(m_CardData, offset, cn, dow, when, false);
-                rec.setControl(i, cn, dow, when);
+                rec.setControl(cn, dow, when);
                 }
             offset += 4;
             }
@@ -619,7 +619,7 @@ void CSIDumper::ProcessSICard5(QByteArray& a_Rec)
             if (a_Rec[offset + START_PUNCH_DATA] != (char)0)
                 {
                 Read3ByteControlData(a_Rec, START_PUNCH_DATA + offset, cn, when);
-                rec.setControl(i, cn, "", when);
+                rec.setControl(cn, "", when);
                 }
             offset += 3;
             }

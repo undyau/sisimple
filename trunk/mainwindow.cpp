@@ -194,7 +194,7 @@ MainWindow::~MainWindow()
 void MainWindow::open()
 {
     CEvent* oevent = CEvent::Event();
-    QString file = QFileDialog::getOpenFileName(this,tr("Select event data file"), oevent->Directory(), "*.csv;*.xml");
+    QString file = QFileDialog::getOpenFileName(this,tr("Select event data file"), oevent->Directory(), "Result files(*.csv *.xml);;All files (* *.*)");
 
     if (file.isEmpty())
         return;

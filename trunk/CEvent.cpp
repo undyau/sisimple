@@ -159,11 +159,17 @@ bool CEvent::SetResultsInputFile(QString a_File)
 
     m_OriginalResultsData.empty();
 
-    if (fileInfo.completeSuffix() == "XML" || fileInfo.completeSuffix() == "xml")
+    // Sample the file
+    QFile tfile(m_ResultsInputFile);
+    if (!tfile.open(QIODevice::ReadOnly))
+        return LoadEventFromDump();
+    QTextStream stream( &tfile );
+    QString line = stream.readLine();
+    tfile.close();
+    if (line.contains("?xml"))
         return LoadEventFromXML(a_File);
     else
         return LoadEventFromDump();
-
 }
 
 bool CEvent::LoadEventFromDump()

@@ -23,7 +23,7 @@ public:
     void setStart(QString a_StartCN, QString a_DOW, QString a_StartTime) {m_StartCN = a_StartCN;m_StartTime = a_StartTime; m_StartDOW = a_DOW;}
     void setFinish(QString a_FinishCN, QString a_DOW, QString a_FinishTime) {m_FinishCN = a_FinishCN;m_FinishTime = a_FinishTime; m_FinishDOW = a_DOW;}
 
-    void setControl(int a_Index, QString a_CN, QString a_DOW, QString a_Time);
+    void setControl(QString a_CN, QString a_DOW, QString a_Time);
     void setBadRead(bool a_BadRead) {m_BadRead = a_BadRead;}
 
     bool getBadRead() {return m_BadRead;}

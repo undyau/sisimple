@@ -5,7 +5,7 @@ SIDumpRecord::SIDumpRecord() :
 {
 }
 
-void SIDumpRecord::setControl(int a_Index, QString a_CN, QString a_DOW, QString a_Time)
+void SIDumpRecord::setControl(QString a_CN, QString a_DOW, QString a_Time)
 {
     m_CNArray.append(a_CN);
     m_TimeArray.append(a_Time);
