@@ -24,12 +24,15 @@ DownloadDialog::DownloadDialog(QWidget *parent) :
     connect(ui->comboBox, SIGNAL(activated(QString)), this, SLOT(setSerialPort(QString)));
 
     m_Sdw = new QextSerialEnumerator();
+#ifndef Q_OS_WIN
     QList<QextPortInfo> allports = m_Sdw->getPorts();
     for (int i = 0; i < allports.count(); i++)
         addDevice(allports.at(i));
+#else
     connect(m_Sdw, SIGNAL(deviceDiscovered(QextPortInfo)), this, SLOT(addDevice(QextPortInfo)));
     connect(m_Sdw, SIGNAL(deviceRemoved(QextPortInfo)), this, SLOT(removeDevice(QextPortInfo)));
     m_Sdw->setUpNotifications( );
+#endif
 
     connect (this, SIGNAL(DownloadDataRead(QStringList)), CEvent::Event(), SLOT(NewDownloadData(QStringList)));
 }
@@ -61,7 +64,11 @@ void DownloadDialog::setSerialPort(const QString& a_SerialPort)
     for (i = ports.begin(); i != ports.end(); i++)
         if ((*i).friendName == a_SerialPort)
             {
+#ifdef Q_OS_WIN
+            m_SerialPort = (*i).portName;
+#else
             m_SerialPort = (*i).physName;
+#endif
             break;
             }
 }
