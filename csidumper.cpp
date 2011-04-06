@@ -65,7 +65,7 @@ bool CSIDumper::OpenPort()
     }
     else {
         QString msg = QString(tr("Device failed to open: %1")).arg(m_Port->errorString());
-        emit StatusUpdate(msg);
+        emit ErrorOcurred(msg);
         return false;
     }
 }
@@ -172,7 +172,7 @@ void CSIDumper::onDsrChanged(bool status)
 {
     if (!status)
         {
-        emit StatusUpdate(tr("Device was turned off"));
+        emit ErrorOcurred(tr("Device was turned off"));
         ClosePort();
         }
 }
