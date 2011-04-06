@@ -105,13 +105,15 @@ void CSIDumper::RestartWith38400()
 
 bool CSIDumper::CompleteMessage(QByteArray &a_Msg, bool& a_Error)
 {
-a_Error = true;
 if (a_Msg.isEmpty())
     return false;
-if ((unsigned char)a_Msg[0] == NAK)
+if ((unsigned char)a_Msg[0] == NAK ||
+    (unsigned char)a_Msg[0] != STX)
+    {
+    a_Error = true;
     return true;
-if ((unsigned char)a_Msg[0] != STX)
-    return true;
+    }
+
 if (a_Msg.length() < 4)
     return false;
 if ((unsigned char)a_Msg[1] >= 0x80)    // new command
@@ -162,10 +164,13 @@ void CSIDumper::onReadyRead()
         case STATE_READING_CARD6: HandleReadingCard6(m_ReadBuf); return;
         }
     }
-    else if (error)
-        {
-        HandleBadData(m_ReadBuf); return;
-        }
+    else
+    {
+        if (error)
+            HandleBadData(m_ReadBuf);
+        else
+            qDebug() << "inbound message incomplete, waiting for more";
+    }
 }
 
 void CSIDumper::onDsrChanged(bool status)
@@ -411,7 +416,6 @@ bool CSIDumper::ProcessResp(QByteArray& a_Rec)
         case CARD_UNKNOWN:
         default:
             DumpMessage("Unknown card type encountered", a_Rec);
-            exit(1);
             return true;
     }
 
