@@ -210,8 +210,7 @@ void CEvent::ProcessRawData()
 
 void CEvent::RecalcResults()
 {
-    if (!m_SavingResults)
-        m_ChangedSinceSave = true;
+    m_ChangedSinceSave = true;
 
     std::vector<QString> lines;
     CalcResults();
@@ -812,9 +811,17 @@ void CEvent::DisplayTextSplits(std::vector<QString>& a_Lines)
                 a_Lines.push_back("");
                 a_Lines.push_back(results[i]->GetCourse()->TextSplitHdrStr());
                 }
-            a_Lines.push_back(results[i]->TextElapsedStr());
+            QString divStart, divEnd;
+            if (m_ShowHTML && m_SavingResults)
+                {
+                divStart = QString("<span title=\"%1\" style=\"background-color: %2\">")
+                           .arg(results[i]->GetName())
+                           .arg(i%2 ? "lavenderblush" : "lemonchiffon" );
+                divEnd = "</span>";
+                }
+            a_Lines.push_back(divStart + results[i]->TextElapsedStr());
             a_Lines.push_back(results[i]->TextLegStr());
-            a_Lines.push_back(results[i]->TextLegBehindStr());
+            a_Lines.push_back(results[i]->TextLegBehindStr() + divEnd);
             }
         }
 
