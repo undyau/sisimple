@@ -83,7 +83,7 @@ CResult::CResult(long a_RawIndex, long a_SINumber, QString a_Name, QString a_Clu
         m_Punches.push_back(new CPunch(ToLong(a_Controls.at(i)), "", ToDateTime(a_Splits.at(i))));
 
     m_Finished = m_Status == "OK";
-    m_Invalid = m_Status == "DidNotFinish" ;
+    m_Invalid = (m_Status == "DidNotFinish" || m_Status == "MisPunch");
     m_Disqualified = m_Status == "Disqualified";
     }
 
