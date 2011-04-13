@@ -53,6 +53,7 @@ private slots:
     void save(); // Save results to file
     void refresh(); // Refresh display
     void exportIOF(); // Export in IOF format
+    void formatHTML(); // Format HTML
     void about(); // Display About dialog
     void setUseHTML(int a_Value); // Toggle use of HTML and plain text
     void setShowSplits(int a_Value); // Toggle display of splits
@@ -77,6 +78,7 @@ private:
     QAction* m_QuitAct;
     QAction* m_RefreshAct;
     QAction* m_AboutAct;
+    QAction* m_FormatHtmlAct;
 
     QCheckBox* m_UseHtmlCheck;
     QCheckBox* m_ShowSplitsCheck;

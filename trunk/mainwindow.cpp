@@ -35,6 +35,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include <QSettings>
 #include <QCloseEvent>
 #include "downloaddialog.h"
+#include "htmloptionsdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -119,6 +120,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->menu_Results->addAction(m_RefreshAct);
     ui->mainToolBar->addAction(m_RefreshAct);
 
+    m_FormatHtmlAct = new QAction(tr("&HTML customisation"), this);
+    m_FormatHtmlAct->setStatusTip(tr("Customise HTML Appearance"));
+    m_FormatHtmlAct->setToolTip(tr("Customise HTML Appearance"));
+    ui->menu_Results->addAction(m_FormatHtmlAct);
+
     m_UseHtmlCheck = new ::QCheckBox(tr("HTML"), this);
     m_ShowSplitsCheck = new QCheckBox(tr("Splits"), this);
     ui->mainToolBar->addSeparator();
@@ -147,6 +153,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_SaveAct, SIGNAL(triggered()), this, SLOT(save()));
     connect(m_ExportAct, SIGNAL(triggered()), this, SLOT(exportIOF()));
     connect(m_RefreshAct, SIGNAL(triggered()), this, SLOT(refresh()));
+    connect(m_FormatHtmlAct, SIGNAL(triggered()), this, SLOT(formatHTML()));
     connect(m_QuitAct, SIGNAL(triggered()), this, SLOT(close()));
     connect(m_UseHtmlCheck, SIGNAL(stateChanged(int)), this, SLOT(setUseHTML(int)));
     connect(m_ShowSplitsCheck, SIGNAL(stateChanged(int)), this, SLOT(setShowSplits(int)));
@@ -446,5 +453,11 @@ void MainWindow::closeEvent ( QCloseEvent * event )
 void MainWindow::rundownloaddialog()
 {
     DownloadDialog dlg(this);
+    dlg.exec();
+}
+
+void MainWindow::formatHTML()
+{
+    HtmlOptionsDialog dlg(this);
     dlg.exec();
 }
