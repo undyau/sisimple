@@ -214,13 +214,22 @@ void CEvent::RecalcResults()
 
     std::vector<QString> lines;
     CalcResults();
+
+    QSettings settings(QSettings::IniFormat,  QSettings::UserScope, "undy","SI Simple");
+    settings.beginGroup("HTML Options");
+    bool m_ResultsAsHTMLPage = settings.value("WholePage",false).toBool();
+    settings.endGroup();
+
     if (m_ShowHTML)
         {
-        lines.push_back("<html>");
-        lines.push_back("<head>");
-        lines.push_back( "<title>" + GetEventName() + "</title>");
-        lines.push_back( "</head>");
-        lines.push_back( "<body>");
+        if (m_ResultsAsHTMLPage && m_SavingResults )
+            {
+            lines.push_back("<html>");
+            lines.push_back("<head>");
+            lines.push_back( "<title>" + GetEventName() + "</title>");
+            lines.push_back( "</head>");
+            lines.push_back( "<body>");
+            }
         lines.push_back( "<h1 align=\"center\">" + GetEventName() + "</h1>");
         lines.push_back( "<pre>");
         }
@@ -232,8 +241,11 @@ void CEvent::RecalcResults()
         {
         lines.push_back ("");
         lines.push_back ("</pre>");
-        lines.push_back("</body>");
-        lines.push_back("</html>");
+        if (m_ResultsAsHTMLPage && m_SavingResults)
+            {
+            lines.push_back("</body>");
+            lines.push_back("</html>");
+            }
         }
 
     WriteResults(lines);
@@ -783,6 +795,16 @@ void CEvent::DisplayTextResults(std::vector<QString>& a_Lines)
 
 void CEvent::DisplayTextSplits(std::vector<QString>& a_Lines)
 {
+    QSettings settings(QSettings::IniFormat,  QSettings::UserScope, "undy","SI Simple");
+    settings.beginGroup("HTML Options");
+    QString preHeader = settings.value("preSplitsHeader","<span>").toString();
+    QString postHeader = settings.value("postSplitsHeader","</span>").toString();
+    QString preEvenLine = settings.value("preSplitsEven","<span title=\"{competitor}\">").toString();
+    QString postEvenLine = settings.value("postSplitsEven","</span>").toString();
+    QString preOddLine = settings.value("preSplitsOdd","<span title=\"{competitor}\">").toString();
+    QString postOddLine = settings.value("postSplitsOdd","</span>").toString();
+    settings.endGroup();
+
 // Display header text
     a_Lines.push_back("");
     if (m_ShowHTML)
@@ -809,15 +831,19 @@ void CEvent::DisplayTextSplits(std::vector<QString>& a_Lines)
                 else
                     a_Lines.push_back(results[i]->GetCourse()->TextDescStr());
                 a_Lines.push_back("");
+                if (m_ShowHTML && m_SavingResults)
+                    a_Lines.push_back(preHeader);
                 a_Lines.push_back(results[i]->GetCourse()->TextSplitHdrStr());
+                if (m_ShowHTML && m_SavingResults)
+                    a_Lines.push_back(postHeader);
                 }
             QString divStart, divEnd;
             if (m_ShowHTML && m_SavingResults)
                 {
-                divStart = QString("<span title=\"%1\" style=\"background-color: %2\">")
-                           .arg(results[i]->GetName())
-                           .arg(i%2 ? "lavenderblush" : "lemonchiffon" );
-                divEnd = "</span>";
+                divStart = i%2 ? preOddLine : preEvenLine;
+                divEnd = i%2 ? postOddLine : postEvenLine;
+                divStart = divStart.replace("{competitor}", results[i]->GetDisplayName());
+                divEnd = divEnd.replace("{competitor}", results[i]->GetDisplayName());
                 }
             a_Lines.push_back(divStart + results[i]->TextElapsedStr());
             a_Lines.push_back(results[i]->TextLegStr());

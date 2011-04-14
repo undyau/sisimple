@@ -10,13 +10,16 @@ HtmlOptionsDialog::HtmlOptionsDialog(QWidget *parent) :
     QSettings settings(QSettings::IniFormat,  QSettings::UserScope, "undy","SI Simple");
     settings.beginGroup("HTML Options");
     ui->wholePageCheckBox->setChecked(settings.value("WholePage",false).toBool());
-    ui->preSplitsHeaderLineEdit->setText(settings.value("preSplitsHeader","<div>").toString());
-    ui->postSplitsHeaderLineEdit->setText(settings.value("postSplitsHeader","</div>").toString());
-    ui->preSplitsEvenLineEdit->setText(settings.value("preSplitsEven","<div title=\"{competitor}\">").toString());
-    ui->postSplitsEvenLineEdit->setText(settings.value("postSplitsEven","</div>").toString());
-    ui->preSplitsOddLineEdit->setText(settings.value("preSplitsEven","<div title=\"{competitor}\">").toString());
-    ui->postSplitsOddLineEdit->setText(settings.value("postSplitsEven","</div>").toString());
+    ui->preSplitsHeaderLineEdit->setText(settings.value("preSplitsHeader","<span>").toString());
+    ui->postSplitsHeaderLineEdit->setText(settings.value("postSplitsHeader","</span>").toString());
+    ui->preSplitsEvenLineEdit->setText(settings.value("preSplitsEven","<span title=\"{competitor}\">").toString());
+    ui->postSplitsEvenLineEdit->setText(settings.value("postSplitsEven","</span>").toString());
+    ui->preSplitsOddLineEdit->setText(settings.value("preSplitsEven","<span title=\"{competitor}\">").toString());
+    ui->postSplitsOddLineEdit->setText(settings.value("postSplitsEven","</span>").toString());
+    ui->preFastestLineEdit->setText(settings.value("preFastest","<span style=\"color:blue\">").toString());
+    ui->postFastestLineEdit->setText(settings.value("postFastest","</span>").toString());
     settings.endGroup();
+
 }
 
 HtmlOptionsDialog::~HtmlOptionsDialog()
@@ -35,5 +38,9 @@ void HtmlOptionsDialog::accept()
     settings.setValue("postSplitsEven",ui->postSplitsEvenLineEdit->text());
     settings.setValue("preSplitsEven",ui->preSplitsOddLineEdit->text());
     settings.setValue("postSplitsEven",ui->postSplitsOddLineEdit->text());
+    settings.setValue("preFastest",ui->preFastestLineEdit->text());
+    settings.setValue("postFastest",ui->postFastestLineEdit->text());
     settings.endGroup();
+
+    QDialog::accept();
 }
