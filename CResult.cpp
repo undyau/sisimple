@@ -25,6 +25,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLegstat.h"
 #include <QStringList>
 #include <QDebug>
+#include <QSettings>
 
 // class constructor
 CResult::CResult(QString& a_RawData) : m_RawData(a_RawData), m_ProcessedResult(false),
@@ -279,19 +280,25 @@ QString CResult::TextElapsedStr()
             s = "  --:--   ";
         else
             {
-            /*           if (CEvent::Event()->GetShowHTML() &&
-                           GetLegStat(i)->m_ElapsedPos == 1)
-                           {
-                           s.Printf("<span style=\"color:red\">%7s%3s</span>", FormatTimeTaken(GetLegStat(i)->m_ElapsedTime).c_str(), QString::Format(QT("%ld"),GetLegStat(i)->m_ElapsedPos).c_str());
+            QString pre, post;
+            if (CEvent::Event()->GetShowHTML() &&
+                GetLegStat(i)->m_ElapsedPos == 1)
+                {
+                QSettings settings(QSettings::IniFormat,  QSettings::UserScope, "undy","SI Simple");
+                settings.beginGroup("HTML Options");
+                pre = settings.value("preFastest","<span style=\"color:blue\">").toString();
+                post = settings.value("postFastest","</span>").toString();
+                }
+/*                           s.Printf("<span style=\"color:red\">%7s%3s</span>", FormatTimeTaken(GetLegStat(i)->m_ElapsedTime).c_str(), QString::Format(QT("%ld"),GetLegStat(i)->m_ElapsedPos).c_str());
                            }
-                          else if (CEvent::Event()->GetShowHTML() &&
+                        else if (CEvent::Event()->GetShowHTML() &&
                            GetLegStat(i)->m_ElapsedPos == 2 || GetLegStat(i)->m_ElapsedPos == 3)
                            {
                            s.Printf("<span style=\"color:blue\">%7s%3s</span>", FormatTimeTaken(GetLegStat(i)->m_ElapsedTime).c_str(), QString::Format(QT("%ld"),GetLegStat(i)->m_ElapsedPos).c_str());
                            }
                            else*/
-            s = QString("%1%2").arg(FormatTimeTaken(GetLegStat(i)->m_ElapsedTime),7)
-                .arg(GetLegStat(i)->m_ElapsedPos,3);
+            s = QString("%1%2%3%4").arg(pre).arg(FormatTimeTaken(GetLegStat(i)->m_ElapsedTime),7)
+                .arg(GetLegStat(i)->m_ElapsedPos,3).arg(post);
             }
         result += s;
         }
@@ -324,6 +331,15 @@ QString CResult::TextLegStr()
             }
         else
             {
+            QString pre, post;
+            if (CEvent::Event()->GetShowHTML() &&
+                GetLegStat(i)->m_LegPos == 1)
+                {
+                QSettings settings(QSettings::IniFormat,  QSettings::UserScope, "undy","SI Simple");
+                settings.beginGroup("HTML Options");
+                pre = settings.value("preFastest","<span style=\"color:blue\">").toString();
+                post = settings.value("postFastest","</span>").toString();
+                }
             /*          if (CEvent::Event()->GetShowHTML() &&
                           GetLegStat(i)->m_LegPos == 1)
                           {
@@ -337,7 +353,7 @@ QString CResult::TextLegStr()
                                QString::Format(QT("%ld"),GetLegStat(i)->m_LegPos).c_str());
                           }
                       else   */
-            s = QString("%1%2").arg(FormatTimeTaken(GetLegStat(i)->m_LegTime),7).arg(GetLegStat(i)->m_LegPos,3);
+            s = QString("%1%2%3%4").arg(pre).arg(FormatTimeTaken(GetLegStat(i)->m_LegTime),7).arg(GetLegStat(i)->m_LegPos,3).arg(post);
             }
         result += s;
         }
