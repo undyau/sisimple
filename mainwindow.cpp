@@ -261,7 +261,7 @@ void MainWindow::setShowSplits(int a_Value)
 void MainWindow::about()
 {
 QMessageBox::about(this, tr("About SI Simple"),
-    tr("<h2>SI Simple 0.8.0</h2>"
+    tr("<h2>SI Simple 0.8.1 (for John Havranak)</h2>"
        "<p>&copy; 2010-2011 Andy Simpson</p>"
        "<p>This is an Open Source project hosted at "
        "http://sisimple.sourceforge.net, licensed under the GPL</p>"
