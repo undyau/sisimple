@@ -792,6 +792,7 @@ void CEvent::DisplayTextResults(std::vector<QString>& a_Lines)
         }
 }
 
+
 void CEvent::DisplayTextSplits(std::vector<QString>& a_Lines)
 {
     CHtmlOptions options;
@@ -822,27 +823,28 @@ void CEvent::DisplayTextSplits(std::vector<QString>& a_Lines)
                 else
                     a_Lines.push_back(results[i]->GetCourse()->TextDescStr());
                 a_Lines.push_back("");
+                QString pre,post;
                 if (m_ShowHTML && m_SavingResults)
-                    a_Lines.push_back("<div style=\"" + options.getHeaderCss() + "\">");
-                a_Lines.push_back(results[i]->GetCourse()->TextSplitHdrStr());
-                if (m_ShowHTML && m_SavingResults)
-                    a_Lines.push_back("</div>");
+                    {
+                    pre = "<span " + CssAsHtmlAttr(options.getHeaderCss()) + ">";
+                    post = "</span>";
+                    }
+                a_Lines.push_back(pre + results[i]->GetCourse()->TextSplitHdrStr() + post);
                 }
-            QString divStartElapsed, divStartLeg, divStartBehind, divEnd;
+            QString spanStartElapsed, spanStartLeg, spanStartBehind, spanEnd;
             if (m_ShowHTML && m_SavingResults)
                 {
-                divStartElapsed =  "<div ";
+                spanStartElapsed =  "<span ";
                 if (options.getShowNameTooltip())
-                    divStartElapsed += "title=\"" + results[i]->GetDisplayName() + "\"";
-                divStartLeg = divStartBehind = divStartElapsed;
-                divStartElapsed += " style=\"" + options.getElapsedCss() + ""
-                divEnd = i%2 ? postOddLine : postEvenLine;
-                divStart = divStart.replace("{competitor}", results[i]->GetDisplayName());
-                divEnd = divEnd.replace("{competitor}", results[i]->GetDisplayName());
+                    spanStartElapsed += "title=\"" + results[i]->GetDisplayName() + "\" ";
+                spanStartLeg = spanStartBehind = spanStartElapsed;
+                spanStartElapsed += CssAsHtmlAttr(options.getElapsedCss()) + ">";
+                spanStartLeg += CssAsHtmlAttr(options.getLegCss()) + ">";
+                spanStartBehind += CssAsHtmlAttr(options.getBehindCss()) + ">";
                 }
-            a_Lines.push_back(divStartElapsed + results[i]->TextElapsedStr() + divEnd);
-            a_Lines.push_back(divStartLeg + results[i]->TextLegStr() + divEnd);
-            a_Lines.push_back(divStartBehind + results[i]->TextLegBehindStr() + divEnd);
+            a_Lines.push_back(spanStartElapsed + results[i]->TextElapsedStr() + spanEnd);
+            a_Lines.push_back(spanStartLeg + results[i]->TextLegStr() + spanEnd);
+            a_Lines.push_back(spanStartBehind + results[i]->TextLegBehindStr() + spanEnd);
             }
         }
 

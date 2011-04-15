@@ -26,6 +26,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include <QStringList>
 #include <QDebug>
 #include <QSettings>
+#include "chtmloptions.h"
 
 // class constructor
 CResult::CResult(QString& a_RawData) : m_RawData(a_RawData), m_ProcessedResult(false),
@@ -282,21 +283,15 @@ QString CResult::TextElapsedStr()
             {
             QString pre, post;
             if (CEvent::Event()->GetShowHTML() &&
-                GetLegStat(i)->m_ElapsedPos == 1)
+                GetLegStat(i)->m_ElapsedPos == 1 &&
+                CEvent::Event()->SavingResults())
                 {
+                CHtmlOptions options;
                 QSettings settings(QSettings::IniFormat,  QSettings::UserScope, "undy","SI Simple");
                 settings.beginGroup("HTML Options");
-                pre = settings.value("preFastest","<span style=\"color:blue\">").toString();
-                post = settings.value("postFastest","</span>").toString();
+                pre = "<span " + CssAsHtmlAttr(options.getFastestCss()) + ">";
+                post = "</span>";
                 }
-/*                           s.Printf("<span style=\"color:red\">%7s%3s</span>", FormatTimeTaken(GetLegStat(i)->m_ElapsedTime).c_str(), QString::Format(QT("%ld"),GetLegStat(i)->m_ElapsedPos).c_str());
-                           }
-                        else if (CEvent::Event()->GetShowHTML() &&
-                           GetLegStat(i)->m_ElapsedPos == 2 || GetLegStat(i)->m_ElapsedPos == 3)
-                           {
-                           s.Printf("<span style=\"color:blue\">%7s%3s</span>", FormatTimeTaken(GetLegStat(i)->m_ElapsedTime).c_str(), QString::Format(QT("%ld"),GetLegStat(i)->m_ElapsedPos).c_str());
-                           }
-                           else*/
             s = QString("%1%2%3%4").arg(pre).arg(FormatTimeTaken(GetLegStat(i)->m_ElapsedTime),7)
                 .arg(GetLegStat(i)->m_ElapsedPos,3).arg(post);
             }
@@ -333,26 +328,15 @@ QString CResult::TextLegStr()
             {
             QString pre, post;
             if (CEvent::Event()->GetShowHTML() &&
+                CEvent::Event()->SavingResults() &&
                 GetLegStat(i)->m_LegPos == 1)
                 {
+                CHtmlOptions options;
                 QSettings settings(QSettings::IniFormat,  QSettings::UserScope, "undy","SI Simple");
                 settings.beginGroup("HTML Options");
-                pre = settings.value("preFastest","<span style=\"color:blue\">").toString();
-                post = settings.value("postFastest","</span>").toString();
+                pre = "<span " + CssAsHtmlAttr(options.getFastestCss()) + ">";
+                post = "</span>";
                 }
-            /*          if (CEvent::Event()->GetShowHTML() &&
-                          GetLegStat(i)->m_LegPos == 1)
-                          {
-                          s.Printf("<span style=\"color:red\">%7s%3s</span>", FormatTimeTaken(GetLegStat(i)->m_LegTime).c_str(),
-                               QString::Format(QT("%ld"),GetLegStat(i)->m_LegPos).c_str());
-                          }
-                      else if (CEvent::Event()->GetShowHTML() &&
-                          GetLegStat(i)->m_LegPos == 2 || GetLegStat(i)->m_LegPos == 3)
-                          {
-                          s.Printf("<span style=\"color:blue\">%7s%3s</span>", FormatTimeTaken(GetLegStat(i)->m_LegTime).c_str(),
-                               QString::Format(QT("%ld"),GetLegStat(i)->m_LegPos).c_str());
-                          }
-                      else   */
             s = QString("%1%2%3%4").arg(pre).arg(FormatTimeTaken(GetLegStat(i)->m_LegTime),7).arg(GetLegStat(i)->m_LegPos,3).arg(post);
             }
         result += s;

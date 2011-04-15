@@ -64,8 +64,8 @@ signals:
         static CEvent* Event();
         QString Directory();
         bool SetResultsInputFile(QString a_File);
-        QString LastLogMsg() {return m_LastLogMsg;};
-        QString LastDisplayMsg() {return m_LastDisplayMsg;};
+        QString LastLogMsg() {return m_LastLogMsg;}
+        QString LastDisplayMsg() {return m_LastDisplayMsg;}
         void GetCourseNames(QStringList& a_Names);
         void addNewCourse(CCourse* a_Course);  // Add a new course to event
         void ProcessSIDData(QStringList& a_Records, bool a_Append);
@@ -101,6 +101,7 @@ signals:
         bool CanClose();
         void LoadLastEvent();
         void Reset();
+        bool SavingResults() {return m_SavingResults;}
 
     private slots:
         void dnfResult(long a_Index); // DNF someone

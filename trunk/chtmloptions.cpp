@@ -10,9 +10,9 @@ CHtmlOptions::CHtmlOptions()
     m_FastestCss = settings.value("FastestCSS", "color:blue").toString();
     m_FastCss = settings.value("FastCSS", "background-color:LightCyan").toString();
     m_SlowCss = settings.value("SlowCSS", "background-color:Tomato").toString();
-    m_ElapsedCss = settings.value("ElapsedCSS", "background-color:Ivory").toString();
-    m_LegCss = settings.value("LegCSS", "background-color:LemonChiffon").toString();
-    m_BehindCss = settings.value("BehindCSS", "background-color:PaleGoldenRod").toString();
+    m_ElapsedCss = settings.value("ElapsedCSS", "background-color:#FFFF99").toString();
+    m_LegCss = settings.value("LegCSS", "background-color:#FFFFCC").toString();
+    m_BehindCss = settings.value("BehindCSS", "background-color:#FFFFFF").toString();
     m_HeaderCss = settings.value("HeaderCSS", "background-color:LightGrey").toString();
     settings.endGroup();
 }
