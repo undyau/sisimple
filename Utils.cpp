@@ -112,6 +112,14 @@ QString TimeTakenTo0BasedTime(QString a_TimeTaken)
     return result;
 }
 
+QString CssAsHtmlAttr(QString a_Css)
+{
+    QString res;
+    if (!a_Css.isEmpty())
+        res = "style=\"" + a_Css + "\"";
+    return res;
+}
+
 //***************************************************************************
 //** Autor: Jürgen Ehms
 //**
