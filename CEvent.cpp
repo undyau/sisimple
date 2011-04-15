@@ -40,6 +40,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include "ciofresultxmlhandler.h"
 #include <QFileDialog>
 #include <QSettings>
+#include "chtmloptions.h"
 
 
 
@@ -215,10 +216,8 @@ void CEvent::RecalcResults()
     std::vector<QString> lines;
     CalcResults();
 
-    QSettings settings(QSettings::IniFormat,  QSettings::UserScope, "undy","SI Simple");
-    settings.beginGroup("HTML Options");
-    bool m_ResultsAsHTMLPage = settings.value("WholePage",false).toBool();
-    settings.endGroup();
+    CHtmlOptions options;
+    bool m_ResultsAsHTMLPage = options.getWholePage();
 
     if (m_ShowHTML)
         {
@@ -795,17 +794,9 @@ void CEvent::DisplayTextResults(std::vector<QString>& a_Lines)
 
 void CEvent::DisplayTextSplits(std::vector<QString>& a_Lines)
 {
-    QSettings settings(QSettings::IniFormat,  QSettings::UserScope, "undy","SI Simple");
-    settings.beginGroup("HTML Options");
-    QString preHeader = settings.value("preSplitsHeader","<span>").toString();
-    QString postHeader = settings.value("postSplitsHeader","</span>").toString();
-    QString preEvenLine = settings.value("preSplitsEven","<span title=\"{competitor}\">").toString();
-    QString postEvenLine = settings.value("postSplitsEven","</span>").toString();
-    QString preOddLine = settings.value("preSplitsOdd","<span title=\"{competitor}\">").toString();
-    QString postOddLine = settings.value("postSplitsOdd","</span>").toString();
-    settings.endGroup();
+    CHtmlOptions options;
 
-// Display header text
+    // Display header text
     a_Lines.push_back("");
     if (m_ShowHTML)
         a_Lines.push_back("<font size=\"4\"><b>Splits</b></font>");
@@ -832,22 +823,26 @@ void CEvent::DisplayTextSplits(std::vector<QString>& a_Lines)
                     a_Lines.push_back(results[i]->GetCourse()->TextDescStr());
                 a_Lines.push_back("");
                 if (m_ShowHTML && m_SavingResults)
-                    a_Lines.push_back(preHeader);
+                    a_Lines.push_back("<div style=\"" + options.getHeaderCss() + "\">");
                 a_Lines.push_back(results[i]->GetCourse()->TextSplitHdrStr());
                 if (m_ShowHTML && m_SavingResults)
-                    a_Lines.push_back(postHeader);
+                    a_Lines.push_back("</div>");
                 }
-            QString divStart, divEnd;
+            QString divStartElapsed, divStartLeg, divStartBehind, divEnd;
             if (m_ShowHTML && m_SavingResults)
                 {
-                divStart = i%2 ? preOddLine : preEvenLine;
+                divStartElapsed =  "<div ";
+                if (options.getShowNameTooltip())
+                    divStartElapsed += "title=\"" + results[i]->GetDisplayName() + "\"";
+                divStartLeg = divStartBehind = divStartElapsed;
+                divStartElapsed += " style=\"" + options.getElapsedCss() + ""
                 divEnd = i%2 ? postOddLine : postEvenLine;
                 divStart = divStart.replace("{competitor}", results[i]->GetDisplayName());
                 divEnd = divEnd.replace("{competitor}", results[i]->GetDisplayName());
                 }
-            a_Lines.push_back(divStart + results[i]->TextElapsedStr());
-            a_Lines.push_back(results[i]->TextLegStr());
-            a_Lines.push_back(results[i]->TextLegBehindStr() + divEnd);
+            a_Lines.push_back(divStartElapsed + results[i]->TextElapsedStr() + divEnd);
+            a_Lines.push_back(divStartLeg + results[i]->TextLegStr() + divEnd);
+            a_Lines.push_back(divStartBehind + results[i]->TextLegBehindStr() + divEnd);
             }
         }
 

@@ -34,7 +34,8 @@ SOURCES += main.cpp\
     qextserial\qextserialport.cpp \
     downloaddialog.cpp \
     ciofcoursexmlhandler.cpp \
-    htmloptionsdialog.cpp
+    htmloptionsdialog.cpp \
+    chtmloptions.cpp
 
 HEADERS  += mainwindow.h \
     Utils.h \
@@ -61,7 +62,8 @@ HEADERS  += mainwindow.h \
     downloaddialog.h \
     sidumprecord.h \
     ciofcoursexmlhandler.h \
-    htmloptionsdialog.h
+    htmloptionsdialog.h \
+    chtmloptions.h
 
 INCLUDEPATH += qextserial
 
