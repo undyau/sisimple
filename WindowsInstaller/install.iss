@@ -7,8 +7,8 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{E60CAA80-80BE-4FE4-BA63-F5321FF6A18C}
 AppName=SI Simple
-AppVersion=0.8.1
-;AppVerName=SI Simple 0.8.1
+AppVersion=0.8.2
+;AppVerName=SI Simple 0.8.2
 AppPublisher=undy
 AppPublisherURL=http://sisimple.sourceforge.net
 AppSupportURL=http://sisimple.sourceforge.net

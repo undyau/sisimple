@@ -63,7 +63,8 @@ HEADERS  += mainwindow.h \
     sidumprecord.h \
     ciofcoursexmlhandler.h \
     htmloptionsdialog.h \
-    chtmloptions.h
+    chtmloptions.h \
+    version.h
 
 INCLUDEPATH += qextserial
 

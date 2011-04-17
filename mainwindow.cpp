@@ -36,6 +36,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include <QCloseEvent>
 #include "downloaddialog.h"
 #include "htmloptionsdialog.h"
+#include "version.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -260,8 +261,9 @@ void MainWindow::setShowSplits(int a_Value)
 
 void MainWindow::about()
 {
+QString version(VER_FILEVERSION_STR);
 QMessageBox::about(this, tr("About SI Simple"),
-    tr("<h2>SI Simple 0.8.1 (for John Havranak)</h2>"
+    QString("<h2>SI Simple " + version + "</h2>"
        "<p>&copy; 2010-2011 Andy Simpson</p>"
        "<p>This is an Open Source project hosted at "
        "http://sisimple.sourceforge.net, licensed under the GPL</p>"
