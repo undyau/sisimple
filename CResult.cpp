@@ -130,18 +130,10 @@ void CResult::DoTimeSanityCheck()
         {
         if ((*i)->GetWhen() < timeMark)
             {
-            QDateTime plus6(timeMark);
-            QDateTime plus12(timeMark);
-            plus6.addSecs(6*3600);
-            plus12.addSecs(12*3600);
-
             // Check for date rollover
-            if ((*i)->GetWhen() > plus6 && (*i)->GetWhen() < plus12)
+            if (timeMark > (*i)->GetWhen().addSecs(6*3600) && timeMark < (*i)->GetWhen().addSecs(12*3600))
                 {
-                QDateTime temp((*i)->GetWhen());
-                temp.addSecs(12*3600);
-                (*i)->SetWhen(temp);
-
+                (*i)->SetWhen((*i)->GetWhen().addSecs(12*3600));
                 timeAdjusted = true;
                 }
             else
@@ -172,11 +164,9 @@ void CResult::DoTimeSanityCheck()
             plus12.addSecs(12*3600);
 
             // Check for date rollover
-            if (m_Finish.GetWhen() > plus6 && m_Finish.GetWhen() < plus12)
+            if (timeMark > m_Finish.GetWhen().addSecs(6*3600) && timeMark < m_Finish.GetWhen().addSecs(12*3600))
                 {
-                QDateTime temp(m_Finish.GetWhen());
-                temp.addSecs(12*3600);
-                m_Finish.SetWhen(temp);
+                m_Finish.SetWhen(m_Finish.GetWhen().addSecs(12*3600));
                 timeAdjusted = true;
                 }
             else
