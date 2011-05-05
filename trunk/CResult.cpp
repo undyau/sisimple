@@ -158,11 +158,6 @@ void CResult::DoTimeSanityCheck()
         {
         if (m_Finish.GetWhen() < timeMark)
             {
-            QDateTime plus6(timeMark);
-            QDateTime plus12(timeMark);
-            plus6.addSecs(6*3600);
-            plus12.addSecs(12*3600);
-
             // Check for date rollover
             if (timeMark > m_Finish.GetWhen().addSecs(6*3600) && timeMark < m_Finish.GetWhen().addSecs(12*3600))
                 {
