@@ -707,14 +707,14 @@ void CSIDumper::Read4ByteControlData(QByteArray& a_Rec, int a_Offset, QString& a
         byte[i] = a_Rec[a_Offset + i];
 
     // See if we have subsecond data in control number
-    a_Subsecond = a_Subsecond && (byte[0] & 1);
+   // a_Subsecond = a_Subsecond && (byte[0] & 1);
 
-    int cn = byte[1];
-
+    unsigned int cn = ((byte[0] & 0xC0) >> 6) << 8;
+    cn += byte[1];
     a_Cn = QString("%1").arg(cn);
 
     // Calculate DOW
-    int dow = (byte[0] & 0x70) >> 4;
+    int dow = (byte[0] & 0x0E) >> 1;
     a_DOW = LookupDay(dow);
 
     // Calculate time - tricky ?
