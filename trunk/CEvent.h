@@ -145,6 +145,9 @@ signals:
         void SaveChangedSIDetails();
         void SICardsAsList(QStringList& a_List);
         void ProcessRawData();
+        void CheckForBadFinishUnit();
+        void FixupRawData(long a_ControlId, int a_Adjustment);
+        QString FixupSingleResult(QString a_ResultData, long a_ControlId, int a_Adjustment, int a_Offset);
 
         bool m_ChangedSinceSave;
         bool m_ShowSplits;
