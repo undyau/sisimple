@@ -224,14 +224,15 @@ void CEvent::CheckForBadFinishUnit()
     if (candidates.find(lastControl) != candidates.end() && candidates[lastControl] > 3)
         {
         // DANGER - looks as though someone didn't program a finish unit !!
-        QString msg = QString("Looks as though unit %1 was used as a finish unit, but not programmed.\nThis affects %2 runners.\n\nDo you want to treat %1 as a finish unit ?")
+        QString msg = QString(tr("It looks as though unit %1 was used as a finish unit, but not programmed.\nThis affects %2 runners.\n\nWas unit %1 used as a finish unit ?"))
         .arg(lastControl).arg(candidates[lastControl]);
         int result = SIMessageBox(msg, QMessageBox::Critical, QMessageBox::Yes|QMessageBox::No);
         if (result == QMessageBox::Yes)
             {
             bool ok;
             int offset = QInputDialog::getInt(NULL, tr("Unprogrammed finish control adjustment"),
-                                          tr("Time to adjust corresponding finish times by (seconds):"), 0, -7200, 7200, 1, &ok);
+                              tr("If the clock time was wrong on this unit, enter the number of seconds to correct it by: "),
+                               0, -7200, 7200, 1, &ok);
             if (ok)
                 FixupRawData(lastControl, offset);
             }
