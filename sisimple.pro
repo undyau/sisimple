@@ -35,7 +35,8 @@ SOURCES += main.cpp\
     downloaddialog.cpp \
     ciofcoursexmlhandler.cpp \
     htmloptionsdialog.cpp \
-    chtmloptions.cpp
+    chtmloptions.cpp \
+    cremediator.cpp
 
 HEADERS  += mainwindow.h \
     Utils.h \
@@ -64,7 +65,8 @@ HEADERS  += mainwindow.h \
     ciofcoursexmlhandler.h \
     htmloptionsdialog.h \
     chtmloptions.h \
-    version.h
+    version.h \
+    cremediator.h
 
 INCLUDEPATH += qextserial
 
