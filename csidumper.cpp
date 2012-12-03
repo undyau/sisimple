@@ -72,7 +72,7 @@ bool CSIDumper::OpenPort()
 
 void CSIDumper::tryDownload()
 {
-    m_SI5 = m_SI6 = m_SI8 = m_SI9 = 0;
+    m_SI5 = m_SI6 = m_SI8 = m_SI9 = m_SI10 = m_SI11 = 0;
     if (m_SerialPort.isEmpty() || m_Port)
         return;
     CreatePort();
@@ -337,8 +337,8 @@ void CSIDumper::GetNextBlock()
     if (m_Address >= m_EndAddress)
         {
         ClosePort();
-        QString summary = QString(tr("%1 SI 5 cards, %2 SI 6 cards, %3 SI 8 cards, %4 SI 9 cards"))
-        .arg(m_SI5).arg(m_SI6).arg(m_SI8).arg(m_SI9);
+        QString summary = QString(tr("%1 SI 5 cards, %2 SI 6 cards, %3 SI 8 cards, %4 SI 9 cards, %5 SI 10 cards, %6 SI 11 cards"))
+        .arg(m_SI5).arg(m_SI6).arg(m_SI8).arg(m_SI9).arg(m_SI10).arg(m_SI11);
         emit StatusUpdate(summary);
         emit Finished(m_AllCards.size(), summary);
         qDebug() << "Read" << m_AllCards.size() << summary;
@@ -374,18 +374,38 @@ CardType CSIDumper::GuessCardType(QByteArray& a_Rec)
         return CARD_SI5;
 
     // Other cards need more data checking
-    bool isSI89(true), isSI6(true);
+    bool isSI891011(true), isSI6(true);
     for (int i = 4; i <= 7; i++)
         {
         //DumpMessage("Suspect SI card", a_Rec);
         if ((unsigned char)a_Rec[i] != 0xEA)
-            isSI89 = false;
+            isSI891011 = false;
         if ((unsigned char)a_Rec[i] != 0xED)
             isSI6 = false;
         }
 
-    if (isSI89)
+    if (isSI891011)
+        {
+        // check the numbe range
+        if ((unsigned char)a_Rec[24] == 0x0F)
+            {
+            long SINumber(0);
+            for (int i = 25; i < 28; i++)
+                {
+                SINumber *= 256;
+                SINumber += (unsigned char)m_CardData[i];
+                }
+             SINumber < 2000000;
+            if (SINumber > 7000000 && SINumber < 8000000)
+                return CARD_SI10;
+
+            if (SINumber > 9000000 && SINumber < 10000000)
+                return CARD_SI11;
+
+            return CARD_SIAC1;
+            }
         return CARD_SI89;
+        }
 
     if (isSI6)
         return CARD_SI6;
@@ -412,7 +432,13 @@ bool CSIDumper::ProcessResp(QByteArray& a_Rec)
         case CARD_SI89:
             ProcessSICard8Or9(a_Rec);
             return false;
-
+        case CARD_SI10:
+        case CARD_SI11:
+            ProcessSICard10Or11(a_Rec);
+            return false;
+        case CARD_SIAC1:
+            DumpMessage("Unsupported card type encountered", a_Rec);
+            return true;
         case CARD_UNKNOWN:
         default:
             DumpMessage("Unknown card type encountered", a_Rec);
@@ -456,6 +482,8 @@ void CSIDumper::HandleReadingCard89(QByteArray& a_Rec)
         }
     rec.setSICard(QString::number(SINumber));
     bool isSI9 = SINumber < 2000000;
+    bool isSI10 = SINumber > 7000000 && SINumber < 8000000;
+    bool isSI11 = SINumber > 9000000 && SINumber < 10000000;
 
     QStringList names = QString(m_CardData.mid(32,24)).split(";");
     rec.setFirstName(names.at(0));
@@ -493,6 +521,10 @@ void CSIDumper::HandleReadingCard89(QByteArray& a_Rec)
     AddNewCard(rec);
     if (isSI9)
         m_SI9++;
+    else if (isSI10)
+        m_SI10++;
+    else if (isSI11)
+        m_SI11++;
     else
         m_SI8++;
 
