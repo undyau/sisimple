@@ -1371,8 +1371,9 @@ long CEvent::LookupResult(QString a_Name, QString a_Result)
     int count(0);
     for (unsigned int i = 0; i < m_Results.size(); i++)
         {
-        if( m_Results[i]->GetName() == a_Name || a_Name.isEmpty())
+        if( m_Results[i]->GetName() == a_Name || a_Name.isEmpty() || a_Name == "someone")
             {
+            QString name = m_Results[i]->GetName();
             if (a_Result == FormatTimeTaken(m_Results[i]->TimeTaken()) ||
                 (a_Result == "DNF" && !m_Results[i]->GetFinished()) ||
                 (a_Result == "DSQ" && !m_Results[i]->GetDisqualified()))
