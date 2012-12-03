@@ -11,6 +11,7 @@ enum StateType
     STATE_SETMSMODE,
     STATE_GETBUFPTR,
     STATE_READING_CARD89,
+    STATE_READING_CARD1011,
     STATE_READING_CARD6,
     STATE_DUMPING
 };
@@ -20,6 +21,9 @@ enum CardType
     CARD_SI5,
     CARD_SI6,
     CARD_SI89,
+    CARD_SI10,
+    CARD_SI11,
+    CARD_SIAC1,
     CARD_UNKNOWN
 };
 
@@ -56,7 +60,7 @@ private:
     QByteArray m_ReadBuf;
     QByteArray m_CardData;
     int m_Timer;
-    int m_SI5,m_SI6,m_SI8, m_SI9;
+    int m_SI5,m_SI6,m_SI8, m_SI9, m_SI10, m_SI11;
     std::vector<SIDumpRecord> m_AllCards;
 
     bool SendSmallCmd(unsigned char a_Cmd, unsigned char a_ParamData);
