@@ -72,6 +72,7 @@ private:
     void HandleSetMSModeResponse(QByteArray& a_Data);
     void HandleGetEndMemoryAddrResponse(QByteArray& a_Data);
     void HandleReadingCard89(QByteArray& a_Data);
+    void HandleReadingCard1011(QByteArray& a_Data);
     void HandleReadingCard6(QByteArray& a_Rec);
     void HandleBadData(QByteArray& a_Data);
     void HandleDumping(QByteArray& a_Data);
@@ -92,6 +93,7 @@ private:
     void ProcessSICard5(QByteArray& a_Rec);
     void ProcessSICard6(QByteArray& a_Rec);
     void ProcessSICard8Or9(QByteArray& a_Rec);
+    void ProcessSICard10Or11(QByteArray& a_Rec);
     void TrimDataResp(QByteArray& a_Resp);
     void Read4ByteControlData(QByteArray& a_Rec, int a_Offset, QString& a_Cn, QString& a_DOW, QString& a_When, bool a_Subsecond);
     void Read2ByteControlData(QByteArray& a_Rec, int a_Offset, QString& a_When);
