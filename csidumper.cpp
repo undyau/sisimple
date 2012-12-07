@@ -482,7 +482,7 @@ void CSIDumper::HandleReadingCard1011(QByteArray& a_Rec)
         {
         // This block belongs to the next card
         m_Address -= m_Increment;
-        rec.setBadRead(true);
+        //rec.setBadRead(true);
         }
     else
         {
@@ -511,7 +511,7 @@ DumpMessage("Got data to process inside HandleReadingCard1011", m_CardData);
     QStringList names = QString(m_CardData.mid(32,24)).split(";");
     rec.setFirstName(names.at(0));
     rec.setOtherName(names.at(1));
-qDebug() << "Found name " << names.at(0);
+
     QString cn, when, dow;
     Read4ByteControlData(m_CardData, 8, cn, dow, when, false);
     rec.setCheck(cn, dow, when);
