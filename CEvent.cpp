@@ -904,6 +904,70 @@ void CEvent::ExportXML(QString a_File, bool a_ExtendedFormat)
     m_ChangedSinceSave = false;
 }
 
+void CEvent::ExportXML3(QString a_File)
+{
+    CXmlWriter xml("ResultList","IOFdata.dtd");
+    xml.StartElement("ResultList","xmlns=\"http://www.orienteering.org/datastandard/3.0\" \
+xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \
+iofVersion=\"3.0\" \
+createTime=\"2011-07-31T22:46:33+01:00\" \
+creator=\"SI Simple\" \
+status=\"complete\"");
+
+    xml.StartElement("Event");
+    xml.StartElement("Name");
+    xml.AddValue(GetEventName());
+    xml.EndElement();
+    // skip Starttime Endtime elements
+    xml.EndElement();
+
+    std::vector<CResult*> results = m_Results;
+    std::sort(results.begin(), results.end(), FinishTimeLessThan);
+
+    CCourse* lastCourse(NULL);
+    int courseCount(0);
+    for (long i = 0; i < (long)results.size(); i++)
+        {
+        if (results[i]->GetCourse() != NULL)
+            {
+            if (results[i]->GetCourse() != lastCourse)
+                {
+                if (lastCourse != NULL)
+                    xml.EndElement();
+
+                lastCourse = results[i]->GetCourse();
+                xml.StartElement("ClassResult");
+
+                xml.StartElement("Class");
+                xml.StartElement("Id");
+                xml.AddValue(++courseCount);
+                xml.EndElement (); //Id
+                xml.StartElement("Name");
+                xml.AddValue(lastCourse->GetName());
+                xml.EndElement(); //Name
+                xml.EndElement(); //Class
+
+                xml.StartElement("Course");
+                xml.StartElement("Length");
+                xml.AddValue(lastCourse->GetLength());
+                xml.EndElement();
+                xml.StartElement("Climb");
+                xml.AddValue(lastCourse->GetLength());
+                xml.EndElement();
+                xml.EndElement();
+                }
+            results[i]->AddXML3(xml);
+            }
+        }
+    if (lastCourse != NULL)
+        xml.EndElement();
+    xml.EndElement(); //ResultList
+
+    xml.WriteToFile(a_File);
+    m_ChangedSinceSave = false;
+}
+
+
 void CEvent::SaveResults(QString a_File)
 {
     QFile tfile(a_File);

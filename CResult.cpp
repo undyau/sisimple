@@ -534,6 +534,115 @@ void CResult::AddXML(CXmlWriter& a_Writer)
 
     }
 
+
+void CResult::AddXML3(CXmlWriter& a_Writer)
+    {
+    a_Writer.StartElement("PersonResult");
+    a_Writer.StartElement("Person");
+    a_Writer.StartElement("PersonName");
+    QString safename(m_Name);
+    safename.replace("&","+");
+    QStringList names = safename.split(' ');
+
+    a_Writer.StartElement("Family");
+    if (names.count() == 0)
+        a_Writer.AddValue("name");
+    else
+        a_Writer.AddValue(names[names.count() -1]);
+    a_Writer.EndElement();
+    for (int i = 0; i < ((int)names.count()) -1; i++)
+        {
+        a_Writer.StartElement("Given");
+        a_Writer.AddValue(names[i]);
+        a_Writer.EndElement();
+        }
+    if (names.size() < 2)
+        {
+        a_Writer.StartElement("Given");
+        if (names.size() == 0)
+            a_Writer.AddValue("no");
+        else
+            a_Writer.AddValue("someone");
+        a_Writer.EndElement();
+        }
+    a_Writer.EndElement(); // PersonName
+
+    a_Writer.StartElement("PersonId");
+    a_Writer.AddValue(PersonID());
+    a_Writer.EndElement();
+    a_Writer.EndElement(); //Person
+
+    a_Writer.StartElement("Club");
+    a_Writer.StartElement("ClubId");
+    a_Writer.AddValue(ClubID());
+    a_Writer.EndElement();
+    a_Writer.StartElement("ShortName");
+    a_Writer.AddValue(ClubID());
+    a_Writer.EndElement();
+    a_Writer.StartElement("CountryId", "value=\"other\"");
+    a_Writer.EndElement();
+    a_Writer.EndElement();
+
+    a_Writer.StartElement("Result");
+    a_Writer.StartElement("CCard");
+    a_Writer.StartElement("CCardId");
+    a_Writer.AddValue(m_SINumber);
+    a_Writer.EndElement();
+    a_Writer.StartElement("PunchingUnitType", "value=\"SI\"");
+    a_Writer.EndElement();
+    a_Writer.EndElement();
+    if (TimeTaken() > 0)
+        {
+        a_Writer.StartElement("Time");
+                a_Writer.AddValue(FormatTimeTaken(TimeTaken()));
+        a_Writer.EndElement();
+        }
+
+    if (GetPos() > 0)
+        {
+        QString temp = QString("%1").arg(GetPos());
+        a_Writer.StartElement("ResultPosition");
+        a_Writer.AddValue(temp);
+        a_Writer.EndElement();
+        }
+
+
+    if (GetFinished() && TimeTaken() > 0)
+        a_Writer.StartElement("CompetitorStatus", "value=\"OK\"");
+    else if (GetDisqualified())
+        a_Writer.StartElement("CompetitorStatus", "value=\"Disqualified\"");
+    else if (GetInvalid())
+        a_Writer.StartElement("CompetitorStatus", "value=\"DidNotFinish\"");
+    else
+        a_Writer.StartElement("CompetitorStatus", "value=\"MisPunch\"");
+    a_Writer.EndElement();
+
+    for (int i = 0; i < m_Course->GetLegCount() -1; i++)
+        {
+        QString temp = QString("sequence=\"%1\"").arg(i+1);
+        a_Writer.StartElement("SplitTime", temp);
+
+        a_Writer.StartElement("ControlCode");
+        temp = QString("%1").arg(m_Course->GetLeg(i).GetEndCN());
+        a_Writer.AddValue(temp);
+        a_Writer.EndElement();
+
+        a_Writer.StartElement("Time");
+        if (GetLegStat(i) && GetLegStat(i)->m_LegTime != 0)
+            a_Writer.AddValue(FormatTimeTaken(GetLegStat(i)->m_ElapsedTime));
+        else
+            a_Writer.AddValue("-----");
+        a_Writer.EndElement();
+
+        a_Writer.EndElement(); //SplitTime
+        }
+
+    a_Writer.EndElement(); // Result
+
+    a_Writer.EndElement(); // PersonResult
+
+    }
+
 QString CResult::PersonID()
     {
     QString result = QString("%1-%2").arg(GetSINumber()).arg(GetRawIndex());
