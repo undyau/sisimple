@@ -75,6 +75,7 @@ class CResult  : public QObject
         CCourse* GetCourse() {return m_Course;}
         long TimeTaken();
         void AddXML(CXmlWriter& a_Writer);
+        void AddXML3(CXmlWriter& a_Writer);
         void SetCourse(CCourse* a_Course) {m_Course = a_Course;}
         QString DebugStr();
         bool Altered() {return m_Altered;}
@@ -97,7 +98,7 @@ class CResult  : public QObject
         QString m_RawData;
         bool m_ProcessedResult;
         bool m_Invalid;
-        bool m_Finished;        
+        bool m_Finished;
         long m_Pos;
         bool m_FinishedOverride;
         bool m_FinishedOverrideSet;

@@ -85,6 +85,7 @@ signals:
         void SetResultCourse(CResult* a_Result, QString a_CourseName);
 
         void ExportXML(QString a_File, bool a_ExtendedFormat = false);
+        void ExportXML3(QString a_File);
         void SaveResults(QString a_File);
 
         bool GetShowSplits();
