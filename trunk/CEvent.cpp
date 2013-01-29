@@ -42,6 +42,8 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include <QSettings>
 #include "chtmloptions.h"
 #include "cremediator.h"
+#include "version.h"
+#include <QDateTime>
 
 
 
@@ -906,13 +908,17 @@ void CEvent::ExportXML(QString a_File, bool a_ExtendedFormat)
 
 void CEvent::ExportXML3(QString a_File)
 {
-    CXmlWriter xml("ResultList","IOFdata.dtd");
-    xml.StartElement("ResultList","xmlns=\"http://www.orienteering.org/datastandard/3.0\" \
+    CXmlWriter xml;
+
+    QString nowTime = QDateTime::currentDateTime ().toString(Qt::ISODate);
+    QString temp = QString("xmlns=\"http://www.orienteering.org/datastandard/3.0\" \
 xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \
 iofVersion=\"3.0\" \
-createTime=\"2011-07-31T22:46:33+01:00\" \
-creator=\"SI Simple\" \
-status=\"complete\"");
+createTime=\"%1\" \
+creator=\"SI Simple (%2)\" \
+status=\"Complete\"").arg(nowTime).arg(VER_PRODUCTVERSION_STR);
+
+    xml.StartElement("ResultList", temp);
 
     xml.StartElement("Event");
     xml.StartElement("Name");
