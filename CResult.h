@@ -65,6 +65,8 @@ class CResult  : public QObject
         QString TextLegStr();
         QString TextLegBehindStr();
         long LegTime(long a_Leg);
+        void SetTimeBehind(long a_TimeBehind) {m_TimeBehind = a_TimeBehind;}
+        long GetTimeBehind() {return m_TimeBehind;}
         void SetPos(long a_Pos) {m_Pos = a_Pos;}
         long GetPos() {return m_Pos;}
         bool GetInvalid() {return m_Invalid;}
@@ -119,6 +121,7 @@ class CResult  : public QObject
 
         std::list<CPunch*> m_Punches;
         std::map<int, CLegStat*> m_LegStats;
+        long m_TimeBehind;
 
 };
 
