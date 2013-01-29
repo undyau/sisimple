@@ -497,7 +497,7 @@ void CEvent::CalcResults()
 void CEvent::SetPositions(std::vector<CResult*>& a_SortedResults)
 {
     CResult* lastResult(NULL);
-    long pos(0), runningCount(0);
+    long pos(0), runningCount(0), bestTime(0);
     for (std::vector<CResult*>::iterator i = a_SortedResults.begin(); i != a_SortedResults.end(); i++)
         {
         // Handle course break
@@ -506,6 +506,10 @@ void CEvent::SetPositions(std::vector<CResult*>& a_SortedResults)
             lastResult = (*i);
             pos = 1;
             runningCount = 1;
+            if ((*i)->GetFinished())
+                bestTime = (*i)->TimeTaken();
+            else
+                bestTime = 0;
             }
         else
         // Handle time break
@@ -521,7 +525,11 @@ void CEvent::SetPositions(std::vector<CResult*>& a_SortedResults)
 
         lastResult = *i;
         if (!(*i)->GetInvalid() && (*i)->GetFinished())
+            {
             (*i)->SetPos(pos);
+            if (bestTime && (*i)->TimeTaken())
+                (*i)->SetTimeBehind((*i)->TimeTaken() - bestTime);
+            }
         else
             (*i)->SetPos(-1);
         }

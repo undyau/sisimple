@@ -31,7 +31,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 // class constructor
 CResult::CResult(QString& a_RawData) : m_RawData(a_RawData), m_ProcessedResult(false),
     m_Invalid(false), m_Finished(true), m_Pos(0), m_FinishedOverride(false), m_FinishedOverrideSet(false),
-    m_Course(NULL), m_Altered(false), m_Disqualified(false)
+    m_Course(NULL), m_Altered(false), m_Disqualified(false), m_TimeBehind(-1)
     {
     QStringList array = m_RawData.split(',');
 
@@ -70,7 +70,7 @@ CResult::CResult(long a_RawIndex, long a_SINumber, QString a_Name, QString a_Clu
                  m_FinishedOverride(false),
                  m_FinishedOverrideSet(false), m_Course(NULL), m_Altered(false),
                  m_Disqualified(false),  m_SINumber(a_SINumber),
-                 m_RawIndex(a_RawIndex), m_Name(a_Name), m_Club(a_Club)
+                 m_RawIndex(a_RawIndex), m_Name(a_Name), m_Club(a_Club), m_TimeBehind(-1)
    {
 
     m_RawData = QString("%1%2%3%4").arg(a_SINumber).arg(a_Name).arg(a_Club).arg(a_Time);
@@ -594,6 +594,12 @@ void CResult::AddXML3(CXmlWriter& a_Writer)
         a_Writer.StartElement("Time");
                 a_Writer.AddValue(TimeTaken());
         a_Writer.EndElement();
+        if (GetTimeBehind() >= 0)
+            {
+            a_Writer.StartElement("TimeBehind");
+            a_Writer.AddValue(GetTimeBehind());
+            a_Writer.EndElement();
+            }
         }
 
     if (GetPos() > 0 && GetFinished() && TimeTaken() > 0)
