@@ -539,103 +539,106 @@ void CResult::AddXML3(CXmlWriter& a_Writer)
     {
     a_Writer.StartElement("PersonResult");
     a_Writer.StartElement("Person");
-    a_Writer.StartElement("PersonName");
+
+    a_Writer.StartElement("Id");
+    a_Writer.AddValue(PersonID());
+    a_Writer.EndElement();
+
+    a_Writer.StartElement("Name");
     QString safename(m_Name);
     safename.replace("&","+");
     QStringList names = safename.split(' ');
 
     a_Writer.StartElement("Family");
-    if (names.count() == 0)
+    if (names.isEmpty())
         a_Writer.AddValue("name");
     else
-        a_Writer.AddValue(names[names.count() -1]);
+        a_Writer.AddValue(names.back());
     a_Writer.EndElement();
-    for (int i = 0; i < ((int)names.count()) -1; i++)
-        {
-        a_Writer.StartElement("Given");
-        a_Writer.AddValue(names[i]);
-        a_Writer.EndElement();
-        }
-    if (names.size() < 2)
-        {
-        a_Writer.StartElement("Given");
-        if (names.size() == 0)
-            a_Writer.AddValue("no");
-        else
-            a_Writer.AddValue("someone");
-        a_Writer.EndElement();
-        }
-    a_Writer.EndElement(); // PersonName
 
-    a_Writer.StartElement("PersonId");
-    a_Writer.AddValue(PersonID());
+    names.pop_back();
+    a_Writer.StartElement("Given");
+    if (names.isEmpty())
+        a_Writer.AddValue ("somebody");
+    else
+        {
+        QString temp;
+        while (!names.isEmpty ())
+            {
+            temp = temp + " " + names.front ();
+            names.pop_front ();
+            }
+        a_Writer.AddValue (temp.trimmed());
+        }
     a_Writer.EndElement();
+
+    a_Writer.EndElement(); // Name
     a_Writer.EndElement(); //Person
 
-    a_Writer.StartElement("Club");
-    a_Writer.StartElement("ClubId");
-    a_Writer.AddValue(ClubID());
-    a_Writer.EndElement();
-    a_Writer.StartElement("ShortName");
-    a_Writer.AddValue(ClubID());
-    a_Writer.EndElement();
-    a_Writer.StartElement("CountryId", "value=\"other\"");
-    a_Writer.EndElement();
-    a_Writer.EndElement();
+    if (!ClubID().isEmpty ())
+        {
+        // USe club name as a proxy for ID (which is a proxy for the name anyway ...)
+        a_Writer.StartElement("Organisation");
+        a_Writer.StartElement("Id");
+        a_Writer.AddValue(ClubID());
+        a_Writer.EndElement();  //Id
+        a_Writer.StartElement("Name");
+        a_Writer.AddValue(ClubID());
+        a_Writer.EndElement();   //Name
+        a_Writer.EndElement();   //Organisation
+        }
 
     a_Writer.StartElement("Result");
-    a_Writer.StartElement("CCard");
-    a_Writer.StartElement("CCardId");
-    a_Writer.AddValue(m_SINumber);
-    a_Writer.EndElement();
-    a_Writer.StartElement("PunchingUnitType", "value=\"SI\"");
-    a_Writer.EndElement();
-    a_Writer.EndElement();
     if (TimeTaken() > 0)
         {
         a_Writer.StartElement("Time");
-                a_Writer.AddValue(FormatTimeTaken(TimeTaken()));
+                a_Writer.AddValue(TimeTaken());
         a_Writer.EndElement();
         }
 
-    if (GetPos() > 0)
+    if (GetPos() > 0 && GetFinished() && TimeTaken() > 0)
         {
         QString temp = QString("%1").arg(GetPos());
-        a_Writer.StartElement("ResultPosition");
+        a_Writer.StartElement("Position");
         a_Writer.AddValue(temp);
         a_Writer.EndElement();
         }
 
-
+    a_Writer.StartElement("Status");
     if (GetFinished() && TimeTaken() > 0)
-        a_Writer.StartElement("CompetitorStatus", "value=\"OK\"");
+        a_Writer.AddValue("OK");
     else if (GetDisqualified())
-        a_Writer.StartElement("CompetitorStatus", "value=\"Disqualified\"");
+        a_Writer.AddValue("Disqualified");
     else if (GetInvalid())
-        a_Writer.StartElement("CompetitorStatus", "value=\"DidNotFinish\"");
+        a_Writer.AddValue("DidNotFinish");
     else
-        a_Writer.StartElement("CompetitorStatus", "value=\"MisPunch\"");
+        a_Writer.AddValue("MissingPunch");
     a_Writer.EndElement();
 
     for (int i = 0; i < m_Course->GetLegCount() -1; i++)
         {
-        QString temp = QString("sequence=\"%1\"").arg(i+1);
-        a_Writer.StartElement("SplitTime", temp);
+        if (GetLegStat(i) && GetLegStat(i)->m_LegTime != 0)
+            a_Writer.StartElement("SplitTime");
+        else
+            a_Writer.StartElement ("SplitTime", "status=\"Missing\"");
 
         a_Writer.StartElement("ControlCode");
-        temp = QString("%1").arg(m_Course->GetLeg(i).GetEndCN());
-        a_Writer.AddValue(temp);
+        a_Writer.AddValue(m_Course->GetLeg(i).GetEndCN());
         a_Writer.EndElement();
 
-        a_Writer.StartElement("Time");
+
         if (GetLegStat(i) && GetLegStat(i)->m_LegTime != 0)
-            a_Writer.AddValue(FormatTimeTaken(GetLegStat(i)->m_ElapsedTime));
-        else
-            a_Writer.AddValue("-----");
-        a_Writer.EndElement();
-
+            {
+            a_Writer.StartElement("Time");
+            a_Writer.AddValue(GetLegStat(i)->m_ElapsedTime);
+            a_Writer.EndElement();
+            }
         a_Writer.EndElement(); //SplitTime
         }
+
+    a_Writer.StartElement("ControlCard", "punchingSystem=\"SI\"");
+    a_Writer.AddValue(m_SINumber);
+    a_Writer.EndElement(); // ControlCard
 
     a_Writer.EndElement(); // Result
 

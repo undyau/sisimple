@@ -32,6 +32,12 @@ CXmlWriter::CXmlWriter(QString a_DocType, QString a_DtdName): m_GotValue(false)
     m_GotValue = true;
 }
 
+CXmlWriter::CXmlWriter(): m_GotValue(false)
+{
+    m_Output = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>";
+    m_GotValue = true;
+}
+
 // class destructor
 CXmlWriter::~CXmlWriter()
 {

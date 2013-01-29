@@ -53,6 +53,7 @@ private slots:
     void save(); // Save results to file
     void refresh(); // Refresh display
     void exportIOF(); // Export in IOF format
+    void exportIOF3(); // Export in IOF format
     void formatHTML(); // Format HTML
     void about(); // Display About dialog
     void setUseHTML(int a_Value); // Toggle use of HTML and plain text
@@ -74,6 +75,7 @@ private:
     QAction* m_OpenAct;
     QAction* m_SaveAct;
     QAction* m_ExportAct;
+    QAction* m_Export3Act;
     QAction* m_DownloadAct;
     QAction* m_QuitAct;
     QAction* m_RefreshAct;

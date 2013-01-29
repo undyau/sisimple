@@ -106,6 +106,10 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ExportAct->setStatusTip(tr("Export to IOF XML..."));
     m_ExportAct->setToolTip(tr("Export to IOF XML..."));
     ui->menu_File->addAction(m_ExportAct);
+    m_Export3Act = new QAction(tr("&Export to IOF 3.0 XML..."), this);
+    m_Export3Act->setStatusTip(tr("Export to IOF 3.0 XML..."));
+    m_Export3Act->setToolTip(tr("Export to IOF 3.0 XML..."));
+    ui->menu_File->addAction(m_Export3Act);
 
     m_QuitAct = new QAction(tr("&Quit"), this);
     m_QuitAct->setShortcuts(QKeySequence::Quit);
@@ -153,6 +157,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_OpenAct, SIGNAL(triggered()), this, SLOT(open()));
     connect(m_SaveAct, SIGNAL(triggered()), this, SLOT(save()));
     connect(m_ExportAct, SIGNAL(triggered()), this, SLOT(exportIOF()));
+    connect(m_Export3Act, SIGNAL(triggered()), this, SLOT(exportIOF3()));
     connect(m_RefreshAct, SIGNAL(triggered()), this, SLOT(refresh()));
     connect(m_FormatHtmlAct, SIGNAL(triggered()), this, SLOT(formatHTML()));
     connect(m_QuitAct, SIGNAL(triggered()), this, SLOT(close()));
@@ -237,6 +242,15 @@ void MainWindow::exportIOF()
     QString file = QFileDialog::getSaveFileName(this, "Export results to", oevent->Directory(), tr("XML files (*.xml)"));
     if (!file.isEmpty())
         CEvent::Event()->ExportXML(file);
+}
+
+void MainWindow::exportIOF3()
+{
+    CEvent* oevent = CEvent::Event();
+
+    QString file = QFileDialog::getSaveFileName(this, "Export results to", oevent->Directory(), tr("XML files (*.xml)"));
+    if (!file.isEmpty())
+        CEvent::Event()->ExportXML3(file);
 }
 
 void MainWindow::refresh()

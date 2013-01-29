@@ -28,6 +28,7 @@ class CXmlWriter
     public:
         // class constructor
         CXmlWriter(QString a_DocType, QString a_DtdName);
+        CXmlWriter();
         // class destructor
         ~CXmlWriter();
         void StartElement(QString a_ElementName, QString a_Attributes = "");
