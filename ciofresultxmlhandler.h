@@ -11,9 +11,10 @@ class CResult;
 class CIofResultXmlHandler : public QXmlDefaultHandler
 {
 
-enum e_State{inClassName, inFamilyName, inGivenName, inClub, inCardId,
-             inTime, inControlCode, inSplitTime, inEventId, inCourseLen, inCourseClimb,
-             inOther};
+enum e_State{inClassName, inFamilyName, inGivenName, inCardId,
+             inTime, inControlCode, inSplit, inSplitTime, inCourse, inCourseLen, inCourseClimb,
+             inEvent, inEventName, inOrganisation, inOrganisationId,inOrganisationName, inResult,
+             inResultStartTime, inResultFinishTime, inStatus, inOther};
 public:
     CIofResultXmlHandler();
 
@@ -25,10 +26,10 @@ private:
     bool m_Valid;
     e_State m_State;
     e_State m_PrevState;
-    QString m_EventId;
+    QString m_EventName;
     QString m_CourseName;
-    QString m_CourseLen;   // Not in IOF XML, just used by SI Simple internally
-    QString m_CourseClimb; // Not in IOF XML, just used by SI Simple internally
+    QString m_CourseLen;
+    QString m_CourseClimb;
     QString m_FamilyName;
     QString m_GivenName;
     QString m_SINumber;
@@ -38,10 +39,15 @@ private:
     QStringList m_Controls;
     QStringList m_Splits;
     QStringList m_CourseControls;
+    QString m_StartTime;
+    QString m_FinishTime;
     static int m_ResultCount;
 
     std::map<QString, e_State> m_States;
     std::vector<CResult*> m_CourseResults;
+    QStringList m_Tags;
+
+    QString Parent();
 };
 
 #endif // CIOFRESULTXMLHANDLER_H

@@ -36,7 +36,7 @@ class CResult  : public QObject
     public:
         // class constructor
         CResult(QString& a_RawData);
-        CResult(long a_RawIndex, long a_SINumber, QString a_Name, QString a_Club, QString a_Time,
+        CResult(long a_RawIndex, QString a_StartTime, QString a_FinishTime, long a_SINumber, QString a_Name, QString a_Club, QString a_Time,
                  QString m_Status, QStringList& a_Controls, QStringList& a_Splits);
         // class destructor
                 ~CResult();
