@@ -64,7 +64,7 @@ CResult::CResult(QString& a_RawData) : m_RawData(a_RawData), m_ProcessedResult(f
     DoTimeSanityCheck();
     }
 
-CResult::CResult(long a_RawIndex, long a_SINumber, QString a_Name, QString a_Club, QString a_Time,
+CResult::CResult(long a_RawIndex, QString a_StartTime, QString a_FinishTime, long a_SINumber, QString a_Name, QString a_Club, QString a_Time,
                  QString m_Status, QStringList& a_Controls, QStringList& a_Splits) :
                  m_ProcessedResult(false), m_Invalid(false), m_Pos(0),
                  m_FinishedOverride(false),
@@ -72,13 +72,17 @@ CResult::CResult(long a_RawIndex, long a_SINumber, QString a_Name, QString a_Clu
                  m_Disqualified(false),  m_SINumber(a_SINumber),
                  m_RawIndex(a_RawIndex), m_Name(a_Name), m_Club(a_Club), m_TimeBehind(-1)
    {
+    if (a_StartTime.isEmpty())
+        a_StartTime = "00:00:00";
+    if (a_FinishTime.isEmpty())
+        a_FinishTime = "00:00:00";
 
     m_RawData = QString("%1%2%3%4").arg(a_SINumber).arg(a_Name).arg(a_Club).arg(a_Time);
 
     m_Clear.SetData(10, "", ToDateTime("00:00:00"));
     m_Check.SetData(20, "", ToDateTime("00:00:00"));
-    m_Start.SetData(-1, "", ToDateTime("00:00:00"));
-    m_Finish.SetData(-2, "", ToDateTime(a_Time));
+    m_Start.SetData(-1, "", ToDateTime(a_StartTime));
+    m_Finish.SetData(-2, "", ToDateTime(a_FinishTime));
 
     unsigned long punches = a_Controls.size();
     for (unsigned long i = 0; i < punches; i++)
@@ -589,6 +593,18 @@ void CResult::AddXML3(CXmlWriter& a_Writer)
         }
 
     a_Writer.StartElement("Result");
+
+    a_Writer.StartElement ("StartTime");
+    a_Writer.AddValue(GetStart().GetWhen().toString (Qt::ISODate));
+    a_Writer.EndElement ();
+
+    if (GetFinished())
+        {
+        a_Writer.StartElement ("FinishTime");
+        a_Writer.AddValue(GetFinish().GetWhen().toString (Qt::ISODate));
+        a_Writer.EndElement ();
+        }
+
     if (TimeTaken() > 0)
         {
         a_Writer.StartElement("Time");

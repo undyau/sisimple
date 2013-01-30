@@ -95,7 +95,7 @@ CEvent::~CEvent()
         {
         QDir dir(QFileInfo(settings.fileName()).absolutePath() + "/");
         QString file = dir.filePath("SISimpleLastEvent.xml");
-        ExportXML(file, true);
+        ExportXML3(file);
         }
 
     for (std::vector<CCourse*>::iterator i = m_Courses.begin(); i != m_Courses.end(); i++)
