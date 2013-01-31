@@ -72,21 +72,26 @@ CResult::CResult(long a_RawIndex, QString a_StartTime, QString a_FinishTime, lon
                  m_Disqualified(false),  m_SINumber(a_SINumber),
                  m_RawIndex(a_RawIndex), m_Name(a_Name), m_Club(a_Club), m_TimeBehind(-1)
    {
-    if (a_StartTime.isEmpty())
-        a_StartTime = "00:00:00";
-    if (a_FinishTime.isEmpty())
-        a_FinishTime = "00:00:00";
-
     m_RawData = QString("%1%2%3%4").arg(a_SINumber).arg(a_Name).arg(a_Club).arg(a_Time);
 
     m_Clear.SetData(10, "", ToDateTime("00:00:00"));
     m_Check.SetData(20, "", ToDateTime("00:00:00"));
-    m_Start.SetData(-1, "", ToDateTime(a_StartTime));
-    m_Finish.SetData(-2, "", ToDateTime(a_FinishTime));
+    if (a_StartTime.isEmpty())
+        m_Start.SetData(-2, "", ToDateTime("00:00:00"));
+    else
+        m_Start.SetData(-1, "", QDateTime::fromString(a_StartTime));
+
+    if (a_FinishTime.isEmpty())
+        m_Finish.SetData(-2, "", ToDateTime("00:00:00"));
+    else
+        m_Finish.SetData(-2, "", QDateTime::fromString(a_FinishTime));
 
     unsigned long punches = a_Controls.size();
     for (unsigned long i = 0; i < punches; i++)
-        m_Punches.push_back(new CPunch(ToLong(a_Controls.at(i)), "", ToDateTime(a_Splits.at(i))));
+        if (a_Splits.at(i) != "Missing")
+            {
+            m_Punches.push_back(new CPunch(ToLong(a_Controls.at(i)), "", ToDateTime(a_Splits.at(i))));
+            }
 
     m_Finished = m_Status == "OK";
     m_Invalid = (m_Status == "DidNotFinish" || m_Status == "MisPunch");
