@@ -10,11 +10,6 @@ class CResult;
 
 class CIofResultXmlHandler : public QXmlDefaultHandler
 {
-
-enum e_State{inClassName, inFamilyName, inGivenName, inCardId,
-             inTime, inControlCode, inSplit, inSplitTime, inCourse, inCourseLen, inCourseClimb,
-             inEvent, inEventName, inOrganisation, inOrganisationId,inOrganisationName, inResult,
-             inResultStartTime, inResultFinishTime, inStatus, inOther};
 public:
     CIofResultXmlHandler();
 
@@ -24,8 +19,6 @@ public:
 
 private:
     bool m_Valid;
-    e_State m_State;
-    e_State m_PrevState;
     QString m_EventName;
     QString m_CourseName;
     QString m_CourseLen;
@@ -43,7 +36,6 @@ private:
     QString m_FinishTime;
     static int m_ResultCount;
 
-    std::map<QString, e_State> m_States;
     std::vector<CResult*> m_CourseResults;
     QStringList m_Tags;
 

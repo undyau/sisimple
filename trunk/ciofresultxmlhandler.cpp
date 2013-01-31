@@ -9,18 +9,7 @@ int CIofResultXmlHandler::m_ResultCount = 0;
 
 CIofResultXmlHandler::CIofResultXmlHandler() : m_Valid(false)
     {
-    m_States["ClassShortName"] = inClassName;
-    m_States["Family"] = inFamilyName;
-    m_States["Given"] = inGivenName;
-    m_States["ControlCard"] = inCardId;
-    m_States["Time"] = inTime;
-    m_States["ControlCode"] = inControlCode;
-    m_States["Course"] = inCourse;
-    m_States["Event"] = inEvent;
-    m_States["Organisation"] = inOrganisation;
-    m_States["Result"] = inResult;
-    m_States["Status"] = inStatus;
-    m_States["SplitTime"] = inSplit;
+
     }
 
 
@@ -36,8 +25,6 @@ bool CIofResultXmlHandler::endElement( const QString&, const QString&, const QSt
 
     if (name == "PersonResult")
         {
-        if (m_Status != "OK")
-            m_Status = "Not OK";
         CResult* result = new CResult(CIofResultXmlHandler::m_ResultCount++,
                             m_StartTime,
                             m_FinishTime,
@@ -61,34 +48,33 @@ bool CIofResultXmlHandler::endElement( const QString&, const QString&, const QSt
         for (unsigned int i = 0; i < m_CourseResults.size(); i++)
             m_CourseResults.at(i)->SetCourse(course);
         }
-    m_PrevState = m_State;
-    m_State = inOther;
+
     return true;
 }
 
 bool CIofResultXmlHandler::characters(const QString &ch)
     {
-    if (Parent() == "Class" && m_Tags.back() == "Name") {m_CourseName = ch; return;}
-    if (Parent() == "Name" && m_Tags.back() =="Family") {m_FamilyName = ch; return;}
-    if (Parent() == "Name" && m_Tags.back() =="Given") {m_GivenName = ch; return;}
-    if (m_Tags.back() =="ControlCard") {m_SINumber = ch; return;}
-    if (Parent() == "SplitTime" && m_Tags.back() =="ControlCode") {m_Controls.append(ch); return;}
-    if (Parent() == "Course" && m_Tags.back() =="Length") {m_CourseLen = ch; return;}
-    if (Parent() == "Course" && m_Tags.back() =="Climb") {m_CourseClimb = ch; return;}
-    if (Parent() == "Event" && m_Tags.back() =="Name") {m_EventName = ch; return;}
-    if (Parent() == "Organisation" && m_Tags.back() =="Name") {m_Club = ch; return;}
-    if (Parent() == "Result" && m_Tags.back() =="StartTime") {m_StartTime = ch; return;}
-    if (Parent() == "Result" && m_Tags.back() =="FinishTime") {m_FinishTime = ch; return;}
-    if (Parent() == "Result" && m_Tags.back() =="Status") {m_Status = ch; return;}
+    if (Parent() == "Class" && m_Tags.back() == "Name") {m_CourseName = ch; return true;}
+    if (Parent() == "Name" && m_Tags.back() =="Family") {m_FamilyName = ch; return true;}
+    if (Parent() == "Name" && m_Tags.back() =="Given") {m_GivenName = ch; return true;}
+    if (m_Tags.back() =="ControlCard") {m_SINumber = ch; return true;}
+    if (Parent() == "SplitTime" && m_Tags.back() =="ControlCode") {m_Controls.append(ch); return true;}
+    if (Parent() == "Course" && m_Tags.back() =="Length") {m_CourseLen = ch; return true;}
+    if (Parent() == "Course" && m_Tags.back() =="Climb") {m_CourseClimb = ch; return true;}
+    if (Parent() == "Event" && m_Tags.back() =="Name") {m_EventName = ch; return true;}
+    if (Parent() == "Organisation" && m_Tags.back() =="Name") {m_Club = ch; return true;}
+    if (Parent() == "Result" && m_Tags.back() =="StartTime") {m_StartTime = ch; return true;}
+    if (Parent() == "Result" && m_Tags.back() =="FinishTime") {m_FinishTime = ch; return true;}
+    if (Parent() == "Result" && m_Tags.back() =="Status") {m_Status = ch; return true;}
     if (Parent() == "Result" && m_Tags.back() =="Time")
         {
         m_Time = TimeTakenTo0BasedTime(FormatTimeTaken(ch.toLong()));
-        return;
+        return true;
         }
     if (Parent() == "SplitTime" && m_Tags.back() =="Time")
         {
         m_Splits.append(TimeTakenTo0BasedTime(FormatTimeTaken(ch.toLong())));
-        return;
+        return true;
         }
 
     return true;
@@ -107,30 +93,10 @@ bool CIofResultXmlHandler::startElement( const QString&, const QString&, const Q
 
     m_Tags.push_back(name);
 
-    if (m_PrevState == inControlCode && name == "Time")
-        m_State = inSplitTime;
-    else if (m_PrevState == inEvent && name == "Name")
-        m_State = inEventName;
-    else if (m_PrevState == inOrganisation && name == "Id")
-        m_State = inOrganisationId;
-    else if ((m_PrevState == inOrganisation || m_PrevState == inOrganisationId) && name == "Name")
-        m_State = inOrganisationName;
-    else if ((m_PrevState == inCourse || m_PrevState == inCourseLen) && name == "Climb")
-        m_State = inCourseClimb;
-    else if ((m_PrevState == inCourse || m_PrevState == inCourseClimb) && name == "Length")
-        m_State = inCourseLen;
-    else if ((m_PrevState == inResult || m_PrevState == inResultFinishTime) && name == "StartTime")
-        m_State = inResultStartTime;
-    else if ((m_PrevState == inResult || m_PrevState == inResultStartTime) && name == "FinishTime")
-        m_State = inResultFinishTime;
-    else if ((m_PrevState == inSplit || m_PrevState == inSplitTime) && name == "ControlCode")
-        m_State = inControlCode;
-    else if ((m_PrevState == inSplit || m_PrevState == inControlCode) && name == "Time")
-        m_State = inSplitTime;
-    else if (m_States.find(name) != m_States.end())
-        m_State = m_States[name];
-    else
-        m_State = inOther;
+    if (name == "SplitTime")
+        if (attrs.index(QString("status")) >= 0 &&
+            attrs.value(attrs.index(QString("status"))) == "Missing")
+            m_Splits.append("Missing");
 
     if (name == "PersonResult")
         {
