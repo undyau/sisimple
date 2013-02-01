@@ -37,6 +37,7 @@ courseDialog::courseDialog(QWidget *parent, CCourse* a_Course) :
 
     ui->nameEdit->setText(a_Course->GetName());
     ui->lengthEdit->setText(a_Course->GetLength());
+    ui->climbEdit->setText(a_Course->GetClimb());
     QStringList controls;
     a_Course->GetControls(controls);
     QString s;

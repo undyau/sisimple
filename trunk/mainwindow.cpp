@@ -102,14 +102,19 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->menu_File->addAction(m_SaveAct);
     ui->mainToolBar->addAction(m_SaveAct);
 
-    m_ExportAct = new QAction(tr("&Export to IOF XML..."), this);
-    m_ExportAct->setStatusTip(tr("Export to IOF XML..."));
-    m_ExportAct->setToolTip(tr("Export to IOF XML..."));
-    ui->menu_File->addAction(m_ExportAct);
-    m_Export3Act = new QAction(tr("&Export to IOF 3.0 XML..."), this);
-    m_Export3Act->setStatusTip(tr("Export to IOF 3.0 XML..."));
-    m_Export3Act->setToolTip(tr("Export to IOF 3.0 XML..."));
-    ui->menu_File->addAction(m_Export3Act);
+    ui->menu_File->addSeparator();
+    m_ExportMenu = ui->menu_File->addMenu(tr("&Export"));
+
+    m_ExportAct = new QAction(tr("IOF XML(2.0.3)..."), this);
+    m_ExportAct->setStatusTip(tr("Export to IOF XML(2.0.3) - for RouteGadget, AttackPoint"));
+    m_ExportAct->setToolTip(tr("Export to IOF XML(2.0.3) - for Eventor"));
+    m_ExportMenu->addAction(m_ExportAct);
+    m_Export3Act = new QAction(tr("IOF XML(3.0)..."), this);
+    m_Export3Act->setStatusTip(tr("Export to IOF XML(3.0) - for RouteGadget, AttackPoint"));
+    m_Export3Act->setToolTip(tr("Export to IOF XML(3.0) - for Eventor"));
+    m_ExportMenu->addAction(m_Export3Act);
+
+    ui->menu_File->addSeparator();
 
     m_QuitAct = new QAction(tr("&Quit"), this);
     m_QuitAct->setShortcuts(QKeySequence::Quit);

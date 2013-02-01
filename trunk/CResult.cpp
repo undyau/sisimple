@@ -79,18 +79,19 @@ CResult::CResult(long a_RawIndex, QString a_StartTime, QString a_FinishTime, lon
     if (a_StartTime.isEmpty())
         m_Start.SetData(-2, "", ToDateTime("00:00:00"));
     else
-        m_Start.SetData(-1, "", QDateTime::fromString(a_StartTime));
+        m_Start.SetData(-1, "", QDateTime::fromString(a_StartTime, Qt::ISODate));
 
     if (a_FinishTime.isEmpty())
         m_Finish.SetData(-2, "", ToDateTime("00:00:00"));
     else
-        m_Finish.SetData(-2, "", QDateTime::fromString(a_FinishTime));
+        m_Finish.SetData(-2, "", QDateTime::fromString(a_FinishTime, Qt::ISODate));
 
     unsigned long punches = a_Controls.size();
     for (unsigned long i = 0; i < punches; i++)
         if (a_Splits.at(i) != "Missing")
             {
-            m_Punches.push_back(new CPunch(ToLong(a_Controls.at(i)), "", ToDateTime(a_Splits.at(i))));
+            m_Punches.push_back(new CPunch(ToLong(a_Controls.at(i)), "",
+                m_Start.GetWhen().addSecs(a_Splits.at(i).toLong())));
             }
 
     m_Finished = m_Status == "OK";
