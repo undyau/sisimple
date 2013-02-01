@@ -73,7 +73,7 @@ bool CIofResultXmlHandler::characters(const QString &ch)
         }
     if (Parent() == "SplitTime" && m_Tags.back() =="Time")
         {
-        m_Splits.append(TimeTakenTo0BasedTime(FormatTimeTaken(ch.toLong())));
+        m_Splits.append(ch);
         return true;
         }
 

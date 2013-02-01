@@ -269,7 +269,7 @@ void CEvent::LoadCourseData(bool& a_Guess)
     QPushButton *guessButton = msgBox.addButton(tr("Guess"), QMessageBox::AcceptRole);
     msgBox.addButton(tr("Later"), QMessageBox::AcceptRole);
 
-    msgBox.setText(tr("<p>If you have a file containing the course data in XML format from Purple Pen or OCAD, you can load that data now.</p><p>Alternatively SI Simple can guess the courses based on the controls visited or you can define the courses later.</p><p>Whichever approach you choose now, you can always alter the courses later.</p>"));
+    msgBox.setText(tr("<p>If you have a file containing the course data in IOF XML (2.0.3) format from Purple Pen or OCAD, you can load that data now.</p><p>Alternatively SI Simple can guess the courses based on the controls visited or you can define the courses later.</p><p>Whichever approach you choose now, you can always alter the courses later.</p>"));
     msgBox.exec();
 
     a_Guess = false;
@@ -966,7 +966,7 @@ status=\"Complete\"").arg(nowTime).arg(VER_PRODUCTVERSION_STR);
                 xml.AddValue(lastCourse->GetLength());
                 xml.EndElement();
                 xml.StartElement("Climb");
-                xml.AddValue(lastCourse->GetLength());
+                xml.AddValue(lastCourse->GetClimb());
                 xml.EndElement();
                 xml.EndElement();
                 }

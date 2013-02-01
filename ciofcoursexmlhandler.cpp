@@ -59,6 +59,7 @@ bool CIofCourseXmlHandler::startElement( const QString&, const QString&, const Q
     if (name == "Course")
         {
         m_Length.clear();
+        m_Climb.clear();
         m_Name.clear();
         m_Controls.clear();
         return true;
@@ -71,6 +72,7 @@ bool CIofCourseXmlHandler::startElement( const QString&, const QString&, const Q
         else
             m_LengthType = "m";
         }
+
 
     return true;
 }

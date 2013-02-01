@@ -7,12 +7,12 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{E60CAA80-80BE-4FE4-BA63-F5321FF6A18C}
 AppName=SI Simple
-AppVersion=0.8.5
-;AppVerName=SI Simple 0.8.5
+AppVersion=0.8.6
+;AppVerName=SI Simple 0.8.6
 AppPublisher=undy
-AppPublisherURL=http://sisimple.sourceforge.net
-AppSupportURL=http://sisimple.sourceforge.net
-AppUpdatesURL=http://sisimple.sourceforge.net
+AppPublisherURL=http://sourceforge.net/projects/sisimple/
+AppSupportURL=http://sourceforge.net/projects/sisimple/
+AppUpdatesURL=http://sourceforge.net/projects/sisimple/
 DefaultDirName={pf}\SI Simple
 DefaultGroupName=SI Simple
 LicenseFile=D:\Andy Documents\Projects\sisimple\gpl.txt

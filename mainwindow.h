@@ -82,6 +82,8 @@ private:
     QAction* m_AboutAct;
     QAction* m_FormatHtmlAct;
 
+    QMenu* m_ExportMenu;
+
     QCheckBox* m_UseHtmlCheck;
     QCheckBox* m_ShowSplitsCheck;
 
