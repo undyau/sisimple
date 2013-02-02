@@ -37,6 +37,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include "downloaddialog.h"
 #include "htmloptionsdialog.h"
 #include "version.h"
+#include "QScrollBar"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -283,7 +284,7 @@ void MainWindow::about()
 QString version(VER_FILEVERSION_STR);
 QMessageBox::about(this, tr("About SI Simple"),
     QString("<h2>SI Simple " + version + "</h2>"
-       "<p>&copy; 2010-2012 Andy Simpson</p>"
+       "<p>&copy; 2010-2013 Andy Simpson</p>"
        "<p>This is an Open Source project hosted at "
        "http://sisimple.sourceforge.net, licensed under the GPL.</p>"
        "<p>Acknowledgement and thanks to Ken Hanson and his amazing TCL program SIDResults"
@@ -296,6 +297,9 @@ void MainWindow::showResults(std::vector<QString>& a_Lines)
     ui->textEdit_2->clear();
     for (unsigned int i = 0; i < a_Lines.size(); i++)
         ui->textEdit_2->append(a_Lines[i]);
+    QScrollBar *vScrollBar = ui->textEdit_2->verticalScrollBar();
+    if (vScrollBar)
+        vScrollBar->triggerAction(QScrollBar::SliderToMinimum);
 }
 
 void MainWindow::populateContextMenu(QMenu& a_Menu, int a_Index)

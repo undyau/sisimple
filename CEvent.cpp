@@ -329,7 +329,7 @@ void CEvent::LoadRawData()
                 }
             else
                     {
-                if (result->GetName().isEmpty())
+                if (result->GetName().isEmpty() || result->GetName().at(0).isDigit())
                     LogResultProblem(result, tr("No name supplied to match SI number - please fix"));
                 else if (IsRental(result->GetName()))
                     LogResultProblem(result, tr("Looks like rental stick - please fix"));
@@ -1478,7 +1478,7 @@ bool CEvent::LoadEventFromXML(QString a_FileName)
     return false;
 
   RecalcResults();
-  return true;
+    return true;
 }
 
 void CEvent::elevateCourse(CCourse* a_Course)
