@@ -34,6 +34,8 @@ CResult::CResult(QString& a_RawData) : m_RawData(a_RawData), m_ProcessedResult(f
     m_Course(NULL), m_Altered(false), m_Disqualified(false), m_TimeBehind(-1)
     {
     QStringList array = m_RawData.split(',');
+    if (array.size() < 28)
+        array = m_RawData.split(';');
 
     m_RawIndex = array[0].toLong();
     m_SINumber = array[2].toLong();
@@ -47,6 +49,9 @@ CResult::CResult(QString& a_RawData) : m_RawData(a_RawData), m_ProcessedResult(f
 
     if (!array[5].isEmpty() && m_Name.isEmpty())
         m_Name = array[5] + ' ' + array[6];
+
+    if (m_Name.isEmpty())
+        m_Name = array[2];
 
     if (!array[7].isEmpty() && m_Club.isEmpty())
         m_Club = array[7].left(3);
@@ -112,7 +117,12 @@ bool CResult::ValidData(QString& a_Data)
     {
     QStringList tokens = a_Data.split(',');
     if (tokens.count() < 28)
-        return false;
+        {
+        tokens = a_Data.split(';');
+        if (tokens.count() < 28)
+            return false;
+        }
+
 
     if (tokens[0] == "No.") // header record
         return false;
