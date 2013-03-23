@@ -5,6 +5,11 @@ SI Card 5,6,8,9,10,11
 
 History
 
+0.8.7 24th March 2013
+Log warnig message when reading an SI5 card with a start time
+of 16:59:26. This value occurs when competitor didn't punch the 
+start.
+
 0.8.6 2nd January 2013
 Added export to IOF XML 3.0 format.
 Improved quality of saved information when SI Simple is stopped.

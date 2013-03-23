@@ -135,6 +135,14 @@ bool CResult::ValidData(QString& a_Data)
 
 void CResult::DoTimeSanityCheck()
     {
+    // If they were using an SI 5 card and they didn't punch the start, the the start time will be "16:59:26"
+    // which is what 0xEEEE turns into
+    //
+    // This could be a legal value - if it is before the first punch time
+    if (m_Start.GetWhen() == ToDateTime("16:59:26") && GetSINumber() <= 500000)
+        CEvent::Event()->LogResultProblem(this, "Start time may be garbage - fix in SI-Config export and retry");
+
+
     QDateTime timeMark = m_Start.GetWhen();
     bool timeAdjusted(false);
     bool ignoredPunches(false);
