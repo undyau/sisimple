@@ -1,4 +1,4 @@
-Latest Release: 0.8.6  2nd January 2013
+Latest Release: 0.8.7  24th March 2013
 
 SI Cards Supported
 SI Card 5,6,8,9,10,11
