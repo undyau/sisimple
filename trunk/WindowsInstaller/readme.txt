@@ -5,6 +5,10 @@ SI Card 5,6,8,9,10,11
 
 History
 
+0.8.8 22nd May 2013
+Fix version baed ino program (was stuck on 0.8.6)
+In Load SI Data dialog, detail the preferred format of the archive.
+
 0.8.7 24th March 2013
 Log warning message when reading an SI5 card with a start time
 of 16:59:26. This value occurs when competitor didn't punch the 
