@@ -4,9 +4,12 @@ SI Cards Supported
 SI Card 5,6,8,9,10,11
 
 History
+0.8.9 25th April 2014
+Import of semi-colon deliminated csv file from SI-Config 
+got broken in 0.8.4 causing program crash, now fixed.
 
 0.8.8 22nd May 2013
-Fix version baed ino program (was stuck on 0.8.6)
+Fix version baked ino program (was stuck on 0.8.6)
 In Load SI Data dialog, detail the preferred format of the archive.
 
 0.8.7 24th March 2013
