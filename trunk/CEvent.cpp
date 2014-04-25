@@ -44,6 +44,7 @@ along with SI Simple.  If not, see <http://www.gnu.org/licenses/>.
 #include "cremediator.h"
 #include "version.h"
 #include <QDateTime>
+#include <QDebug>
 
 
 
@@ -166,7 +167,7 @@ bool CEvent::SetResultsInputFile(QString a_File)
     // Sample the file
     QFile tfile(m_ResultsInputFile);
     if (!tfile.open(QIODevice::ReadOnly))
-        return LoadEventFromDump();
+       return LoadEventFromDump();
     QTextStream stream( &tfile );
     QString line = stream.readLine();
     tfile.close();

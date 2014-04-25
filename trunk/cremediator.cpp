@@ -17,6 +17,8 @@ void CRemediator::CheckForBadFinishUnit()
         {
         QString str = m_OriginalResultsData.at(i);
         QStringList array = str.split(',');
+        if (array.size() < 28)
+            array = str.split(';');
         if (array[26].isEmpty() && array[27].isEmpty()) // No Finish !!
             if (ToLong(array[28]) > 0)
                 {
@@ -78,6 +80,8 @@ void CRemediator::FixupRawData(long a_ControlId, int a_Adjustment)
         {
         QString str = m_OriginalResultsData.at(i);
         QStringList array = str.split(',');
+        if (array.size() < 28)
+            array = str.split(';');
         if (array[26].isEmpty() && array[27].isEmpty()) // No Finish !!
             if (ToLong(array[28]) > 0)
                 {
