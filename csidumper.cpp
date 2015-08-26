@@ -155,8 +155,8 @@ void CSIDumper::onReadyRead()
     bool error(false);
     if (CompleteMessage(m_ReadBuf, error))
     {
-    if (m_State != STATE_SETMSMODE && m_State != STATE_GETBUFPTR)
-    DumpMessage("in onReadyRead", m_ReadBuf);
+    //if (m_State != STATE_SETMSMODE && m_State != STATE_GETBUFPTR)
+    //DumpMessage("in onReadyRead", m_ReadBuf);
     switch (m_State)
         {
         case STATE_SETMSMODE: HandleSetMSModeResponse(m_ReadBuf); return;
@@ -197,6 +197,40 @@ void CSIDumper::ClosePort()
     m_State = STATE_SETMSMODE;
 }
 
+void CSIDumper::DumpMessage2(QString a_Prefix, QByteArray& a_Data)
+{
+    char lookup[] = {"0123456789ABCDEF"};
+
+    QString temp = "\nMessage Dump v.2 (" + a_Prefix + "):\n";
+    for (int i = 0; i < a_Data.length() && i < 5000; i+=4)
+        {
+        temp += "0x";
+        temp += QString((char)lookup[((i/4)/16)]);
+        temp += QString((char)lookup[((i/4) & 0xF)]);
+        temp += ":  ";
+        for (int j = 0; j < 4 && j+i < a_Data.length(); j++)
+            {
+            int val = (unsigned char) a_Data[i+j];
+            temp += QString((char)lookup[(val/16)]);
+            temp += QString((char)lookup[(val & 0xF)]);
+            temp += "  ";
+            }
+
+        temp += "  ";
+        for (int j = 0; j < 4 && j + i < a_Data.length(); j++)
+            {
+            int val = (unsigned char) a_Data[i+j];
+            if (val >=32 && val <= 127)
+                temp += val;
+            else
+                temp += ".";
+            }
+        qDebug() << temp;
+        temp.clear();
+        }
+}
+
+
 void CSIDumper::DumpMessage(QString a_Prefix, QByteArray& a_Data)
 {
     char lookup[] = {"0123456789ABCDEF"};
@@ -213,10 +247,9 @@ void CSIDumper::DumpMessage(QString a_Prefix, QByteArray& a_Data)
             case 16: temp += "DLE "; break;
             case 21: temp += "NAK "; break;
             default:
-                    temp += " ";
                     temp += QString((char)lookup[(val/16)]);
                     temp += QString((char)lookup[(val & 0xF)]);
-                    temp += " ";
+                    temp += "  ";
             }
         }
     qDebug() << temp;
@@ -333,6 +366,7 @@ bool CSIDumper::GetBackupData()
     params.append((unsigned char) a3);
     params.append((unsigned char) m_Increment);
 
+//    qDebug() << "Attempting to read from" << m_Address << "for" << m_Increment << "bytes";
     if (!SendCmd(SICmdGetBackupDataValue, params))
         return false;
 
@@ -353,7 +387,7 @@ void CSIDumper::GetNextBlock()
     if (m_Address >= m_EndAddress)
         {
         ClosePort();
-        QString summary = QString(tr("%1 SI 5 cards, %2 SI 6 cards, %3 SI 8 cards, %4 SI 9 cards, %5 SI 10 cards, %6 SI 11 cards"))
+        QString summary = QString(tr("Cards: %1 SI-5, %2 SI-6, %3 SI-8, %4 SI-9, %5 SI-10, %6 SI-11"))
         .arg(m_SI5).arg(m_SI6).arg(m_SI8).arg(m_SI9).arg(m_SI10).arg(m_SI11);
         emit StatusUpdate(summary);
         emit Finished(m_AllCards.size(), summary);
@@ -482,12 +516,13 @@ void CSIDumper::HandleReadingCard1011(QByteArray& a_Rec)
         {
         // This block belongs to the next card
         m_Address -= m_Increment;
-        //rec.setBadRead(true);
+ //       qDebug() << "Ooops, read too much" << m_CardData.size() + a_Rec.size() << cType;
         }
     else
         {
         m_CardData.append(a_Rec);
-        if (a_Rec.length () < 0x80 * 3)
+ //       qDebug() << "m_CardData.size()" << m_CardData.size() << "a_Rec.size()" << a_Rec.size();
+        if (m_CardData.length () < 0x80 * 8)
             {
             // Get next load of data !
             m_State = STATE_READING_CARD1011;
@@ -497,12 +532,13 @@ void CSIDumper::HandleReadingCard1011(QByteArray& a_Rec)
             return;
             }
         }
-DumpMessage("Got data to process inside HandleReadingCard1011", m_CardData);
+//DumpMessage2("Got data to process inside HandleReadingCard1011", m_CardData);
     long SINumber(0);
     for (int i = 25; i < 28; i++)
         {
         SINumber *= 256;
         SINumber += (unsigned char)m_CardData[i];
+//        qDebug() <<"Found SI10/11 card" << SINumber;
         }
     rec.setSICard(QString::number(SINumber));
     bool isSI10 = SINumber > 7000000 && SINumber < 8000000;
@@ -511,6 +547,7 @@ DumpMessage("Got data to process inside HandleReadingCard1011", m_CardData);
     QStringList names = QString(m_CardData.mid(32,24)).split(";");
     rec.setFirstName(names.at(0));
     rec.setOtherName(names.at(1));
+
 
     QString cn, when, dow;
     Read4ByteControlData(m_CardData, 8, cn, dow, when, false);
@@ -521,25 +558,24 @@ DumpMessage("Got data to process inside HandleReadingCard1011", m_CardData);
     Read4ByteControlData(m_CardData, 16, cn, dow, when, true);
     rec.setFinish(cn, dow, when);
 
-    int offset = 512;
+    int offset = 128;
     int max_punches = 100;
 
-   /* if (!rec.getBadRead())
-        {*/
-        for (int i = 0; i < max_punches && offset < m_CardData.size ()-4; i++)
-            {
-            if ((unsigned char)m_CardData[offset] != 0xEE ||
-                (unsigned char)m_CardData[offset + 1] != 0xEE ||
-                (unsigned char)m_CardData[offset + 2] != 0xEE ||
-                (unsigned char)m_CardData[offset + 3] != 0xEE)
-                {
-                Read4ByteControlData(m_CardData, offset, cn, dow, when, false);
-                rec.setControl(cn, dow, when);
-                }
-            offset += 4;
-            }
-       // }
 
+    for (int i = 0; i < max_punches && offset < m_CardData.size ()-4; i++)
+        {
+        if ((unsigned char)m_CardData[offset] != 0xEE ||
+            (unsigned char)m_CardData[offset + 1] != 0xEE ||
+            (unsigned char)m_CardData[offset + 2] != 0xEE ||
+            (unsigned char)m_CardData[offset + 3] != 0xEE)
+            {
+            Read4ByteControlData(m_CardData, offset, cn, dow, when, false);
+            rec.setControl(cn, dow, when);
+            }
+        else
+            break;
+        offset += 4;
+        }
 
     AddNewCard(rec);
     if (isSI10)
@@ -570,7 +606,6 @@ void CSIDumper::HandleReadingCard89(QByteArray& a_Rec)
         {
         // This block belongs to the next card
         m_Address -= m_Increment;
-        rec.setBadRead(true);
         }
     else
         m_CardData.append(a_Rec);
@@ -582,6 +617,9 @@ void CSIDumper::HandleReadingCard89(QByteArray& a_Rec)
         SINumber += (unsigned char)m_CardData[i];
         }
     rec.setSICard(QString::number(SINumber));
+
+
+    //DumpMessage2("Processing SI Card 8/9 " + QString::number(SINumber), m_CardData);
     bool isSI9 = SINumber < 2000000;
 
     QStringList names = QString(m_CardData.mid(32,24)).split(";");
@@ -600,22 +638,20 @@ void CSIDumper::HandleReadingCard89(QByteArray& a_Rec)
     int offset = isSI9 ? 56 : 136;
     int max_punches = isSI9 ? 50 : 30;
 
-    if (!rec.getBadRead())
+    for (int i = 0; i < max_punches && offset < m_CardData.size(); i++)
         {
-        for (int i = 0; i < max_punches; i++)
+        if ((unsigned char)m_CardData[offset] != 0xEE ||
+            (unsigned char)m_CardData[offset + 1] != 0xEE ||
+            (unsigned char)m_CardData[offset + 2] != 0xEE ||
+            (unsigned char)m_CardData[offset + 3] != 0xEE)
             {
-            if ((unsigned char)m_CardData[offset] != 0xEE ||
-                (unsigned char)m_CardData[offset + 1] != 0xEE ||
-                (unsigned char)m_CardData[offset + 2] != 0xEE ||
-                (unsigned char)m_CardData[offset + 3] != 0xEE)
-                {
-                Read4ByteControlData(m_CardData, offset, cn, dow, when, false);
-                rec.setControl(cn, dow, when);
-                }
-            offset += 4;
+            Read4ByteControlData(m_CardData, offset, cn, dow, when, false);
+            rec.setControl(cn, dow, when);
             }
+        else
+            break;
+        offset += 4;
         }
-
 
     AddNewCard(rec);
     if (isSI9)
@@ -631,12 +667,13 @@ void CSIDumper::HandleReadingCard6(QByteArray& a_Rec)
     {
     TrimDataResp(a_Rec);
     SIDumpRecord rec;
+    bool hitEnd(false);
 
     if (GuessCardType(a_Rec) != CARD_UNKNOWN)
         {
         // This block belongs to the next card
         m_Address -= m_Increment;
-        rec.setBadRead(true);
+        hitEnd = true;
         }
     else
         m_CardData.append(a_Rec);
@@ -648,17 +685,16 @@ void CSIDumper::HandleReadingCard6(QByteArray& a_Rec)
         sinumber += (unsigned char)m_CardData[i];
         }
 
-    if (!rec.getBadRead())
+    if (!hitEnd &&
+        (m_CardData.size() < 3*128 ||
+        (sinumber >= 0xFF0000 && m_CardData.size() < 8*128)))  // Its a 6-star card !
         {
-        if (m_CardData.size() < 3*128 ||
-           (sinumber >= 0xFF0000 && m_CardData.size() < 8*128))  // Its a 6-star card !
-            {
-            m_Increment = 0x80;
-            m_Address += m_Increment;
-            GetBackupData();
-            return;
-            }
+        m_Increment = 0x80;
+        m_Address += m_Increment;
+        GetBackupData();
+        return;
         }
+//    DumpMessage2("Processing SI Card 6 " + QString::number(sinumber), m_CardData);
 
     rec.setSICard(QString::number(sinumber));
     rec.setFirstName(m_CardData.mid(68,20).trimmed());
@@ -675,8 +711,8 @@ void CSIDumper::HandleReadingCard6(QByteArray& a_Rec)
     rec.setFinish(cn, dow, when);
     rec.setClub(m_CardData.mid(96,32).trimmed());
 
-    if (!rec.getBadRead())
-        {
+   // if (!rec.getBadRead())
+   //     {
         int offset;
         if (sinumber >= 0xFF0000)
             offset =  7 *  // block number
@@ -695,9 +731,11 @@ void CSIDumper::HandleReadingCard6(QByteArray& a_Rec)
                 Read4ByteControlData(m_CardData, offset, cn, dow, when, false);
                 rec.setControl(cn, dow, when);
                 }
+            else
+                break;
             offset += 4;
             }
-        }
+      //  }
 
     AddNewCard(rec);
     m_SI6++;
@@ -720,7 +758,7 @@ void CSIDumper::ProcessSICard5(QByteArray& a_Rec)
 
     long temp = (unsigned char)a_Rec[4] * 256 + (unsigned char)a_Rec[5];
     switch((int)a_Rec[6])
-    {
+        {
         case 0:
         case 1:
             break;
@@ -730,7 +768,6 @@ void CSIDumper::ProcessSICard5(QByteArray& a_Rec)
             temp += (100000 * (int)a_Rec[6]);
             break;
         }
-
     rec.setSICard(QString::number(temp));
     QString cn, when;
     Read2ByteControlData(a_Rec, 25, when);
@@ -885,11 +922,19 @@ void CSIDumper::Read2ByteControlData(QByteArray& a_Rec, int a_Offset, QString& a
 
 void CSIDumper::AddNewCard(SIDumpRecord& a_Card)
 {
+    static SIDumpRecord lastCard;
+    if (m_AllCards.size() > 0 &&
+        a_Card.getSICard() == lastCard.getSICard() &&
+        lastCard.getPunchCount() < a_Card.getPunchCount())
+        {
+        m_AllCards.pop_back();
+        }
     a_Card.setNo(m_AllCards.size() + 1);
     m_AllCards.push_back(a_Card);
     emit CardCsv(a_Card.getAsCsv());
     QString msg = QString("Reading card %1").arg(a_Card.getSICard());
     emit StatusUpdate(msg);
+    lastCard = a_Card;
 }
 
 QString CSIDumper::LookupDay(int a_Day)

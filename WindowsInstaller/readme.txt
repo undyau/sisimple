@@ -1,9 +1,15 @@
-Latest Release: 0.8.8 22nd May 2013
+Latest Release: 0.8.10 26th August 2015
 
 SI Cards Supported
 SI Card 5,6,8,9,10,11
+Note: SIAC format cards are not supported.
 
 History
+0.8.10 26th August 2015
+Processing of SI 6, 10, 11 cards was broken to varying extents.
+Incomplete first download of a card was hiding complete download
+which followed it.
+
 0.8.9 25th April 2014
 Import of semi-colon deliminated csv file from SI-Config 
 got broken in 0.8.4 causing program crash, now fixed.
