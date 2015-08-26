@@ -67,6 +67,7 @@ private:
     bool SendCmd(unsigned char a_Cmd, QByteArray& a_ParamData);
     void BuildMsg(unsigned char a_Cmd, const QByteArray& a_ParamData, QByteArray& a_Msg);
     void DumpMessage(QString a_Prefix, QByteArray& a_Data);
+    void DumpMessage2(QString a_Prefix, QByteArray& a_Data);
     bool IncompleteResponse(const QByteArray& a_Data);
     bool SetMSMode();
     void HandleSetMSModeResponse(QByteArray& a_Data);
@@ -101,7 +102,6 @@ private:
     QString LookupDay(int a_Day);
 
     void AddNewCard(SIDumpRecord& a_Card);
-
 };
 
 #endif // CSIDUMPER_H

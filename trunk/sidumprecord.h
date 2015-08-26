@@ -24,11 +24,10 @@ public:
     void setFinish(QString a_FinishCN, QString a_DOW, QString a_FinishTime) {m_FinishCN = a_FinishCN;m_FinishTime = a_FinishTime; m_FinishDOW = a_DOW;}
 
     void setControl(QString a_CN, QString a_DOW, QString a_Time);
-    void setBadRead(bool a_BadRead) {m_BadRead = a_BadRead;}
 
-    bool getBadRead() {return m_BadRead;}
     QString getAsCsv();
     QString getSICard() {return m_SICard;}
+    int getPunchCount() {return m_CNArray.size();}
 
 signals:
 
@@ -68,8 +67,6 @@ private:
     QStringList m_CNArray;
     QStringList m_TimeArray;
     QStringList m_DOWArray;
-    bool m_BadRead;
-
 };
 
 #endif // SIDUMPRECORD_H

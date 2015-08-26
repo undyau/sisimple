@@ -1,7 +1,7 @@
 #include "sidumprecord.h"
 
 SIDumpRecord::SIDumpRecord() :
-     m_No(0),m_BadRead(false)
+     m_No(0)
 {
 }
 
@@ -52,21 +52,18 @@ result += m_FinishCN + ',';
 result += m_FinishDOW + ',';
 result += m_FinishTime + ',';
 
-if (m_BadRead)
-    result += "0";
-else
-    {
-    result += NumPunches() + ',';
 
-    if (m_CNArray.count() > 0)
+result += NumPunches() + ',';
+
+if (m_CNArray.count() > 0)
+    {
+    for (int i = 0; i < m_CNArray.count(); i++)
         {
-        for (int i = 0; i < m_CNArray.count(); i++)
-            {
-            result += m_CNArray[i] + ',';
-            result += m_DOWArray[i] + ',';
-            result += m_TimeArray[i] + ',';
-            }
+        result += m_CNArray[i] + ',';
+        result += m_DOWArray[i] + ',';
+        result += m_TimeArray[i] + ',';
         }
     }
+
 return result;
 }
