@@ -1,5 +1,5 @@
 #include "csidumper.h"
-#include "qextserialport.h"
+#include <QSerialPort>
 #include <QMessageBox>
 #include <QtDebug>
 #include "sidumprecord.h"
@@ -49,11 +49,11 @@ return true;
 
 void CSIDumper::CreatePort()
 {
-    m_Port = new QextSerialPort(m_SerialPort, QextSerialPort::EventDriven);
-    m_Port->setFlowControl(FLOW_OFF);
-    m_Port->setParity(PAR_NONE);
-    m_Port->setDataBits(DATA_8);
-    m_Port->setStopBits(STOP_1);
+    m_Port = new QSerialPort(m_SerialPort);
+    m_Port->setFlowControl(QSerialPort::FlowControl::NoFlowControl);
+    m_Port->setParity(QSerialPort::NoParity);
+    m_Port->setDataBits(QSerialPort::Data8);
+    m_Port->setStopBits(QSerialPort::StopBits::OneStop);
 }
 
 bool CSIDumper::OpenPort()
@@ -76,7 +76,7 @@ void CSIDumper::tryDownload()
     if (m_SerialPort.isEmpty() || m_Port)
         return;
     CreatePort();
-    m_Port->setBaudRate(BAUD4800);
+    m_Port->setBaudRate(QSerialPort::Baud4800);
 
     if (!OpenPort())
         return;
@@ -92,7 +92,7 @@ void CSIDumper::tryDownload()
 void CSIDumper::RestartWith38400()
 {
     CreatePort();
-    m_Port->setBaudRate(BAUD38400);
+    m_Port->setBaudRate(QSerialPort::Baud38400);
     if (!OpenPort())
         return;
 
@@ -172,7 +172,7 @@ void CSIDumper::onReadyRead()
         if (error)
             HandleBadData(m_ReadBuf);
         else
-            ;// wait
+        {}// wait
             /*qDebug() << "inbound message incomplete, waiting for more";*/
     }
 }
@@ -550,12 +550,12 @@ void CSIDumper::HandleReadingCard1011(QByteArray& a_Rec)
 
 
     QString cn, when, dow;
-    Read4ByteControlData(m_CardData, 8, cn, dow, when, false);
+    Read4ByteControlData(m_CardData, 8, cn, dow, when);
     rec.setCheck(cn, dow, when);
     rec.setClear(cn, dow, when);
-    Read4ByteControlData(m_CardData, 12, cn, dow, when, true);
+    Read4ByteControlData(m_CardData, 12, cn, dow, when);
     rec.setStart(cn, dow, when);
-    Read4ByteControlData(m_CardData, 16, cn, dow, when, true);
+    Read4ByteControlData(m_CardData, 16, cn, dow, when);
     rec.setFinish(cn, dow, when);
 
     int offset = 128;
@@ -569,7 +569,7 @@ void CSIDumper::HandleReadingCard1011(QByteArray& a_Rec)
             (unsigned char)m_CardData[offset + 2] != 0xEE ||
             (unsigned char)m_CardData[offset + 3] != 0xEE)
             {
-            Read4ByteControlData(m_CardData, offset, cn, dow, when, false);
+            Read4ByteControlData(m_CardData, offset, cn, dow, when);
             rec.setControl(cn, dow, when);
             }
         else
@@ -627,12 +627,12 @@ void CSIDumper::HandleReadingCard89(QByteArray& a_Rec)
     rec.setOtherName(names.at(1));
 
     QString cn, when, dow;
-    Read4ByteControlData(m_CardData, 8, cn, dow, when, false);
+    Read4ByteControlData(m_CardData, 8, cn, dow, when);
     rec.setCheck(cn, dow, when);
     rec.setClear(cn, dow, when);
-    Read4ByteControlData(m_CardData, 12, cn, dow, when, true);
+    Read4ByteControlData(m_CardData, 12, cn, dow, when);
     rec.setStart(cn, dow, when);
-    Read4ByteControlData(m_CardData, 16, cn, dow, when, true);
+    Read4ByteControlData(m_CardData, 16, cn, dow, when);
     rec.setFinish(cn, dow, when);
 
     int offset = isSI9 ? 56 : 136;
@@ -645,7 +645,7 @@ void CSIDumper::HandleReadingCard89(QByteArray& a_Rec)
             (unsigned char)m_CardData[offset + 2] != 0xEE ||
             (unsigned char)m_CardData[offset + 3] != 0xEE)
             {
-            Read4ByteControlData(m_CardData, offset, cn, dow, when, false);
+            Read4ByteControlData(m_CardData, offset, cn, dow, when);
             rec.setControl(cn, dow, when);
             }
         else
@@ -701,13 +701,13 @@ void CSIDumper::HandleReadingCard6(QByteArray& a_Rec)
     rec.setOtherName(m_CardData.mid(48,20).trimmed());
 
     QString cn, when, dow;
-    Read4ByteControlData(m_CardData, 28, cn, dow, when, false);
+    Read4ByteControlData(m_CardData, 28, cn, dow, when);
     rec.setCheck(cn, dow, when);
-    Read4ByteControlData(m_CardData, 32, cn, dow, when, false);
+    Read4ByteControlData(m_CardData, 32, cn, dow, when);
     rec.setClear(cn, dow, when);
-    Read4ByteControlData(m_CardData, 24, cn, dow, when, true);
+    Read4ByteControlData(m_CardData, 24, cn, dow, when);
     rec.setStart(cn, dow, when);
-    Read4ByteControlData(m_CardData, 20, cn, dow, when, true);
+    Read4ByteControlData(m_CardData, 20, cn, dow, when);
     rec.setFinish(cn, dow, when);
     rec.setClub(m_CardData.mid(96,32).trimmed());
 
@@ -728,7 +728,7 @@ void CSIDumper::HandleReadingCard6(QByteArray& a_Rec)
                 (unsigned char)m_CardData[offset + 2] != 0xEE ||
                 (unsigned char)m_CardData[offset + 3] != 0xEE)
                 {
-                Read4ByteControlData(m_CardData, offset, cn, dow, when, false);
+                Read4ByteControlData(m_CardData, offset, cn, dow, when);
                 rec.setControl(cn, dow, when);
                 }
             else
@@ -854,7 +854,7 @@ a_Msg.insert(0,0xFF);
 void CSIDumper::timerEvent(QTimerEvent *event)
 {
     killTimer(event->timerId());
-    bool running4800 = (m_Port->baudRate() == BAUD4800);
+    bool running4800 = (m_Port->baudRate() == QSerialPort::Baud4800);
     ClosePort();
 
     if (running4800)
@@ -862,16 +862,13 @@ void CSIDumper::timerEvent(QTimerEvent *event)
 }
 
 
-void CSIDumper::Read4ByteControlData(QByteArray& a_Rec, int a_Offset, QString& a_Cn, QString& a_DOW, QString& a_When, bool a_Subsecond)
+void CSIDumper::Read4ByteControlData(QByteArray& a_Rec, int a_Offset, QString& a_Cn, QString& a_DOW, QString& a_When)
 {
 // record structure: PTD - CN - PTH - PTL
 
     unsigned char byte[4];
     for (int i = 0; i < 4; i++)
         byte[i] = a_Rec[a_Offset + i];
-
-    // See if we have subsecond data in control number
-   // a_Subsecond = a_Subsecond && (byte[0] & 1);
 
     unsigned int cn = ((byte[0] & 0xC0) >> 6) << 8;
     cn += byte[1];

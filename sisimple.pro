@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui xml network svg
+QT       += core gui xml network svg widgets serialport
 
 TARGET = sisimple
 TEMPLATE = app
@@ -31,7 +31,6 @@ SOURCES += main.cpp\
     clockerrorsdialog.cpp \
     sidumprecord.cpp \
     csidumper.cpp \
-    qextserial\qextserialport.cpp \
     downloaddialog.cpp \
     ciofcoursexmlhandler.cpp \
     htmloptionsdialog.cpp \
@@ -56,9 +55,6 @@ HEADERS  += mainwindow.h \
     importsidialog.h \
     CControlAdjustments.h \
     clockerrorsdialog.h \
-    qextserial\qextserialport_global.h \
-    qextserial\qextserialport.h \
-    qextserial\qextserialenumerator.h \
     csidumper.h \
     downloaddialog.h \
     sidumprecord.h \
@@ -68,17 +64,11 @@ HEADERS  += mainwindow.h \
     version.h \
     cremediator.h
 
-INCLUDEPATH += qextserial
-
-unix:SOURCES           += qextserial\posix_qextserialport.cpp
-unix:!macx:SOURCES     += qextserial\qextserialenumerator_unix.cpp
 macx {
-  SOURCES          += qextserial\qextserialenumerator_osx.cpp
   LIBS             += -framework IOKit -framework CoreFoundation
 }
 
 win32 {
-  SOURCES          += qextserial\win_qextserialport.cpp qextserial\qextserialenumerator_win.cpp
   DEFINES          += WINVER=0x0501 # needed for mingw to pull in appropriate dbt business...probably a better way to do this
   LIBS             += -lsetupapi
 }

@@ -4,7 +4,7 @@
 #include <QObject>
 #include "sidumprecord.h"
 #include "QStringList"
-class QextSerialPort;
+class QSerialPort;
 
 enum StateType
 {
@@ -52,7 +52,7 @@ private slots:
 
 private:
     StateType m_State;
-    QextSerialPort *m_Port;
+    QSerialPort *m_Port;
     QString m_SerialPort;
     unsigned long m_Address;
     unsigned long m_EndAddress;
@@ -96,7 +96,7 @@ private:
     void ProcessSICard8Or9(QByteArray& a_Rec);
     void ProcessSICard10Or11(QByteArray& a_Rec);
     void TrimDataResp(QByteArray& a_Resp);
-    void Read4ByteControlData(QByteArray& a_Rec, int a_Offset, QString& a_Cn, QString& a_DOW, QString& a_When, bool a_Subsecond);
+    void Read4ByteControlData(QByteArray& a_Rec, int a_Offset, QString& a_Cn, QString& a_DOW, QString& a_When);
     void Read2ByteControlData(QByteArray& a_Rec, int a_Offset, QString& a_When);
     void Read3ByteControlData(QByteArray& a_Rec, int a_Offset, QString& a_Cn, QString& a_When);
     QString LookupDay(int a_Day);

@@ -38,6 +38,5 @@ QString CLeg::Label()
         return "F";
 
     QString s("%1");
-    s.arg(m_EndCN);
-    return s;
+    return s.arg(m_EndCN);
 }

@@ -2,7 +2,7 @@
 #define DOWNLOADDIALOG_H
 
 #include <QDialog>
-#include "qextserialenumerator.h"
+#include <QSerialPortInfo>
 #include <QStringListModel>
 #include "csidumper.h"
 
@@ -19,9 +19,9 @@ public:
     ~DownloadDialog();
 
 public slots:
- void addDevice(const QextPortInfo & info );
- void removeDevice(const QextPortInfo & info );
- void processCardCsv(QString);
+ void addDevice(const QSerialPortInfo & info );
+ void removeDevice(const QSerialPortInfo & info );
+ void processCardCsv();
  void dumperFinished(int, QString);
  void dumperError(QString);
  void tryDownload();
@@ -33,7 +33,7 @@ signals:
 
 private:
     Ui::DownloadDialog *ui;
-    QextSerialEnumerator* m_Sdw;
+ //   QextSerialEnumerator* m_Sdw;
     QStringListModel m_SerialPorts;
     CSIDumper* m_Dumper;
     QString m_SerialPort;
