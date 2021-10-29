@@ -387,7 +387,7 @@ void CEvent::SaveChangedSIDetails()
                            .arg((*j)->GetSINumber())
                            .arg((*j)->GetName())
                            .arg((*j)->GetClub());
-                out << line << endl;
+                out << line << Qt::endl;
                 }
             }
 
@@ -1065,7 +1065,7 @@ void CEvent::WriteResults(std::vector<QString>& a_Lines)
         {
         QTextStream out(m_SaveFile);
         for (unsigned int i = 0; i < a_Lines.size(); i++)
-            out << a_Lines[i] << endl;
+            out << a_Lines[i] << Qt::endl;
         }
     else
         emit updatedResultsOutput(a_Lines);

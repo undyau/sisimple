@@ -29,10 +29,6 @@ public:
     QString getSICard() {return m_SICard;}
     int getPunchCount() {return m_CNArray.size();}
 
-signals:
-
-public slots:
-
 private:
     int m_No;
     QString m_ReadAt;

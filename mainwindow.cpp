@@ -284,11 +284,10 @@ void MainWindow::about()
 QString version(VER_FILEVERSION_STR);
 QMessageBox::about(this, tr("About SI Simple"),
     QString("<h2>SI Simple " + version + "</h2>"
-       "<p>&copy; 2010-2015 Andy Simpson</p>"
+       "<p>&copy; 2010-2021 Andy Simpson</p>"
        "<p>This is an Open Source project hosted at "
-       "http://sisimple.sourceforge.net, licensed under the GPL.</p>"
-       "<p>Acknowledgement and thanks to Ken Hanson and his amazing TCL program SIDResults"
-       "and Terry Bluett for testing the program at numerous events.</p>"
+       "https://github.com/undyau/sisimple, licensed under the GPL.</p>"
+       "<p>Acknowledgement and thanks to Ken Hanson and his amazing TCL program SIDResults.</p>"
        ));
 }
 

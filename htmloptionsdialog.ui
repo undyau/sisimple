@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>HTML Options</string>
   </property>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="layoutWidget1">
    <property name="geometry">
     <rect>
      <x>21</x>
@@ -44,7 +44,7 @@
       <property name="title">
        <string>Splits Display</string>
       </property>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget2">
        <property name="geometry">
         <rect>
          <x>20</x>

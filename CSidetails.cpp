@@ -49,7 +49,7 @@ QString CSiDetails::ExportText()
     if (!m_Club.isEmpty())
         {
         result = "%1,\"%2\",\"%3\"";
-        result.arg(m_Number).arg(m_Name, m_Club);
+        result = result.arg(m_Number).arg(m_Name, m_Club);
         }
     return result;
 }
