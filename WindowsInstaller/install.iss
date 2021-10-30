@@ -7,18 +7,18 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{E60CAA80-80BE-4FE4-BA63-F5321FF6A18C}
 AppName=SI Simple
-AppVersion=0.8.10
-;AppVerName=SI Simple 0.8.10
+AppVersion=0.9.0
+;AppVerName=SI Simple 0.9.0
 AppPublisher=undy
-AppPublisherURL=http://sourceforge.net/projects/sisimple/
-AppSupportURL=http://sourceforge.net/projects/sisimple/
-AppUpdatesURL=http://sourceforge.net/projects/sisimple/
+AppPublisherURL=https://github.com/undyau/sisimple
+AppSupportURL=https://github.com/undyau/sisimple
+AppUpdatesURL=https://github.com/undyau/sisimple
 DefaultDirName={pf}\SI Simple
 DefaultGroupName=SI Simple
-LicenseFile=D:\Andy Documents\Projects\sisimple\gpl.txt
-OutputDir=D:\Andy Documents\Projects\sisimple\WindowsInstaller
+LicenseFile=..\gpl.txt
+OutputDir=..\WindowsInstaller
 OutputBaseFilename=SISimpleSetup
-SetupIconFile=D:\Andy Documents\Projects\sisimple\sisimple.ico
+SetupIconFile=..\sisimple.ico
 Compression=lzma
 SolidCompression=yes
 
@@ -31,14 +31,20 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: sisimple.exe; DestDir: {app}; Flags: ignoreversion; 
-Source: libgcc_s_dw2-1.dll; DestDir: {app}; Flags: ignoreversion; 
-Source: mingwm10.dll; DestDir: {app}; Flags: ignoreversion; 
-Source: QtCore4.dll; DestDir: {app}; Flags: ignoreversion; 
-Source: QtGui4.dll; DestDir: {app}; Flags: ignoreversion; 
-Source: QtXml4.dll; DestDir: {app}; Flags: ignoreversion; 
-Source: QtSvg4.dll; DestDir: {app}; Flags: ignoreversion; 
-Source: QtNetwork4.dll; DestDir: {app}; Flags: ignoreversion; 
-Source: qsvgicon4.dll; DestDir: {app}\iconengines; Flags: ignoreversion; 
+Source: C:\Qt\5.15.2\mingw81_32\bin\libgcc_s_dw2-1.dll; DestDir: {app}; Flags: ignoreversion; 
+Source: C:\Qt\5.15.2\mingw81_32\bin\libwinpthread-1.dll; DestDir: {app}; Flags: ignoreversion; 
+Source: C:\Qt\5.15.2\mingw81_32\bin\libstdc++-6.dll; DestDir: {app}; Flags: ignoreversion; 
+;Source: mingwm10.dll; DestDir: {app}; Flags: ignoreversion; 
+Source: C:\Qt\5.15.2\mingw81_32\bin\Qt5Core.dll; DestDir: {app}; Flags: ignoreversion; 
+Source: C:\Qt\5.15.2\mingw81_32\bin\Qt5Gui.dll; DestDir: {app}; Flags: ignoreversion; 
+Source: C:\Qt\5.15.2\mingw81_32\bin\Qt5Xml.dll; DestDir: {app}; Flags: ignoreversion; 
+Source: C:\Qt\5.15.2\mingw81_32\bin\Qt5Svg.dll; DestDir: {app}; Flags: ignoreversion; 
+Source: C:\Qt\5.15.2\mingw81_32\bin\Qt5Network.dll; DestDir: {app}; Flags: ignoreversion; 
+Source: C:\Qt\5.15.2\mingw81_32\bin\Qt5Widgets.dll; DestDir: {app}; Flags: ignoreversion; 
+Source: C:\Qt\5.15.2\mingw81_32\bin\Qt5SerialPort.dll; DestDir: {app}; Flags: ignoreversion;
+
+Source: C:\Qt\5.15.2\mingw81_32\plugins\iconengines\qsvgicon.dll; DestDir: {app}\iconengines; Flags: ignoreversion; 
+Source: C:\Qt\5.15.2\mingw81_32\plugins\platforms\qwindows.dll; DestDir: {app}\platforms; Flags: ignoreversion; 
 
 
 [Icons]

@@ -10,9 +10,10 @@ enum StateType
 {
     STATE_SETMSMODE,
     STATE_GETBUFPTR,
-    STATE_READING_CARD89,
-    STATE_READING_CARD1011,
-    STATE_READING_CARD6,
+    STATE_READING_CARD_89,
+    STATE_READING_CARD_1011,
+    STATE_READING_CARD_SIAC1,
+    STATE_READING_CARD_6,
     STATE_DUMPING
 };
 
@@ -48,7 +49,7 @@ public slots:
 
 private slots:
     void onReadyRead();
-    void onDsrChanged(bool status);
+    void onDataTerminalReadyChanged(bool status);
 
 private:
     StateType m_State;
@@ -60,7 +61,7 @@ private:
     QByteArray m_ReadBuf;
     QByteArray m_CardData;
     int m_Timer;
-    int m_SI5,m_SI6,m_SI8, m_SI9, m_SI10, m_SI11;
+    int m_SI5,m_SI6,m_SI8, m_SI9, m_SI10, m_SI11, m_SIAC1;
     std::vector<SIDumpRecord> m_AllCards;
 
     bool SendSmallCmd(unsigned char a_Cmd, unsigned char a_ParamData);
@@ -74,7 +75,8 @@ private:
     void HandleGetEndMemoryAddrResponse(QByteArray& a_Data);
     void HandleReadingCard89(QByteArray& a_Data);
     void HandleReadingCard1011(QByteArray& a_Data);
-    void HandleReadingCard6(QByteArray& a_Rec);
+    void HandleReadingCardSiac1(QByteArray& a_Data);
+    void HandleReadingCard6(QByteArray& a_Data);
     void HandleBadData(QByteArray& a_Data);
     void HandleDumping(QByteArray& a_Data);
 
@@ -95,6 +97,7 @@ private:
     void ProcessSICard6(QByteArray& a_Rec);
     void ProcessSICard8Or9(QByteArray& a_Rec);
     void ProcessSICard10Or11(QByteArray& a_Rec);
+    void ProcessSICardSIAC1(QByteArray& a_Rec);
     void TrimDataResp(QByteArray& a_Resp);
     void Read4ByteControlData(QByteArray& a_Rec, int a_Offset, QString& a_Cn, QString& a_DOW, QString& a_When);
     void Read2ByteControlData(QByteArray& a_Rec, int a_Offset, QString& a_When);
