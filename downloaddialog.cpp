@@ -2,7 +2,7 @@
 #include "ui_downloaddialog.h"
 #include <QSerialPortInfo>
 #include <QSerialPort>
-//#include <QColorGroup>
+#include <QDebug>
 #include "CEvent.h"
 
 DownloadDialog::DownloadDialog(QWidget *parent) :
@@ -41,7 +41,11 @@ void DownloadDialog::addDevice(const QSerialPortInfo & info)
     QString description = QString("%1 - %2").arg(info.portName() +" ", info.description());
     ui->comboBox->addItem(description);
     if (ui->comboBox->count() == 1)
+        {
+        qDebug() << "Setting port to" << description;
         setSerialPort(info.portName());
+        }
+
 }
 
 void DownloadDialog::removeDevice(const QSerialPortInfo & info)
@@ -70,7 +74,7 @@ void DownloadDialog::setSerialPort(const QString& a_SerialPort)
 void DownloadDialog::tryDownload()
 {
     if (m_SerialPort.isEmpty())
-        m_SerialPort = ui->comboBox->currentText();
+        setSerialPort(ui->comboBox->currentText());
 
     if (!m_SerialPort.isEmpty())
         {
